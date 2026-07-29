@@ -1,5 +1,8 @@
 # LAUNCH.md — Abbey Group build runbook
 
+> **New session?** Read `_Specs/08 BUILD HANDOVER.md` in the client Dropbox
+> folder first for orientation, then this file for the detail.
+
 Living tick-list of what is done and what is still open. Update as items land.
 
 ## Done (foundation + first 3 pages — for client review)
