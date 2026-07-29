@@ -1,0 +1,49 @@
+---
+import Section from './Section.astro';
+import Eyebrow from './Eyebrow.astro';
+import Icon from './Icon.astro';
+import { areasServed } from '../data/site.ts';
+
+interface Props {
+  heading: string;
+  eyebrow?: string;
+  bg?: 'white' | 'sunken';
+}
+const { heading, eyebrow = 'Where we work', bg = 'white' } = Astro.props;
+---
+<Section bg={bg}>
+  <div class="areas reveal">
+    <div class="areas__head">
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <h2 class="areas__title">{heading}</h2>
+      <p class="areas__lead"><slot /></p>
+    </div>
+    <ul class="areas__list">
+      {areasServed.map((a) => (
+        <li><Icon name="map-pin" size={14} /><span>{a}</span></li>
+      ))}
+    </ul>
+  </div>
+</Section>
+
+<style>
+  .areas { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 48px; align-items: center; }
+  .areas__title { font-size: clamp(28px, 2.8vw, 40px); margin-top: 10px; }
+  .areas__lead { margin-top: 16px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); max-width: 46ch; }
+  .areas__list { display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; }
+  .areas__list li {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-signature);
+    background: var(--white);
+    font-size: 14px;
+    font-weight: var(--weight-semibold);
+    color: var(--text-heading);
+    box-shadow: var(--shadow-sm);
+  }
+  .areas__list :global(svg) { color: var(--accent-plumbing); flex: none; }
+  @media (max-width: 860px) { .areas { grid-template-columns: 1fr; gap: 24px; } }
+</style>

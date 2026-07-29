@@ -1,0 +1,20 @@
+---
+/* Small uppercase label above a heading. Inter, tracked out, weight 700.
+   `tone`: default (blue on light) | inverse (muted on dark). */
+interface Props { tone?: 'default' | 'inverse'; class?: string; }
+const { tone = 'default', class: className } = Astro.props;
+---
+<p class:list={['eyebrow', `eyebrow--${tone}`, className]}><slot /></p>
+
+<style>
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .eyebrow--default { color: var(--blue-800); }
+  .eyebrow--inverse { color: var(--text-muted-inverse); }
+</style>

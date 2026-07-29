@@ -1,0 +1,179 @@
+---
+import Icon from './Icon.astro';
+import { site, nap, ratings, social, footerNav, routes } from '../data/site.ts';
+
+const year = new Date().getFullYear(); // build-time, not client
+---
+<footer class="ftr">
+  <div class="container ftr__inner">
+    <div class="ftr__grid">
+      <!-- Brand -->
+      <div class="ftr__brand">
+        <img
+          class="ftr__logo"
+          src="/brand/logos/group-on-dark.svg"
+          alt={site.name}
+          width="187"
+          height="56"
+        />
+        <p class="ftr__pos">{site.positioning}</p>
+        <div class="ftr__chips">
+          <span class="ftr__chip">
+            <Icon name="shield-check" size={15} /> Gas Safe registered
+          </span>
+          <span class="ftr__chip">
+            <Icon name="star" size={15} class="ftr__star" /> {ratings.google.value} on Google
+          </span>
+        </div>
+      </div>
+
+      <!-- Services -->
+      <nav class="ftr__col" aria-label="Services">
+        <h2 class="ftr__heading">Services</h2>
+        <ul>
+          {footerNav.services.map((l) => (
+            <li><a href={l.href}>{l.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Company -->
+      <nav class="ftr__col" aria-label="Company">
+        <h2 class="ftr__heading">Company</h2>
+        <ul>
+          {footerNav.company.map((l) => (
+            <li><a href={l.href}>{l.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Contact -->
+      <div class="ftr__col">
+        <h2 class="ftr__heading">Contact</h2>
+        <ul>
+          <li><a class="ftr__phone tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a></li>
+          <li><a class="ftr__phone tnum" href={`tel:${nap.mobile.tel}`}>{nap.mobile.label}</a></li>
+        </ul>
+        <address class="ftr__addr">
+          {nap.addressLine},<br />
+          {nap.locality} {nap.postcode}
+        </address>
+        <div class="ftr__social">
+          <a href={social.facebook} target="_blank" rel="noopener noreferrer" aria-label={`${site.name} on Facebook`}>
+            <Icon name="facebook" size={18} />
+          </a>
+          <a href={social.instagram} target="_blank" rel="noopener noreferrer" aria-label={`${site.name} on Instagram`}>
+            <Icon name="instagram" size={18} />
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="ftr__bottom">
+      <ul class="ftr__legal">
+        <li><a href={routes.privacy}>Privacy</a></li>
+        <li><a href={routes.terms}>Terms &amp; Conditions</a></li>
+        <li><a href={routes.credits}>Website Credits</a></li>
+      </ul>
+      <p class="ftr__copy">
+        &copy; {site.name} {year}. {site.legalName}, company no. {site.companyNo}, registered in {site.registeredIn}.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ftr {
+    background: var(--ink-600);
+    color: var(--text-body-inverse);
+    padding-block: 72px 32px;
+  }
+  .ftr__inner { display: flex; flex-direction: column; gap: 56px; }
+
+  .ftr__grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+    gap: 48px;
+  }
+
+  .ftr__brand { display: flex; flex-direction: column; gap: 18px; }
+  .ftr__logo { height: 56px; width: auto; }
+  .ftr__pos {
+    font-size: 14.5px;
+    line-height: var(--leading-relaxed);
+    max-width: 300px;
+    color: var(--text-body-inverse);
+  }
+  .ftr__chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .ftr__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: var(--radius-signature);
+    border: 1px solid var(--border-inverse);
+    font-size: 12.5px;
+    font-weight: var(--weight-semibold);
+    color: var(--text-body-inverse);
+  }
+  .ftr__chip :global(svg) { color: var(--blue-300); }
+  .ftr__chip :global(.ftr__star) { color: var(--review-star); }
+
+  .ftr__heading {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--text-muted-inverse);
+    margin-bottom: 16px;
+  }
+  .ftr__col ul { display: flex; flex-direction: column; gap: 12px; }
+  .ftr__col a {
+    font-size: 14.5px;
+    font-weight: var(--weight-medium);
+    color: var(--text-body-inverse);
+    transition: color var(--duration-fast) var(--ease-standard);
+  }
+  .ftr__col a:hover { color: var(--white); }
+
+  .ftr__phone { font-size: 15px; color: var(--white) !important; }
+  .ftr__addr {
+    font-style: normal;
+    font-size: 14px;
+    line-height: var(--leading-relaxed);
+    color: var(--text-body-inverse);
+    margin-top: 16px;
+  }
+  .ftr__social { display: flex; gap: 14px; margin-top: 16px; }
+  .ftr__social a { color: var(--text-body-inverse); transition: color var(--duration-fast) var(--ease-standard); }
+  .ftr__social a:hover { color: var(--white); }
+
+  .ftr__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-inverse);
+  }
+  .ftr__legal { display: flex; flex-wrap: wrap; gap: 22px; }
+  .ftr__legal a {
+    font-size: 13px;
+    color: var(--text-muted-inverse);
+    transition: color var(--duration-fast) var(--ease-standard);
+  }
+  .ftr__legal a:hover { color: var(--white); }
+  .ftr__copy { font-size: 13px; color: var(--text-muted-inverse); }
+
+  @media (max-width: 1024px) {
+    .ftr__grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .ftr__brand { grid-column: 1 / -1; }
+  }
+  @media (max-width: 700px) {
+    .ftr { padding-block: 56px 28px; }
+    .ftr__grid { grid-template-columns: 1fr; gap: 36px; }
+    .ftr__bottom { flex-direction: column; align-items: flex-start; }
+  }
+</style>

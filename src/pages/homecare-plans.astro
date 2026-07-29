@@ -1,0 +1,396 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import PageHero from '../components/PageHero.astro';
+import Reviews from '../components/Reviews.astro';
+import FAQ from '../components/FAQ.astro';
+import Areas from '../components/Areas.astro';
+import EnquiryForm from '../components/EnquiryForm.astro';
+import { nap, booking, routes } from '../data/site.ts';
+import type { Review } from '../data/site.ts';
+import { service, faqPage, breadcrumb } from '../lib/schema.ts';
+
+const title = 'Boiler Cover Plans Whitby | From £9.99/Month | Abbey Group';
+const description =
+  'Local, Gas Safe boiler cover in Whitby from £9.99 a month. Annual service, gas safety certificate and priority response from a real Whitby team.';
+
+const plans = [
+  {
+    name: 'Service Care', price: '£9.99', popular: true,
+    blurb: 'Your full annual boiler service, gas safety certificate and heating health check, with one free call-out and priority response. The honest plan that keeps your boiler right.',
+  },
+  {
+    name: 'Service Care+', price: '£19.99', popular: false,
+    blurb: 'Everything in Service Care, plus unlimited call-outs and boiler parts and labour included. If the boiler needs a part, it is covered.',
+  },
+  {
+    name: 'Ultimate Home Care', price: '£34.99', popular: false,
+    blurb: 'Our fullest home plan. Everything above, plus central heating and plumbing parts and labour included, and 20% off any other work. The whole home looked after.',
+  },
+];
+
+const includes = [
+  { t: 'Full boiler service', d: 'A complete service by a Gas Safe engineer, so small faults get caught before they cost you.' },
+  { t: 'Gas safety certificate', d: 'Issued on the visit, so your paperwork is current and correct.' },
+  { t: 'Flue gas analysis', d: 'We check the boiler is burning cleanly and safely.' },
+  { t: 'Heating filter cleaned', d: 'Keeps sludge out of the system and the boiler working efficiently.' },
+  { t: 'Balance of radiators', d: 'So every room heats evenly, not just the ones nearest the boiler.' },
+  { t: 'Heating health check', d: 'A look over the whole system while we are there, so nothing gets missed.' },
+];
+
+// Comparison — booleans render tick/cross; strings render as-is.
+const compareRows: { label: string; sc: boolean | string; scp: boolean | string; uhc: boolean | string }[] = [
+  { label: 'Full boiler service', sc: true, scp: true, uhc: true },
+  { label: 'Gas safety certificate', sc: true, scp: true, uhc: true },
+  { label: 'Flue gas analysis', sc: true, scp: true, uhc: true },
+  { label: 'Heating filter cleaned', sc: true, scp: true, uhc: true },
+  { label: 'Balance of radiators', sc: true, scp: true, uhc: true },
+  { label: 'Heating health check', sc: true, scp: true, uhc: true },
+  { label: 'Call-outs', sc: '1 free', scp: 'Unlimited', uhc: 'Unlimited' },
+  { label: 'Priority response', sc: true, scp: true, uhc: true },
+  { label: 'Discount on future work', sc: '5%', scp: '10%', uhc: '20%' },
+  { label: 'Boiler parts and labour', sc: false, scp: true, uhc: true },
+  { label: 'Central heating parts and labour', sc: false, scp: false, uhc: true },
+  { label: 'Plumbing parts and labour', sc: false, scp: false, uhc: true },
+];
+
+const homecareReviews: Review[] = [
+  { quote: 'As always reliable and efficient. They came within hours when I had no heating. They have a home plan that covers servicing and one callout per year taking the sting out of a big bill.', name: 'Angela', source: 'Google review' },
+  { quote: 'A year on from Abbeygas fitting my boiler it was due a service. As was the boiler fitting the service was seamless from start to finish. Wonderful company to deal with, brilliant engineer and I am very grateful.', name: 'Dan McDermott', source: 'Google review' },
+  { quote: "Efficient and reliable as always. It's good to know that there is someone you can trust for anything central heating related.", name: 'Diana Mortimer', source: 'Google review' },
+];
+
+const faqs = [
+  { q: 'How much does boiler cover cost per month?', a: 'Abbey Group boiler cover starts at £9.99 a month for our Service Care plan. That is below what the big national cover providers charge for comparable annual cover, and some of their plans rise sharply after the first year. With us the price stays fair, and it is set by a local team rather than a national call centre.' },
+  { q: 'Is boiler cover worth it?', a: 'A single boiler call-out usually starts at over £100, and most home insurance will not cover a breakdown. Cover is worth it if you would rather pay a small fixed amount each month than face a surprise bill, and if you want your annual service handled without having to remember it. For landlords and holiday-let owners, it also keeps the yearly certificate and paperwork sorted.' },
+  { q: 'How often should a boiler be serviced?', a: 'Once a year. An annual service keeps most manufacturer warranties valid, catches small faults before they turn expensive, and keeps the boiler running safely and efficiently. Every Abbey Group plan includes that yearly service, so it is booked in and handled for you.' },
+  { q: 'What is included in a boiler cover plan?', a: 'Every plan includes a full boiler service, a gas safety certificate, flue gas analysis, a heating filter clean, a balance of your radiators and a heating health check, with priority response and one free call-out. Higher plans add parts and labour cover and unlimited call-outs. The full breakdown is in the comparison table above.' },
+  { q: 'Does boiler cover include landlord gas safety certificates?', a: 'Yes. Our Landlord Care plan at £13.99 a month bundles the annual gas safety certificate landlords are legally required to hold, alongside the full boiler service. Your certification stays current without a separate booking each year. If you only need a one-off certificate, see our Plumbing & Heating page.' },
+  { q: 'Can I cancel my boiler cover plan anytime?', a: 'Yes. There is no minimum contract and no cancellation fee, so you can cancel at any time by emailing or writing to us. If you cancel within the first 14 days and we have not yet carried out any work or a service, you get a full refund. After that, the plan spreads your annual service across the year, so if you cancel before your next service we cannot refund payments already made or carry out that service. Full terms are in your Homecare plan agreement.' },
+  { q: 'Do you cover holiday lets and second homes?', a: 'Yes, though the cover depends on how the property is used. A holiday let is treated as a rental, so it needs a Landlord Gas Safety Certificate, priced at £162. Guest houses and B&Bs normally fall under our Ultimate Commercial Cover, priced from £74.99 a month after a site inspection, though this depends on the size and number of appliances.' },
+  { q: 'What is the difference between a one-off boiler service and a boiler cover plan?', a: 'A one-off boiler service is a single visit you book and pay for each time, usually around £96. A boiler cover plan spreads that yearly service across monthly payments and adds priority response, call-outs and discounts on other work. If you just need a single service or repair, see our Plumbing & Heating page.' },
+];
+
+const schemas = [
+  service({ name: 'Boiler Cover Plans', path: routes.homecare, serviceType: 'Boiler cover and servicing', description }),
+  faqPage(faqs),
+  breadcrumb([{ name: 'Home', path: routes.home }, { name: 'Homecare Plans', path: routes.homecare }]),
+];
+---
+<BaseLayout title={title} description={description} schemas={schemas}>
+  <PageHero
+    accent="orange"
+    title="Boiler Cover Plans in Whitby, from £9.99 a Month"
+    lead="Your boiler serviced, certified and covered by a local Whitby team who turn up fast and do the job properly. You deal with the same people every year, and a real person answers when you call."
+    trust={['Gas Safe registered', 'Local', 'Serving Whitby since 2008', 'Rated 4.6 on Google']}
+  >
+    <Button href="#plans" size="lg">Get Covered from £9.99/Month</Button>
+    <Button href={`tel:${nap.phone.tel}`} variant="inverse-outline" size="lg">Call the Whitby office</Button>
+  </PageHero>
+
+  <!-- PLANS (primary offer, high on the page) -->
+  <Section bg="white" id="plans">
+    <div class="plans__head reveal">
+      <Eyebrow tone="default">Choose your cover</Eyebrow>
+      <h2 class="h2">Boiler cover from £9.99 a month</h2>
+      <p class="plans__intro">
+        Three plans, and most homes start with the first one. Our entry cover is £9.99 a
+        month, below what the big national brands charge for similar cover, and it does not
+        jump after the first year.
+      </p>
+    </div>
+
+    <ul class="plans__grid reveal">
+      {plans.map((p) => (
+        <li class:list={['plan', { 'plan--popular': p.popular }]}>
+          {p.popular && <span class="plan__flag">Most popular</span>}
+          <h3 class="plan__name">{p.name}</h3>
+          <p class="plan__price"><span class="tnum">{p.price}</span><span class="plan__per">/month</span></p>
+          <p class="plan__blurb">{p.blurb}</p>
+          <Button href="#enquiry" variant={p.popular ? 'primary' : 'outline'} block>Choose This Plan</Button>
+        </li>
+      ))}
+    </ul>
+    <p class="plans__note reveal">
+      Not sure which fits? Call the Whitby office on
+      <a class="tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>
+      and we will talk it through honestly.
+    </p>
+  </Section>
+
+  <!-- WHAT YOU GET -->
+  <Section bg="sunken">
+    <div class="get__head reveal">
+      <Eyebrow>What every plan includes</Eyebrow>
+      <h2 class="h2">Every plan includes one proper annual visit</h2>
+      <p class="get__intro">
+        Whichever plan you choose, the yearly service is the full job, not a token
+        once-over. Every visit includes:
+      </p>
+    </div>
+    <ul class="get__grid reveal">
+      {includes.map((i) => (
+        <li class="get__item">
+          <span class="get__chip"><Icon name="check" size={16} /></span>
+          <div>
+            <strong>{i.t}.</strong> {i.d}
+          </div>
+        </li>
+      ))}
+    </ul>
+    <p class="get__foot reveal">
+      You also get priority response when you need us, and a discount on any other work you
+      have done.
+    </p>
+  </Section>
+
+  <!-- SIGN-UP OFFER -->
+  <Section bg="dark" bleed>
+    <div class="offer">
+      <img class="offer__mark" src="/brand/crescent/crescent-mark.svg" alt="" aria-hidden="true" width="360" height="378" />
+      <div class="container offer__inner reveal">
+        <div class="offer__copy">
+          <Eyebrow tone="inverse">The easy way to start</Eyebrow>
+          <h2 class="offer__h2">Booking a service? Start your plan and pay half</h2>
+          <p class="offer__lead">
+            Most people find us because they need a boiler service. Book it today and start
+            Service Care at the same time: your service is half price, and your cover is set
+            up before we leave.
+          </p>
+          <Button href={booking.boilerService} external size="lg">Book My Service and Start Covered</Button>
+        </div>
+        <div class="offer__prices">
+          <div class="offer__price offer__price--was">
+            <span class="offer__label">One-off service</span>
+            <span class="offer__num tnum">£96</span>
+          </div>
+          <div class="offer__price offer__price--now">
+            <span class="offer__label">With Service Care today</span>
+            <span class="offer__num tnum">£48</span>
+            <span class="offer__then">then £9.99/month</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <!-- COMPARE -->
+  <Section bg="white">
+    <div class="cmp__head reveal">
+      <Eyebrow>Side by side</Eyebrow>
+      <h2 class="h2">Compare the plans</h2>
+    </div>
+    <div class="cmp__scroll reveal">
+      <table class="cmp">
+        <caption class="sr-only">Comparison of Service Care, Service Care+ and Ultimate Home Care plans</caption>
+        <thead>
+          <tr>
+            <th scope="col">Feature</th>
+            <th scope="col">Service Care<span class="cmp__p tnum">£9.99</span></th>
+            <th scope="col">Service Care+<span class="cmp__p tnum">£19.99</span></th>
+            <th scope="col">Ultimate Home Care<span class="cmp__p tnum">£34.99</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {compareRows.map((r) => (
+            <tr>
+              <th scope="row">{r.label}</th>
+              {[r.sc, r.scp, r.uhc].map((v) => (
+                <td>
+                  {typeof v === 'boolean'
+                    ? (v
+                        ? <><Icon name="check" size={18} class="cmp__yes" /><span class="sr-only">Included</span></>
+                        : <><Icon name="x" size={18} class="cmp__no" /><span class="sr-only">Not included</span></>)
+                    : <span class="cmp__val">{v}</span>}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </Section>
+
+  <!-- LANDLORD / BUSINESS -->
+  <Section bg="sunken">
+    <div class="lb__head reveal">
+      <Eyebrow>A different type of customer</Eyebrow>
+      <h2 class="h2">Landlord or running a business?</h2>
+    </div>
+    <div class="lb__grid reveal">
+      <article class="lb__card">
+        <h3 class="lb__title">Landlords</h3>
+        <p>
+          If you let a property, the law says you need a gas safety certificate every year.
+          Landlord Care at <strong>£13.99 a month</strong> covers the annual service and
+          bundles that certificate, so your paperwork never lapses. Letting more than one
+          property? We will sort cover across the portfolio.
+        </p>
+      </article>
+      <article class="lb__card">
+        <h3 class="lb__title">Guest houses, B&amp;Bs and holiday lets</h3>
+        <p>
+          Ultimate Commercial Cover looks after all the appliances across your premises,
+          priced <strong>from £74.99 a month</strong> after a quick site visit. Talk to
+          James and he will set it up around your business.
+        </p>
+      </article>
+    </div>
+    <div class="lb__cta reveal">
+      <Button href={`tel:${nap.phone.tel}`} variant="outline" size="lg">Talk to Us About Cover</Button>
+      <span class="lb__nums tnum">{nap.mobile.label} / {nap.phone.label}</span>
+    </div>
+  </Section>
+
+  <!-- WHY PEOPLE STAY -->
+  <Reviews eyebrow="Why people stay" heading="Cover from people who pick up the phone" reviews={homecareReviews} />
+
+  <!-- AREAS -->
+  <Areas heading="Boiler cover across Whitby and the coast" bg="white">
+    Boiler cover for Whitby and the coast, and the villages between. If you are in the YO21
+    area and not sure whether we reach you, ask.
+  </Areas>
+
+  <!-- FAQ -->
+  <FAQ heading="Boiler cover questions, answered" items={faqs} bg="sunken" />
+
+  <!-- ENQUIRY -->
+  <EnquiryForm
+    heading="Get covered, or ask us anything"
+    lead="Leave your details and we will set up your plan or answer your questions, whichever you need. Step one captures enough for us to follow up, so we can help even if you are still deciding."
+    source="Homecare Plans"
+    tags="homecare,boiler-cover"
+    submitLabel="Get Covered"
+    bg="white"
+    fields={[
+      { name: 'name', label: 'Name', required: true, autocomplete: 'name' },
+      { name: 'email', label: 'Email', type: 'email', required: true, autocomplete: 'email' },
+      { name: 'house', label: 'House name or number', autocomplete: 'address-line1' },
+      { name: 'postcode', label: 'Postcode', autocomplete: 'postal-code' },
+    ]}
+  />
+
+  <!-- FINAL CTA -->
+  <Section bg="sunken" borderTop>
+    <div class="final reveal">
+      <h2 class="h2">Get your boiler covered from £9.99 a month</h2>
+      <p class="final__body">
+        Local team, fast response, fair price, and the same people looking after your heating
+        every year.
+      </p>
+      <div class="final__cta">
+        <Button href="#enquiry" size="lg">Get Covered from £9.99/Month</Button>
+        <Button href={`tel:${nap.phone.tel}`} variant="outline" size="lg">Call the Whitby office</Button>
+      </div>
+      <p class="final__links">
+        Prefer a one-off repair instead of a plan? See <a href={routes.plumbing}>Plumbing &amp; Heating</a>.
+        Want to know who you are dealing with first? Read our story on <a href={routes.about}>About</a>.
+      </p>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .h2 { font-size: clamp(32px, 3.2vw, 46px); color: var(--text-heading); margin-top: 10px; }
+
+  /* PLANS */
+  .plans__head { max-width: 640px; margin-bottom: 40px; }
+  .plans__intro { margin-top: 16px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
+  .plans__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
+  .plan {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--white);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 28px 26px;
+  }
+  .plan--popular { border-color: var(--accent-care); box-shadow: var(--shadow-glow-orange); }
+  .plan__flag {
+    position: absolute;
+    top: -12px; left: 26px;
+    background: var(--cta); color: var(--cta-fg);
+    font-size: 12px; font-weight: var(--weight-bold);
+    padding: 5px 12px; border-radius: var(--radius-signature);
+  }
+  .plan__name { font-family: var(--font-display); font-size: 24px; color: var(--text-heading); }
+  .plan__price { display: flex; align-items: baseline; gap: 6px; }
+  .plan__price .tnum { font-size: 40px; font-weight: var(--weight-bold); color: var(--text-heading); font-family: var(--font-body); }
+  .plan__per { font-size: var(--text-sm); color: var(--text-muted); }
+  .plan__blurb { font-size: 14.5px; line-height: var(--leading-relaxed); color: var(--text-body); flex: 1; }
+  .plan :global(.btn) { margin-top: 6px; }
+  .plans__note { margin-top: 24px; text-align: center; font-size: var(--text-sm); color: var(--text-muted); }
+  .plans__note a { color: var(--text-link); font-weight: var(--weight-semibold); }
+
+  /* WHAT YOU GET */
+  .get__head { max-width: 640px; margin-bottom: 36px; }
+  .get__intro { margin-top: 16px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
+  .get__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 40px; }
+  .get__item { display: flex; gap: 14px; align-items: flex-start; font-size: 15px; line-height: var(--leading-relaxed); color: var(--text-body); }
+  .get__item strong { color: var(--text-heading); }
+  .get__chip { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex: none; border-radius: var(--radius-signature); background: color-mix(in oklch, var(--accent-care) 14%, var(--white)); color: var(--accent-care-ink); margin-top: 2px; }
+  .get__foot { margin-top: 28px; font-size: var(--text-base); color: var(--text-body); }
+
+  /* OFFER */
+  .offer { position: relative; overflow: hidden; padding-block: 80px; background: radial-gradient(900px 560px at 82% 25%, color-mix(in oklch, var(--orange-900) 55%, transparent) 0%, transparent 65%); }
+  .offer__mark { position: absolute; left: -100px; top: 50%; transform: translateY(-50%); width: 360px; opacity: 0.1; pointer-events: none; }
+  .offer__inner { position: relative; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 48px; align-items: center; }
+  .offer__copy { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+  .offer__h2 { font-family: var(--font-display); font-size: clamp(30px, 3vw, 44px); color: var(--white); text-wrap: balance; }
+  .offer__lead { font-size: var(--text-md); line-height: var(--leading-relaxed); color: var(--text-body-inverse); max-width: 520px; }
+  .offer__prices { display: flex; gap: 16px; }
+  .offer__price { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 22px 20px; border-radius: var(--radius-lg); border: 1px solid var(--border-inverse); }
+  .offer__price--now { background: color-mix(in oklch, var(--white) 8%, transparent); border-color: color-mix(in oklch, var(--orange-400) 60%, transparent); }
+  .offer__label { font-size: 12.5px; font-weight: var(--weight-semibold); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted-inverse); }
+  .offer__num { font-size: 44px; font-weight: var(--weight-bold); color: var(--white); }
+  .offer__price--was .offer__num { color: var(--text-body-inverse); text-decoration: line-through; text-decoration-color: color-mix(in oklch, var(--white) 40%, transparent); }
+  .offer__price--now .offer__num { color: var(--orange-300); }
+  .offer__then { font-size: var(--text-sm); color: var(--text-body-inverse); }
+
+  /* COMPARE */
+  .cmp__head { margin-bottom: 32px; }
+  .cmp__scroll { overflow-x: auto; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); }
+  .cmp { width: 100%; border-collapse: collapse; min-width: 640px; background: var(--white); }
+  .cmp caption { text-align: left; }
+  .cmp th, .cmp td { padding: 14px 18px; text-align: center; border-bottom: 1px solid var(--border-subtle); }
+  .cmp thead th { background: var(--surface-sunken); font-family: var(--font-body); font-size: 14.5px; font-weight: var(--weight-bold); color: var(--text-heading); vertical-align: top; }
+  .cmp__p { display: block; margin-top: 4px; font-size: 13px; font-weight: var(--weight-semibold); color: var(--accent-care-ink); }
+  .cmp tbody th[scope='row'] { text-align: left; font-weight: var(--weight-semibold); color: var(--text-heading); font-size: 14.5px; }
+  .cmp tbody tr:last-child th, .cmp tbody tr:last-child td { border-bottom: none; }
+  .cmp :global(.cmp__yes) { color: var(--success); }
+  .cmp :global(.cmp__no) { color: var(--ink-200); }
+  .cmp__val { font-size: 14px; font-weight: var(--weight-semibold); color: var(--text-heading); }
+
+  /* LANDLORD/BUSINESS */
+  .lb__head { margin-bottom: 32px; }
+  .lb__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .lb__card { background: var(--white); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 28px 26px; }
+  .lb__title { font-family: var(--font-display); font-size: 22px; color: var(--text-heading); margin-bottom: 10px; }
+  .lb__card p { font-size: 15px; line-height: var(--leading-relaxed); color: var(--text-body); }
+  .lb__card strong { color: var(--text-heading); }
+  .lb__cta { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 28px; }
+  .lb__nums { font-size: var(--text-sm); color: var(--text-muted); font-weight: var(--weight-semibold); }
+
+  /* FINAL */
+  .final { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px; }
+  .final__body { font-size: var(--text-base); color: var(--text-body); max-width: 560px; line-height: var(--leading-relaxed); }
+  .final__cta { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+  .final__links { font-size: var(--text-sm); color: var(--text-muted); max-width: 620px; }
+  .final__links a { color: var(--text-link); font-weight: var(--weight-semibold); }
+
+  @media (max-width: 1024px) {
+    .plans__grid { grid-template-columns: 1fr; max-width: 460px; margin-inline: auto; }
+    .offer__inner { grid-template-columns: 1fr; gap: 32px; }
+    .lb__grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .get__grid { grid-template-columns: 1fr; }
+    .offer__prices { flex-direction: column; }
+  }
+</style>

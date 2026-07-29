@@ -1,0 +1,86 @@
+---
+import Section from './Section.astro';
+import Eyebrow from './Eyebrow.astro';
+import Icon from './Icon.astro';
+
+/* FAQ accordion (native <details> — zero JS, keyboard-accessible).
+   Pass the same items to schema.faqPage() in the page and hand the result
+   to BaseLayout `schemas` so the markup and FAQPage schema stay in sync. */
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  items: { q: string; a: string }[];
+  bg?: 'white' | 'sunken';
+}
+const { eyebrow = 'Questions people ask', heading = 'Good to know', items, bg = 'white' } = Astro.props;
+---
+<Section bg={bg}>
+  <div class="faq">
+    <div class="faq__head reveal">
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <h2 class="faq__title">{heading}</h2>
+    </div>
+    <div class="faq__list reveal">
+      {items.map((it) => (
+        <details class="faq__item">
+          <summary class="faq__q">
+            <span>{it.q}</span>
+            <Icon name="chevron-down" size={20} class="faq__chev" />
+          </summary>
+          <div class="faq__a"><p>{it.a}</p></div>
+        </details>
+      ))}
+    </div>
+  </div>
+</Section>
+
+<style>
+  .faq {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .faq__title { font-size: clamp(30px, 3vw, 44px); margin-top: 10px; }
+  .faq__list { display: flex; flex-direction: column; gap: 12px; }
+
+  .faq__item {
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    overflow: hidden;
+  }
+  .faq__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    font-size: var(--text-md);
+    font-weight: var(--weight-semibold);
+    color: var(--text-heading);
+    cursor: pointer;
+    list-style: none;
+  }
+  .faq__q::-webkit-details-marker { display: none; }
+  .faq__q :global(.faq__chev) {
+    flex: none;
+    color: var(--ink-300);
+    transition: transform var(--duration-base) var(--ease-standard);
+  }
+  .faq__item[open] .faq__q :global(.faq__chev) { transform: rotate(180deg); }
+  .faq__a { padding: 0 20px 20px; }
+  .faq__a p {
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+    max-width: 62ch;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq__q :global(.faq__chev) { transition: none; }
+  }
+  @media (max-width: 860px) {
+    .faq { grid-template-columns: 1fr; gap: 28px; }
+  }
+</style>

@@ -1,0 +1,64 @@
+---
+/* Section wrapper — consistent max-width, gutter and vertical rhythm.
+   `bg`: white | sunken (off-white) | dark (navy).
+   `bleed`: skip the inner .container (for full-bleed bands that manage
+   their own inner layout, e.g. gradient CTA bands).
+   Vertical padding steps down responsively (96 → 64 → 48) per §10. */
+
+interface Props {
+  bg?: 'white' | 'sunken' | 'dark';
+  bleed?: boolean;
+  borderTop?: boolean;
+  borderBottom?: boolean;
+  id?: string;
+  class?: string;
+  containerClass?: string;
+  pad?: 'default' | 'tight';
+}
+
+const {
+  bg = 'white',
+  bleed = false,
+  borderTop = false,
+  borderBottom = false,
+  id,
+  class: className,
+  containerClass,
+  pad = 'default',
+} = Astro.props;
+
+const classes = [
+  'section',
+  `section--${bg}`,
+  `section--${pad}`,
+  borderTop ? 'section--bt' : '',
+  borderBottom ? 'section--bb' : '',
+  className,
+].filter(Boolean).join(' ');
+---
+<section class={classes} id={id}>
+  {bleed ? <slot /> : <div class={['container', containerClass].filter(Boolean).join(' ')}><slot /></div>}
+</section>
+
+<style>
+  .section { position: relative; }
+
+  .section--default { padding-block: var(--space-24); }   /* 96 */
+  .section--tight   { padding-block: var(--space-6); }    /* 26-ish (trust strip) */
+
+  .section--white  { background: var(--surface-page); color: var(--text-body); }
+  .section--sunken { background: var(--surface-sunken); color: var(--text-body); }
+  .section--dark   { background: var(--surface-page-dark); color: var(--text-body-inverse); }
+
+  .section--bt { border-top: 1px solid var(--border-subtle); }
+  .section--bb { border-bottom: 1px solid var(--border-subtle); }
+  .section--dark.section--bt { border-top-color: var(--border-inverse); }
+  .section--dark.section--bb { border-bottom-color: var(--border-inverse); }
+
+  @media (max-width: 1024px) {
+    .section--default { padding-block: var(--space-16); } /* 64 */
+  }
+  @media (max-width: 700px) {
+    .section--default { padding-block: var(--space-12); } /* 48 */
+  }
+</style>

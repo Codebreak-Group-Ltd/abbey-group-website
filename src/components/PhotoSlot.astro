@@ -1,0 +1,62 @@
+---
+import Icon from './Icon.astro';
+
+/* Placeholder for photography not yet shot (Amy's shoot is pending).
+   Diagonal-hatch box at the intended crop, with a caption naming the
+   subject — mirrors the design handover's PhotoSlot. Swap for a real
+   <Image> per the page's image-manifest.md when photos land. */
+interface Props {
+  ratio?: string;        // e.g. '4 / 5', '16 / 9', '4 / 3'
+  caption: string;
+  radius?: 'lg' | 'xl' | 'none';
+  class?: string;
+  bordered?: boolean;
+}
+const { ratio = '16 / 9', caption, radius = 'lg', class: className, bordered = true } = Astro.props;
+const radiusVar = radius === 'none' ? '0' : `var(--radius-${radius})`;
+---
+<div
+  class:list={['photo', bordered ? 'photo--bordered' : '', className]}
+  style={`aspect-ratio:${ratio};border-radius:${radiusVar}`}
+>
+  <div class="photo__inner">
+    <Icon name="camera" size={22} />
+    <span class="photo__caption">{caption}</span>
+  </div>
+</div>
+
+<style>
+  .photo {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--ink-50);
+    background-image: repeating-linear-gradient(
+      45deg,
+      color-mix(in oklch, var(--ink-300) 22%, transparent) 0,
+      color-mix(in oklch, var(--ink-300) 22%, transparent) 1px,
+      transparent 1px,
+      transparent 11px
+    );
+    box-shadow: var(--shadow-md);
+  }
+  .photo--bordered { border: 1px solid var(--border-subtle); }
+  .photo__inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    text-align: center;
+    color: var(--ink-400);
+  }
+  .photo__caption {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    max-width: 28ch;
+    line-height: var(--leading-snug);
+  }
+</style>

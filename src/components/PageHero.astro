@@ -1,0 +1,93 @@
+---
+import Icon from './Icon.astro';
+
+/* Interior-page hero — dark navy band with the brand gradient + a static
+   crescent watermark. Title + lead + CTA slot + a trust-strip row.
+   The primary CTA stays above the mobile fold (§10). */
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead: string;
+  trust?: string[];
+  accent?: 'blue' | 'orange' | 'plum' | 'green';
+}
+const { eyebrow, title, lead, trust = [], accent = 'blue' } = Astro.props;
+const glow = {
+  blue: 'var(--blue-800)',
+  orange: 'var(--orange-900)',
+  plum: 'var(--plum-900)',
+  green: 'var(--green-900)',
+}[accent];
+---
+<section class="phero" style={`--glow:${glow}`}>
+  <img class="phero__mark" src="/brand/crescent/crescent-mark.svg" alt="" aria-hidden="true" width="420" height="441" />
+  <div class="container phero__inner">
+    {eyebrow && <p class="phero__eyebrow">{eyebrow}</p>}
+    <h1 class="phero__h1">{title}</h1>
+    <p class="phero__lead">{lead}</p>
+    <div class="phero__cta"><slot /></div>
+    {trust.length > 0 && (
+      <ul class="phero__trust">
+        {trust.map((t) => (
+          <li><Icon name="badge-check" size={15} /><span>{t}</span></li>
+        ))}
+      </ul>
+    )}
+  </div>
+</section>
+
+<style>
+  .phero {
+    position: relative;
+    overflow: hidden;
+    color: var(--white);
+    padding: 150px var(--container-padding) 84px;
+    background:
+      radial-gradient(1000px 640px at 80% 15%, color-mix(in oklch, var(--glow) 55%, transparent) 0%, transparent 60%),
+      radial-gradient(720px 520px at 10% 95%, color-mix(in oklch, var(--plum-900) 42%, transparent) 0%, transparent 60%),
+      var(--ink-500);
+  }
+  .phero__mark {
+    position: absolute;
+    right: -90px;
+    bottom: -120px;
+    width: 420px;
+    opacity: 0.5;
+    pointer-events: none;
+    filter: drop-shadow(0 30px 70px rgba(0, 0, 0, 0.5));
+  }
+  .phero__inner { position: relative; max-width: 760px; display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+  .phero__eyebrow {
+    font-size: 12.5px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--text-muted-inverse);
+  }
+  .phero__h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(38px, 4.4vw, 62px);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    text-wrap: balance;
+    color: var(--white);
+  }
+  .phero__lead { font-size: var(--text-md); line-height: var(--leading-relaxed); color: var(--text-body-inverse); max-width: 600px; }
+  .phero__cta { display: flex; flex-wrap: wrap; gap: 14px; }
+  .phero__trust {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 22px;
+    margin-top: 6px;
+  }
+  .phero__trust li { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: var(--weight-semibold); color: var(--text-body-inverse); }
+  .phero__trust :global(svg) { color: var(--blue-300); flex: none; }
+
+  @media (max-width: 700px) {
+    .phero { padding-top: 124px; }
+    .phero__cta { width: 100%; }
+    .phero__cta :global(.btn) { flex: 1 1 auto; }
+    .phero__mark { width: 300px; right: -110px; }
+  }
+</style>

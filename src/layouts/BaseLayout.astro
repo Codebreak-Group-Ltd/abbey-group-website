@@ -1,0 +1,145 @@
+---
+import '../styles/tokens.css';
+import '../styles/global.css';
+
+/* Self-hosted fonts (latin subset only) — DM Serif Display 400 + Inter 400/500/600/700.
+   NEVER a Google Fonts <link> (render-block + GDPR IP-leak, build standard §5/§7). */
+import '@fontsource/dm-serif-display/latin-400.css';
+import '@fontsource/inter/latin-400.css';
+import '@fontsource/inter/latin-500.css';
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/inter/latin-700.css';
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site, nap, ratings, social, areasServed } from '../data/site.ts';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Absolute path for canonical/og:url. Defaults to the current URL. */
+  canonical?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  /** Extra JSON-LD objects for this page (LocalBusiness, Service, FAQPage…). */
+  schemas?: object[];
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogImage = '/og/default.png',
+  noindex = false,
+  schemas = [],
+} = Astro.props;
+
+const canonicalURL = new URL(canonical ?? Astro.url.pathname, Astro.site).href;
+const ogImageURL = new URL(ogImage, Astro.site).href;
+
+/* ---- Site-wide schema: Organization + WebSite ---- */
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${site.domain}/#organization`,
+  name: site.name,
+  legalName: site.legalName,
+  url: `${site.domain}/`,
+  logo: `${site.domain}/brand/logos/group.svg`,
+  image: ogImageURL,
+  telephone: nap.phone.tel,
+  email: nap.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: nap.addressLine,
+    addressLocality: nap.locality,
+    addressRegion: nap.region,
+    postalCode: nap.postcode,
+    addressCountry: 'GB',
+  },
+  areaServed: areasServed.map((a) => ({ '@type': 'Place', name: a })),
+  sameAs: [social.facebook, social.instagram],
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: ratings.google.value,
+    reviewCount: ratings.google.count,
+    bestRating: 5,
+  },
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${site.domain}/#website`,
+  name: site.name,
+  url: `${site.domain}/`,
+  publisher: { '@id': `${site.domain}/#organization` },
+  inLanguage: 'en-GB',
+};
+
+const allSchemas = [orgSchema, websiteSchema, ...schemas];
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    {noindex && <meta name="robots" content="noindex,follow" />}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+
+    <meta name="theme-color" content="#121037" />
+
+    {allSchemas.map((s) => (
+      <script type="application/ld+json" set:html={JSON.stringify(s)} />
+    ))}
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      /* Scroll reveal — one IntersectionObserver, unobserve on reveal.
+         Skipped entirely under reduced motion (CSS leaves .reveal visible). */
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const els = document.querySelectorAll('.reveal');
+      if (!prefersReduced && 'IntersectionObserver' in window && els.length) {
+        const io = new IntersectionObserver(
+          (entries, obs) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                obs.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.08, rootMargin: '0px 0px -40px 0px' },
+        );
+        els.forEach((el) => io.observe(el));
+      }
+    </script>
+  </body>
+</html>

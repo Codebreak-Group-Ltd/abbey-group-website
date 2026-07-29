@@ -1,0 +1,108 @@
+---
+import Section from './Section.astro';
+import Eyebrow from './Eyebrow.astro';
+import Stars from './Stars.astro';
+import Icon from './Icon.astro';
+import type { Review } from '../data/site.ts';
+import { routes } from '../data/site.ts';
+
+interface Props {
+  eyebrow?: string;
+  heading: string;
+  reviews: Review[];
+  readAllHref?: string;
+  readAllLabel?: string;
+}
+const {
+  eyebrow = "Don't take our word for it",
+  heading,
+  reviews,
+  readAllHref = routes.reviews,
+  readAllLabel = 'Read all our reviews',
+} = Astro.props;
+---
+<Section bg="sunken">
+  <div class="rv__head reveal">
+    <div>
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <h2 class="rv__title">{heading}</h2>
+    </div>
+    <a class="rv__all" href={readAllHref}>
+      {readAllLabel} <Icon name="arrow-right" size={15} />
+    </a>
+  </div>
+
+  <ul class="rv__grid reveal">
+    {reviews.map((r) => (
+      <li class="rv__card">
+        <Stars />
+        <blockquote class="rv__quote">{r.quote}</blockquote>
+        <div class="rv__meta">
+          <span class="rv__name">{r.name}</span>
+          <span class="rv__src">{r.source}</span>
+        </div>
+      </li>
+    ))}
+  </ul>
+</Section>
+
+<style>
+  .rv__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+  .rv__title {
+    font-size: clamp(32px, 3.2vw, 46px);
+    color: var(--text-heading);
+    margin-top: 10px;
+  }
+  .rv__all {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: var(--weight-bold);
+    color: var(--text-link);
+    white-space: nowrap;
+  }
+  .rv__all:hover { color: var(--blue-800); }
+
+  .rv__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .rv__card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--white);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 22px 22px 20px;
+    height: 100%;
+  }
+  .rv__quote {
+    margin: 0;
+    font-size: 14px;
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+    flex: 1;
+  }
+  .rv__meta { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .rv__name { font-size: 13.5px; font-weight: var(--weight-bold); color: var(--text-heading); }
+  .rv__src { font-size: 12.5px; color: var(--text-muted); }
+
+  @media (max-width: 1024px) {
+    .rv__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .rv__grid { grid-template-columns: 1fr; }
+  }
+</style>

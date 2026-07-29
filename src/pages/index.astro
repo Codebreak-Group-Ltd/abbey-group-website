@@ -1,0 +1,514 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import PhotoSlot from '../components/PhotoSlot.astro';
+import Reviews from '../components/Reviews.astro';
+import FAQ from '../components/FAQ.astro';
+import { nap, booking, routes, homeReviews } from '../data/site.ts';
+import { localBusiness, faqPage, breadcrumb } from '../lib/schema.ts';
+
+const title = 'Abbey Group Whitby | Plumbing, Heating & Home Services';
+const description =
+  "Whitby's one local team for plumbing, heating, renovations, building and electrical work. Gas Safe registered and local. Homecare plans from £9.99 a month.";
+
+const divisions = [
+  {
+    title: 'Homecare Plans', href: routes.homecare, icon: 'shield-check', accent: 'var(--accent-care)', ink: 'var(--accent-care-ink)',
+    desc: 'Boiler cover from £9.99 a month. Your annual service, gas safety certificate and priority response, sorted.',
+    link: 'Compare the Plans', photo: 'A serviced boiler and an Abbey engineer',
+  },
+  {
+    title: 'Plumbing & Heating', href: routes.plumbing, icon: 'flame', accent: 'var(--accent-plumbing)', ink: 'var(--accent-plumbing-ink)',
+    desc: 'Boilers, heating, repairs and emergencies from a local Gas Safe team.',
+    link: 'Explore Plumbing & Heating', photo: 'Engineer working on a home heating system',
+  },
+  {
+    title: 'Renovations', href: routes.renovations, icon: 'paintbrush', accent: 'var(--accent-joinery)', ink: 'var(--accent-joinery-ink)',
+    desc: 'Kitchens, bathrooms and extensions, project-managed from first drawing to final clean.',
+    link: 'See Our Renovations', photo: 'A finished Abbey kitchen renovation',
+  },
+  {
+    title: 'Building & Joinery', href: routes.joinery, icon: 'ruler', accent: 'var(--accent-joinery)', ink: 'var(--accent-joinery-ink)',
+    desc: 'Structural building work and bespoke joinery, made and fitted properly.',
+    link: 'Explore Building & Joinery', photo: 'Bespoke joinery detail',
+  },
+  {
+    // Homepage division card uses blue for legibility (green is reserved for
+    // large highlights on the Electrical page — it fails as text/small icon on white).
+    title: 'Electrical', href: routes.electrical, icon: 'zap', accent: 'var(--accent-plumbing)', ink: 'var(--accent-plumbing-ink)',
+    desc: 'Safe, certified electrical work for your home.',
+    link: 'Explore Electrical', photo: 'Consumer unit and certified electrical work',
+  },
+];
+
+const proofs = [
+  { icon: 'calendar-check', text: 'Fresh plastic sheeting goes down every Monday, and your house is handed back clean every Friday.' },
+  { icon: 'truck', text: 'We hire and manage the skip, so it is one less thing on your plate.' },
+  { icon: 'door-open', text: 'Twelve months after a new kitchen, we come back and check everything is still right.' },
+  { icon: 'phone', text: 'One number, answered by Amy or Natasha in the Whitby office, so you talk to someone who knows your job.' },
+];
+
+const faqs = [
+  {
+    q: 'Is there one company in Whitby that does plumbing, electrical and building work?',
+    a: 'Yes. Abbey Group is a Whitby firm that covers boiler cover, plumbing and heating, renovations, building and joinery, and electrical work, all from one local team. You deal with one number for the whole job rather than chasing separate trades.',
+  },
+  {
+    q: 'What areas around Whitby do you cover?',
+    a: "We cover Whitby and the surrounding coast and villages, including Sandsend, Sleights, Ruswarp, Robin Hood's Bay, Egton and Egton Bridge, Goathland, Staithes and Runswick Bay, as well as Scarborough. If you are nearby and not sure, ask, we're always happy to help.",
+  },
+  {
+    q: 'Is Abbey Group the same company as Abbeygas?',
+    a: 'Yes. Abbey Group is the same local team many people in Whitby know as Abbeygas.',
+  },
+  {
+    q: 'Are your engineers Gas Safe registered?',
+    a: 'Yes. Abbey Group is Gas Safe registered under number 303376. Any gas work is carried out by a Gas Safe engineer, which is a legal requirement for work on boilers and gas appliances.',
+  },
+];
+
+const schemas = [
+  localBusiness({ path: routes.home, description }),
+  faqPage(faqs),
+  breadcrumb([{ name: 'Home', path: routes.home }]),
+];
+---
+<BaseLayout title={title} description={description} schemas={schemas}>
+  <!-- 1. HERO -->
+  <section class="hero">
+    <div class="hero__crescent" aria-hidden="true" data-crescent>
+      <div class="c-layer" data-depth="10"><img class="c-drift" src="/brand/crescent/crescent-outer-blue.svg" alt="" width="520" height="546" /></div>
+      <div class="c-layer" data-depth="20"><img class="c-drift" src="/brand/crescent/crescent-mid-coral.svg" alt="" width="520" height="546" /></div>
+      <div class="c-layer" data-depth="32"><img class="c-drift" src="/brand/crescent/crescent-inner-plum.svg" alt="" width="520" height="546" /></div>
+    </div>
+
+    <div class="container hero__grid">
+      <div class="hero__copy">
+        <p class="hero__eyebrow">
+          <img src="/brand/crescent/crescent-mark.svg" alt="" width="22" height="23" aria-hidden="true" />
+          <span>Whitby based</span>
+        </p>
+        <h1 class="hero__h1">One Local Team for Everything Your Home Needs</h1>
+        <p class="hero__lead">
+          Boilers, heating, kitchens, bathrooms, extensions and the everyday repairs in
+          between. Abbey Group is Whitby's one-stop home services team, and homecare plans
+          start at £9.99 a month. One call, and it is handled.
+        </p>
+        <div class="hero__cta">
+          <Button href={routes.homecare} size="lg">See the Homecare Plans</Button>
+          <Button href={booking.quote} external variant="inverse-outline" size="lg">Get a Quote</Button>
+        </div>
+        <p class="hero__reassure">
+          Call
+          <a class="tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>, and a real person answers.
+        </p>
+      </div>
+
+      <div class="hero__media">
+        <PhotoSlot ratio="4 / 5" radius="xl" caption="James and the team — new shoot" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. TRUST STRIP -->
+  <Section bg="white" pad="tight" borderBottom>
+    <ul class="trust">
+      <li><Icon name="star" size={18} /><span>Rated 4.6 on Google by local customers</span></li>
+      <li><Icon name="shield-check" size={18} /><span>Gas Safe registered, No. 303376</span></li>
+      <li><Icon name="wrench" size={18} /><span>One team, every trade</span></li>
+      <li><Icon name="map-pin" size={18} /><span>Serving Whitby and the surrounding villages</span></li>
+    </ul>
+  </Section>
+
+  <!-- 3. WHAT WE DO -->
+  <Section bg="sunken">
+    <div class="dv__head reveal">
+      <div>
+        <Eyebrow>What we do</Eyebrow>
+        <h2 class="h2">Whatever your house needs, it is one call</h2>
+      </div>
+      <p class="dv__intro">
+        Yes, one local company in Whitby covers boiler cover, plumbing, heating,
+        renovations, building, joinery and electrical work. You do not need to line up
+        separate trades and hope they turn up in the right order. We handle it.
+      </p>
+    </div>
+
+    <ul class="dv__grid reveal">
+      {divisions.map((d) => (
+        <li>
+          <a class="dv__card" href={d.href} style={`--accent:${d.accent};--accent-ink:${d.ink}`}>
+            <PhotoSlot ratio="16 / 9" radius="none" caption={d.photo} bordered={false} class="dv__photo" />
+            <div class="dv__body">
+              <div class="dv__titlerow">
+                <span class="dv__chip"><Icon name={d.icon} size={17} /></span>
+                <h3 class="dv__title">{d.title}</h3>
+              </div>
+              <p class="dv__desc">{d.desc}</p>
+              <span class="dv__link">{d.link} <Icon name="arrow-right" size={14} /></span>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <!-- 4. WHY PEOPLE STAY -->
+  <Section bg="white">
+    <div class="way">
+      <div class="way__left reveal">
+        <Eyebrow>Why people stay with us</Eyebrow>
+        <h2 class="h2" style="text-wrap:balance">We do the things you would only notice if we did not</h2>
+        <p class="way__intro">The work speaks for itself, but it is how we work that people remember.</p>
+        <blockquote class="way__quote">
+          Most of our customers stay with us for more than 15 years, and in all that time
+          we have had one cancellation.
+        </blockquote>
+      </div>
+      <ul class="way__grid reveal">
+        {proofs.map((p) => (
+          <li class="way__card">
+            <span class="way__chip"><Icon name={p.icon} size={18} /></span>
+            <p>{p.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Section>
+
+  <!-- 5. HOMECARE BANNER -->
+  <Section bg="dark" bleed>
+    <div class="hcb">
+      <img class="hcb__mark" src="/brand/crescent/crescent-mark.svg" alt="" aria-hidden="true" width="380" height="399" />
+      <div class="container hcb__inner reveal">
+        <h2 class="hcb__h2">Never face a broken boiler alone again</h2>
+        <p class="hcb__body">
+          For <span class="hcb__price tnum">£9.99</span> a month, your boiler is serviced,
+          safety-checked and looked after by a local team, with priority response when you
+          need it. It is the easiest way to stop worrying about the heating.
+        </p>
+        <Button href={routes.homecare} size="lg">See What's Included</Button>
+      </div>
+    </div>
+  </Section>
+
+  <!-- 6. REVIEWS -->
+  <Reviews heading="What Whitby says about us" reviews={homeReviews} />
+
+  <!-- 7. FIND US -->
+  <Section bg="white">
+    <div class="find">
+      <div class="find__map reveal">
+        <PhotoSlot ratio="4 / 3" radius="xl" caption="Map — 20 Skinner Street, Whitby YO21 3AJ" />
+      </div>
+      <div class="find__copy reveal">
+        <Eyebrow>Come and find us</Eyebrow>
+        <h2 class="h2">Find us on Skinner Street</h2>
+        <p class="find__lead">
+          Abbey Group, 20 Skinner Street, Whitby, North Yorkshire, YO21 3AJ. We are a local
+          business with a real office, so you can pop in, have a proper conversation and meet
+          the team.
+        </p>
+        <ul class="find__list">
+          <li><Icon name="map-pin" size={17} /><span>{nap.addressFull}</span></li>
+          <li><Icon name="clock" size={17} /><span>{nap.hours}</span></li>
+          <li>
+            <Icon name="phone" size={17} />
+            <span>
+              <a class="tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>
+              <span class="find__sep">·</span>
+              <a class="tnum" href={`tel:${nap.mobile.tel}`}>{nap.mobile.label}</a>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </Section>
+
+  <!-- 8. FAQ -->
+  <FAQ heading="Questions people ask" items={faqs} bg="sunken" />
+
+  <!-- 9. FINAL CTA -->
+  <Section bg="white" borderTop>
+    <div class="final reveal">
+      <h2 class="h2">Not sure who you need? Start with us</h2>
+      <p class="final__body">
+        Tell us what is going on, and we will tell you honestly what it needs, who will do
+        it, and what it will cost. No obligation.
+      </p>
+      <Button href={booking.quote} external size="lg">Get a Quote</Button>
+      <p class="final__phone">
+        Or call the Whitby office on <a class="tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>.
+      </p>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  /* Shared H2 */
+  .h2 {
+    font-size: clamp(32px, 3.2vw, 46px);
+    color: var(--text-heading);
+    margin-top: 10px;
+  }
+
+  /* ---------- 1. HERO ---------- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    color: var(--white);
+    padding: 170px var(--container-padding) 96px;
+    background:
+      radial-gradient(1100px 700px at 82% 20%, color-mix(in oklch, var(--blue-800) 55%, transparent) 0%, transparent 60%),
+      radial-gradient(800px 600px at 8% 90%, color-mix(in oklch, var(--orange-900) 50%, transparent) 0%, transparent 60%),
+      radial-gradient(700px 500px at 45% 0%, color-mix(in oklch, var(--plum-900) 55%, transparent) 0%, transparent 55%),
+      var(--ink-500);
+  }
+  .hero__crescent {
+    position: absolute;
+    right: -80px;
+    bottom: -140px;
+    width: 520px;
+    aspect-ratio: 600 / 630;
+    opacity: 0.5;
+    pointer-events: none;
+    filter: drop-shadow(0 30px 70px rgba(0, 0, 0, 0.5));
+  }
+  .hero__crescent .c-layer { position: absolute; inset: 0; will-change: transform; }
+  .hero__crescent .c-drift { width: 100%; height: auto; }
+
+  .hero__grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 64px;
+    align-items: center;
+    max-width: calc(var(--container-max) + 2 * var(--container-padding));
+  }
+  .hero__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 26px; }
+  .hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin: 0;
+    font-size: 13px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--text-muted-inverse);
+  }
+  .hero__eyebrow img { opacity: 0.9; }
+  .hero__h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(44px, 4.8vw, 72px);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    text-wrap: balance;
+    color: var(--white);
+  }
+  .hero__lead {
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body-inverse);
+    max-width: 520px;
+  }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 14px; }
+  .hero__reassure { font-size: var(--text-sm); color: var(--text-muted-inverse); }
+  .hero__reassure a { color: var(--blue-300); font-weight: var(--weight-semibold); }
+  .hero__reassure a:hover { color: var(--blue-200); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .c-drift { animation: drift var(--dur, 10s) var(--ease-standard) infinite alternate; }
+    .c-layer[data-depth='10'] .c-drift { --dur: 9s; }
+    .c-layer[data-depth='20'] .c-drift { --dur: 11s; }
+    .c-layer[data-depth='32'] .c-drift { --dur: 13s; }
+  }
+  @keyframes drift { from { transform: translateY(0) rotate(0); } to { transform: translateY(-22px) rotate(-1.4deg); } }
+
+  /* ---------- 2. TRUST STRIP ---------- */
+  .trust {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .trust li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-align: left;
+  }
+  .trust :global(svg) { color: var(--blue-500); flex: none; }
+  .trust span { font-size: 14.5px; font-weight: var(--weight-semibold); color: var(--text-heading); }
+
+  /* ---------- 3. DIVISIONS ---------- */
+  .dv__head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: end;
+    margin-bottom: 48px;
+  }
+  .dv__intro { font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
+
+  .dv__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .dv__card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--white);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: transform var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+  }
+  .dv__card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .dv__photo { border-bottom: 1px solid var(--border-subtle); }
+  .dv__body { display: flex; flex-direction: column; gap: 10px; padding: 22px 24px 24px; flex: 1; }
+  .dv__titlerow { display: flex; align-items: center; gap: 12px; }
+  .dv__chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border-radius: var(--radius-signature);
+    background: color-mix(in oklch, var(--accent) 14%, var(--white));
+    color: var(--accent-ink);
+  }
+  .dv__title { font-family: var(--font-display); font-size: 21px; color: var(--text-heading); }
+  .dv__desc { font-size: 14.5px; line-height: var(--leading-normal); color: var(--text-body); flex: 1; }
+  .dv__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: var(--weight-bold);
+    color: var(--accent-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dv__card { transition: none; }
+    .dv__card:hover { transform: none; }
+  }
+
+  /* ---------- 4. WHY PEOPLE STAY ---------- */
+  .way { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 64px; align-items: center; }
+  .way__left { display: flex; flex-direction: column; gap: 20px; align-items: flex-start; }
+  .way__intro { font-size: var(--text-base); color: var(--text-body); line-height: var(--leading-relaxed); }
+  .way__quote {
+    margin: 8px 0 0;
+    padding: 24px 28px;
+    border-radius: var(--radius-lg);
+    background: var(--ink-500);
+    color: var(--white);
+    box-shadow: var(--shadow-md);
+    font-family: var(--font-display);
+    font-size: 20px;
+    line-height: var(--leading-snug);
+  }
+  .way__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .way__card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: var(--white);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 24px 22px;
+  }
+  .way__card p { font-size: 14.5px; line-height: var(--leading-relaxed); color: var(--text-body); }
+  .way__chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-signature);
+    background: var(--blue-50);
+    color: var(--blue-700);
+  }
+
+  /* ---------- 5. HOMECARE BANNER ---------- */
+  .hcb {
+    position: relative;
+    overflow: hidden;
+    padding-block: 88px;
+    background: radial-gradient(900px 600px at 80% 30%, color-mix(in oklch, var(--orange-900) 60%, transparent) 0%, transparent 65%);
+  }
+  .hcb__mark { position: absolute; left: -110px; top: 50%; transform: translateY(-50%); width: 380px; opacity: 0.1; pointer-events: none; }
+  .hcb__inner { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; }
+  .hcb__h2 { font-size: clamp(34px, 3.4vw, 52px); color: var(--white); text-wrap: balance; }
+  .hcb__body { font-size: var(--text-md); color: var(--text-body-inverse); max-width: 620px; line-height: var(--leading-relaxed); }
+  .hcb__price { color: var(--orange-300); font-weight: var(--weight-bold); }
+
+  /* ---------- 7. FIND US ---------- */
+  .find { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .find__copy { display: flex; flex-direction: column; gap: 20px; align-items: flex-start; }
+  .find__lead { font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); max-width: 480px; }
+  .find__list { display: flex; flex-direction: column; gap: 14px; }
+  .find__list li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; font-weight: var(--weight-semibold); color: var(--text-heading); }
+  .find__list :global(svg) { color: var(--blue-500); flex: none; margin-top: 2px; }
+  .find__list a { color: var(--text-heading); }
+  .find__list a:hover { color: var(--text-link); }
+  .find__sep { color: var(--text-muted); margin: 0 8px; }
+
+  /* ---------- 9. FINAL CTA ---------- */
+  .final { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px; }
+  .final__body { font-size: var(--text-base); color: var(--text-body); max-width: 560px; line-height: var(--leading-relaxed); }
+  .final__phone { font-size: var(--text-sm); color: var(--text-muted); }
+  .final__phone a { color: var(--text-link); font-weight: var(--weight-semibold); }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1024px) {
+    .hero__grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero__media { max-width: 420px; }
+    .way { grid-template-columns: 1fr; gap: 40px; }
+    .find { grid-template-columns: 1fr; gap: 40px; }
+    .dv__grid { grid-template-columns: repeat(2, 1fr); }
+    .dv__head { grid-template-columns: 1fr; gap: 20px; }
+    .trust { grid-template-columns: repeat(2, 1fr); gap: 20px 24px; }
+  }
+  @media (max-width: 700px) {
+    .hero { padding-top: 132px; }
+    .hero__cta { width: 100%; }
+    .hero__cta :global(.btn) { flex: 1 1 auto; }
+    .dv__grid { grid-template-columns: 1fr; }
+    .way__grid { grid-template-columns: 1fr; }
+    .trust { grid-template-columns: 1fr; }
+    .trust li { justify-content: flex-start; }
+    .hero__crescent { width: 360px; right: -120px; }
+  }
+</style>
+
+<script>
+  /* Hero crescent parallax — pointer offset written straight to transform via
+     rAF (no re-render). Disabled under reduced motion. Idle drift is CSS. */
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hero = document.querySelector<HTMLElement>('.hero');
+  const wrap = document.querySelector<HTMLElement>('[data-crescent]');
+  if (!prefersReduced && hero && wrap) {
+    const layers = Array.from(wrap.querySelectorAll<HTMLElement>('.c-layer'));
+    let mx = 0, my = 0, raf = 0;
+    const apply = () => {
+      for (const l of layers) {
+        const depth = Number(l.dataset.depth ?? 0);
+        l.style.transform = `translate3d(${-mx * depth}px, ${-my * depth}px, 0)`;
+      }
+      raf = 0;
+    };
+    hero.addEventListener('mousemove', (e) => {
+      const r = hero.getBoundingClientRect();
+      mx = (e.clientX - r.left) / r.width - 0.5;
+      my = (e.clientY - r.top) / r.height - 0.5;
+      if (!raf) raf = requestAnimationFrame(apply);
+    });
+  }
+</script>

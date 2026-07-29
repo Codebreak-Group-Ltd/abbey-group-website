@@ -1,0 +1,230 @@
+/* =====================================================================
+   Abbey Group — Design Tokens
+   Single source of truth for the site's visual language.
+
+   Reconciled from two sources per the project precedence rule:
+   - STRUCTURE / SYSTEM (scales, semantic tokens, radii, shadows, motion,
+     the signature corner radius) is ported from the Claude Design handover
+     design system.
+   - VALUES (brand hex + fonts) are the CLIENT-CONFIRMED ones from
+     `_Specs/03 DESIGN TOKENS.md`: navy #121037, blue #1895cc, plum #7f5d9c,
+     orange #eb6740 (Home Care accent AND the site-wide primary CTA),
+     green #c0ff71 (Electrical). Fonts: DM Serif Display + Inter, self-hosted.
+
+   Rule: if a colour/font/space/radius isn't in this file, it must not be in
+   the CSS. Pure `:root` variables, zero selectors — safely importable into
+   standalone pages/embeds (build standard §1).
+   ===================================================================== */
+
+:root {
+  /* ---- Ink (navy neutral scale — tinted from navy, not grey) ---- */
+  --ink-50:  #f1f1f3;
+  --ink-100: #dcdbe0;
+  --ink-200: #b8b8c1;
+  --ink-300: #898898;
+  --ink-400: #55546a;
+  --ink-500: #121037; /* brand navy — confirmed */
+  --ink-600: #100e29;
+  --ink-700: #0d0c22;
+  --ink-800: #0a091a;
+  --ink-900: #080713;
+  --ink-950: #05040c;
+
+  /* ---- Signal blue — Plumbing & Heating / Electrical accent + links ---- */
+  --blue-50:  #f8fafc;
+  --blue-100: #eff4f9;
+  --blue-200: #dae6f1;
+  --blue-300: #bcd3e7;
+  --blue-400: #8db9db;
+  --blue-500: #1895cc; /* confirmed */
+  --blue-600: #168bbf;
+  --blue-700: #147faf;
+  --blue-800: #11729d;
+  --blue-900: #0e6187;
+  --blue-950: #0a4d6b;
+
+  /* ---- Care plum — Renovations / Building & Joinery accent ---- */
+  --plum-50:  #faf9fa;
+  --plum-100: #f2f0f4;
+  --plum-200: #e2dee7;
+  --plum-300: #ccc4d5;
+  --plum-400: #ad9ebd;
+  --plum-500: #7f5d9c; /* confirmed */
+  --plum-600: #775792;
+  --plum-700: #6d4f86;
+  --plum-800: #614678;
+  --plum-900: #533c67;
+  --plum-950: #422f53;
+
+  /* ---- Hearth orange — Home Care accent AND site-wide primary CTA ---- */
+  --orange-50:  #fef9f9;
+  --orange-100: #fcf1ef;
+  --orange-200: #f9dfdc;
+  --orange-300: #f5c6c0;
+  --orange-400: #f0a294;
+  --orange-500: #eb6740; /* confirmed */
+  --orange-600: #dc603c;
+  --orange-700: #ca5836;
+  --orange-800: #b54e30;
+  --orange-900: #9c4228;
+  --orange-950: #7d341f;
+
+  /* ---- Signal green — Electrical accent (bright; accents only, never text/fills) ---- */
+  --green-50:  #fcfff9;
+  --green-100: #f7fff1;
+  --green-200: #eeffe1;
+  --green-300: #e2ffc9;
+  --green-400: #d3ffa6;
+  --green-500: #c0ff71; /* confirmed */
+  --green-600: #b4ef69;
+  --green-700: #a4db60;
+  --green-800: #92c355;
+  --green-900: #7da848;
+  --green-950: #628437;
+
+  --white: #ffffff;
+
+  /* ---- Semantic surfaces ---- */
+  --surface-page: var(--white);
+  --surface-page-dark: var(--ink-500);
+  --surface-raised: var(--white);
+  --surface-raised-dark: var(--ink-600);
+  --surface-sunken: var(--ink-50);
+  --surface-overlay: color-mix(in oklch, var(--ink-950) 70%, transparent);
+  --surface-inverse: var(--ink-500);
+
+  /* ---- Semantic text ---- */
+  --text-heading: var(--ink-500);
+  --text-heading-inverse: var(--white);
+  --text-body: var(--ink-400);
+  --text-body-inverse: color-mix(in oklch, var(--white) 82%, var(--ink-500));
+  /* Muted text is a darkened ink so it passes AA (4.5:1) on white — the
+     lighter --ink-300 is reserved for borders/decorative icons only. */
+  --text-muted: #6f6e82;
+  --text-muted-inverse: color-mix(in oklch, var(--white) 62%, var(--ink-500));
+  --text-link: var(--blue-800);
+
+  /* ---- Semantic borders ---- */
+  --border-subtle: var(--ink-100);
+  --border-default: var(--ink-200);
+  --border-inverse: color-mix(in oklch, var(--white) 18%, transparent);
+
+  /* ---- Service-line accents ----
+     Plumbing & Heating = blue · Renovations / Building & Joinery = plum
+     Home Care = orange · Electrical = green */
+  --accent-plumbing: var(--blue-500);
+  --accent-joinery: var(--plum-500);
+  --accent-care: var(--orange-500);
+  --accent-electrical: var(--green-500);
+
+  /* On-light "ink" variants of each accent — AA-safe (>=4.5:1 on white) for
+     accent-coloured TEXT and small icons. The bright 500s above stay for
+     fills, tints, borders and glows only. */
+  --accent-plumbing-ink: var(--blue-800);
+  --accent-joinery-ink: var(--plum-700);
+  --accent-care-ink: var(--orange-800);
+
+  /* Site-wide primary CTA colour — ONE action colour everywhere.
+     Slightly deepened from the brand orange (#eb6740) so white button text
+     passes AA (4.59:1); the vivid brand orange stays as --orange-500 for
+     accents. Division accents identify a service; never recolour the CTA. */
+  --cta: #c94d28;
+  --cta-fg: var(--white);
+  --accent-primary: var(--orange-500);
+
+  /* ---- Interactive states ---- */
+  --state-hover-tint: color-mix(in oklch, var(--ink-500) 6%, transparent);
+  --state-press-tint: color-mix(in oklch, var(--ink-500) 12%, transparent);
+  --focus-ring: var(--blue-600);
+
+  /* ---- Feedback ---- */
+  --success: #1f8a5b;
+  --warning: #c98a12;
+  --danger: var(--orange-800);
+
+  /* Warm review-gold — the one intentional non-brand colour (star fills) */
+  --review-star: #e8a33d;
+
+  /* ---- Typography ---- */
+  /* Confirmed brand faces, self-hosted via @fontsource (no Google Fonts link,
+     no mono face — numbers/phone use Inter with tabular figures). */
+  --font-display: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Type scale (1.25 ratio, rem-based) */
+  --text-xs:  0.75rem;   /* 12px */
+  --text-sm:  0.875rem;  /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-md:  1.125rem;  /* 18px */
+  --text-lg:  1.375rem;  /* 22px */
+  --text-xl:  1.75rem;   /* 28px */
+  --text-2xl: 2.25rem;   /* 36px */
+  --text-3xl: 2.875rem;  /* 46px */
+  --text-4xl: 3.75rem;   /* 60px */
+  --text-5xl: 4.75rem;   /* 76px */
+
+  --leading-tight: 1.08;
+  --leading-snug: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.12em;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ---- Spacing scale (4px base) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* ---- Radii ---- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+  --radius-signature: 12px 12px 12px 2px; /* three soft corners, one near-sharp
+                                             bottom-left — echoes the crescent tail.
+                                             Buttons, badges, tags, icon chips. */
+
+  /* ---- Shadows: soft, low-contrast, warm navy tint (never pure black) ---- */
+  --shadow-sm: 0 1px 2px color-mix(in oklch, var(--ink-500) 10%, transparent);
+  --shadow-md: 0 4px 16px color-mix(in oklch, var(--ink-500) 12%, transparent);
+  --shadow-lg: 0 16px 40px color-mix(in oklch, var(--ink-500) 18%, transparent);
+  --shadow-xl: 0 28px 70px color-mix(in oklch, var(--ink-500) 24%, transparent);
+  --shadow-glow-blue: 0 8px 32px color-mix(in oklch, var(--blue-500) 32%, transparent);
+  --shadow-glow-orange: 0 8px 32px color-mix(in oklch, var(--orange-500) 32%, transparent);
+
+  /* ---- Motion ---- */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 450ms;
+  --duration-scene: 650ms;
+
+  /* ---- Layout ---- */
+  --container-max: 1280px;
+  --container-padding: clamp(20px, 5vw, 64px); /* global fluid gutter */
+  --section-x: var(--container-padding);       /* alias used by mobile rules (§10) */
+  --z-header: 50;
+  --z-menu: 60;
+  --z-banner: 80;
+}

@@ -1,0 +1,204 @@
+---
+import Section from './Section.astro';
+import Eyebrow from './Eyebrow.astro';
+import Button from './Button.astro';
+import { routes } from '../data/site.ts';
+
+/* Enquiry form — built to build-standard §8 (GHL webhook pattern):
+   merges stored attribution (gclid/utm) into the payload, disables the
+   button with progress copy while in-flight, and always reaches the success
+   state. The webhook URL is read from PUBLIC_GHL_WEBHOOK; until GHL access is
+   granted it is unset, so the form validates + confirms without posting. */
+interface Field {
+  name: string;
+  label: string;
+  type?: 'text' | 'email' | 'tel' | 'textarea';
+  required?: boolean;
+  autocomplete?: string;
+  full?: boolean; // span both columns
+}
+interface Props {
+  heading: string;
+  lead: string;
+  source: string;       // human-readable funnel name
+  tags: string;         // comma-separated
+  submitLabel: string;
+  fields: Field[];
+  bg?: 'white' | 'sunken';
+  eyebrow?: string;
+}
+const {
+  heading, lead, source, tags, submitLabel, fields,
+  bg = 'sunken', eyebrow = 'Get in touch',
+} = Astro.props;
+const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+---
+<Section bg={bg} id="enquiry">
+  <div class="ef reveal">
+    <div class="ef__intro">
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <h2 class="ef__title">{heading}</h2>
+      <p class="ef__lead">{lead}</p>
+      <slot />
+    </div>
+
+    <form class="ef__form" id={formId} data-source={source} data-tags={tags} novalidate>
+      <div class="ef__grid">
+        {fields.map((f) => (
+          <p class:list={['ef__field', { 'ef__field--full': f.full || f.type === 'textarea' }]}>
+            <label for={`${formId}-${f.name}`}>
+              {f.label}{f.required && <span class="ef__req" aria-hidden="true"> *</span>}
+            </label>
+            {f.type === 'textarea' ? (
+              <textarea
+                id={`${formId}-${f.name}`}
+                name={f.name}
+                rows="4"
+                required={f.required}
+              ></textarea>
+            ) : (
+              <input
+                id={`${formId}-${f.name}`}
+                name={f.name}
+                type={f.type ?? 'text'}
+                autocomplete={f.autocomplete}
+                required={f.required}
+              />
+            )}
+          </p>
+        ))}
+      </div>
+
+      <Button type="submit" size="lg" class="ef__submit">{submitLabel}</Button>
+      <p class="ef__micro">
+        We will only use your details to help with your enquiry. See our
+        <a href={routes.privacy}>privacy policy</a>.
+      </p>
+
+      <p class="ef__success" role="status" hidden>
+        Thanks, that is with us. A real person from the Whitby office will be in touch in
+        working hours, Monday to Friday, 9am to 5pm.
+      </p>
+    </form>
+  </div>
+</Section>
+
+<style>
+  .ef { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 56px; align-items: start; }
+  .ef__intro { display: flex; flex-direction: column; gap: 16px; }
+  .ef__title { font-size: clamp(30px, 3vw, 44px); margin-top: 10px; }
+  .ef__lead { font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
+
+  .ef__form {
+    background: var(--white);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 28px;
+  }
+  .ef__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .ef__field { display: flex; flex-direction: column; gap: 6px; margin: 0; }
+  .ef__field--full { grid-column: 1 / -1; }
+  .ef__field label { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--text-heading); }
+  .ef__req { color: var(--cta); }
+  .ef__field input,
+  .ef__field textarea {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    color: var(--text-heading);
+    background: var(--white);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    padding: 11px 14px;
+    width: 100%;
+    transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+  }
+  .ef__field textarea { resize: vertical; min-height: 108px; }
+  .ef__field input:focus,
+  .ef__field textarea:focus {
+    outline: none;
+    border-color: var(--focus-ring);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--focus-ring) 22%, transparent);
+  }
+  .ef__submit { margin-top: 20px; }
+  .ef__micro { margin-top: 12px; font-size: var(--text-xs); color: var(--text-muted); }
+  .ef__micro a { color: var(--text-link); text-decoration: underline; }
+  .ef__success {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    background: color-mix(in oklch, var(--success) 12%, var(--white));
+    border: 1px solid color-mix(in oklch, var(--success) 40%, var(--white));
+    color: var(--ink-600);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+  }
+
+  @media (max-width: 860px) { .ef { grid-template-columns: 1fr; gap: 28px; } }
+  @media (max-width: 520px) { .ef__grid { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  /* Attribution capture (§6): store ad-click + utm params on first landing. */
+  (() => {
+    try {
+      const KEY = 'ag_attribution';
+      const params = new URLSearchParams(window.location.search);
+      const keys = ['gclid', 'gbraid', 'wbraid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+      const found: Record<string, string> = {};
+      for (const k of keys) { const v = params.get(k); if (v) found[k] = v; }
+      if (Object.keys(found).length) {
+        const existing = JSON.parse(localStorage.getItem(KEY) || '{}');
+        localStorage.setItem(KEY, JSON.stringify({ ...existing, ...found }));
+      }
+    } catch { /* ignore */ }
+  })();
+
+  const WEBHOOK = import.meta.env.PUBLIC_GHL_WEBHOOK as string | undefined;
+
+  document.querySelectorAll<HTMLFormElement>('form[data-source]').forEach((form) => {
+    const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const success = form.querySelector<HTMLElement>('.ef__success');
+    const submitLabel = submit?.querySelector('span')?.textContent ?? 'Send';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+
+      if (submit) {
+        submit.disabled = true;
+        const span = submit.querySelector('span');
+        if (span) span.textContent = 'Sending…';
+      }
+
+      const data: Record<string, unknown> = {};
+      new FormData(form).forEach((v, k) => (data[k] = v));
+      let attribution = {};
+      try { attribution = JSON.parse(localStorage.getItem('ag_attribution') || '{}'); } catch {}
+
+      const payload = {
+        ...data,
+        source: form.dataset.source,
+        page: window.location.pathname,
+        tags: form.dataset.tags,
+        timestamp: new Date().toISOString(),
+        ...attribution,
+      };
+
+      try {
+        if (WEBHOOK) {
+          await fetch(WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            keepalive: true,
+          });
+        }
+      } catch { /* always resolve to the success state regardless */ }
+
+      form.querySelectorAll('.ef__grid, .ef__submit, .ef__micro').forEach((el) => ((el as HTMLElement).hidden = true));
+      if (success) success.hidden = false;
+      if (submit) { submit.disabled = false; const span = submit.querySelector('span'); if (span) span.textContent = submitLabel; }
+    });
+  });
+</script>

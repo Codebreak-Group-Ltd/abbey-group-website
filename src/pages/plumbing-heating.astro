@@ -1,0 +1,233 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import PageHero from '../components/PageHero.astro';
+import Reviews from '../components/Reviews.astro';
+import FAQ from '../components/FAQ.astro';
+import Areas from '../components/Areas.astro';
+import EnquiryForm from '../components/EnquiryForm.astro';
+import { nap, booking, routes } from '../data/site.ts';
+import type { Review } from '../data/site.ts';
+import { service, faqPage, breadcrumb } from '../lib/schema.ts';
+
+const title = 'Plumbing & Heating in Whitby | Gas Safe | Abbey Group';
+const description =
+  'Gas Safe plumbing and heating in Whitby. Boiler installation, servicing, repairs, landlord gas certificates and fast emergency call-outs from a local team.';
+
+const services = [
+  { t: 'Boiler installation', d: 'A new boiler fitted properly, sized to your home, with the old one taken away.' },
+  { t: 'Boiler service', d: 'A one-off annual service that keeps your boiler safe, efficient and warranty-valid.' },
+  { t: 'Boiler replacement', d: 'Straight swaps and full upgrades, with honest advice on what your home actually needs.' },
+  { t: 'Central heating', d: 'New systems, radiators, pumps and repairs, so every room heats the way it should.' },
+  { t: 'Underfloor heating', d: 'Warm floors installed for renovations and new builds across North Yorkshire.' },
+  { t: 'Landlord gas safety certificates', d: 'The annual check landlords are legally required to hold, sorted on time.' },
+  { t: 'LPG heating', d: 'Installation and servicing for off-grid and rural homes, and we work with Calor for LPG supply.' },
+  { t: 'Emergency and breakdown repairs', d: 'A cold house or a leak sorted quickly by a local engineer.' },
+];
+
+const phReviews: Review[] = [
+  { quote: 'Excellent response when heating system not working, came within hours and carried out the repair. Engineer was friendly and cost was very reasonable.', name: 'Angela Weldon', source: 'Google review' },
+  { quote: 'We could not have been happier with Abbey Group who came to install a new boiler at very short notice. They were very professional, knowledgeable and were tidy workers too.', name: 'Susan Hodgson', source: 'Facebook' },
+  { quote: "Turned up when they said they would and the work was carried out to a great standard, and when they left couldn't tell they had been. Apart from piping hot radiators.", name: 'Sonia Wood', source: 'Facebook' },
+];
+
+const faqs = [
+  { q: 'How much does an emergency plumber cost in Whitby?', a: 'Emergency call-outs in the area typically run from around £120 to £230, depending on the time of day and how complex the job is. We will always be straight with you about the cost before we start, so there are no surprises on the bill.' },
+  { q: 'How long does a boiler installation take?', a: 'A straightforward boiler swap usually takes a day. A bigger job, such as moving the boiler, changing fuel type or upgrading the whole system, can take two to three days. We give you a clear timescale with your quote so you know what to expect.' },
+  { q: 'Can I get LPG heating in a rural property near Whitby?', a: 'Yes. Many homes on the coast and moors are off the gas grid, and we install and service LPG boilers and heating for them. We work with Calor for LPG supply, so we can sort both the system and the fuel side.' },
+  { q: 'What is the difference between a boiler service and a boiler cover plan?', a: 'A boiler service is a single visit you book and pay for each time, usually around £96. A boiler cover plan spreads your annual service across monthly payments and adds priority response and call-outs. If you want ongoing cover rather than a one-off visit, see our Homecare Plans page.' },
+];
+
+const schemas = [
+  service({ name: 'Plumbing & Heating', path: routes.plumbing, serviceType: 'Plumbing and heating engineers', description }),
+  faqPage(faqs),
+  breadcrumb([{ name: 'Home', path: routes.home }, { name: 'Plumbing & Heating', path: routes.plumbing }]),
+];
+---
+<BaseLayout title={title} description={description} schemas={schemas}>
+  <PageHero
+    accent="blue"
+    title="Plumbing & Heating Engineers in Whitby"
+    lead="Boilers, heating, repairs and gas safety, sorted fast by a local Gas Safe team. Looking for a plumber in Whitby you can actually get hold of? A real person answers the phone, and a local Gas Safe engineer turns up to do the work."
+    trust={['Gas Safe registered, No. 303376', 'Local', 'Fast local response', 'Rated 4.6 on Google']}
+  >
+    <Button href={`tel:${nap.phone.tel}`} size="lg">Call the Whitby office</Button>
+    <Button href={booking.quote} external variant="inverse-outline" size="lg">Request a Quote</Button>
+  </PageHero>
+
+  <!-- WHAT WE DO -->
+  <Section bg="white">
+    <div class="svc__head reveal">
+      <Eyebrow>What we do</Eyebrow>
+      <h2 class="h2">Plumbing and heating, all from one local team</h2>
+      <p class="svc__intro">Whatever the job, you deal with the same Whitby team from the first call to the finished work.</p>
+    </div>
+    <ul class="svc__grid reveal">
+      {services.map((s) => (
+        <li class="svc__item">
+          <span class="svc__chip"><Icon name="check" size={16} /></span>
+          <div><strong>{s.t}.</strong> {s.d}</div>
+        </li>
+      ))}
+    </ul>
+    <div class="svc__cta reveal">
+      <Button href={booking.quote} external size="lg">Request a Quote</Button>
+    </div>
+  </Section>
+
+  <!-- EMERGENCY -->
+  <Section bg="dark" bleed>
+    <div class="emg">
+      <img class="emg__mark" src="/brand/crescent/crescent-mark.svg" alt="" aria-hidden="true" width="360" height="378" />
+      <div class="container emg__inner reveal">
+        <Eyebrow tone="inverse">Emergency and breakdown</Eyebrow>
+        <h2 class="emg__h2">A broken boiler needs sorting today, not next week</h2>
+        <p class="emg__body">
+          When the heating packs in or you have a leak you cannot stop, you want someone local
+          who answers and turns up. The line is open 24 hours a day, so you can always get
+          through and leave a message, and a real person in the Whitby office picks it up and
+          gets an engineer to you as quickly as we can. The office is open Monday to Friday,
+          9am to 5pm.
+        </p>
+        <Button href={`tel:${nap.phone.tel}`} size="lg">Call now on {nap.phone.label}</Button>
+      </div>
+    </div>
+  </Section>
+
+  <!-- LANDLORD GAS SAFETY -->
+  <Section bg="white">
+    <div class="lgs reveal">
+      <div class="lgs__copy">
+        <Eyebrow>Landlords</Eyebrow>
+        <h2 class="h2">Landlord gas safety certificates in Whitby, done on time</h2>
+        <p class="lgs__lead">
+          If you let a property, the law requires a gas safety check on every gas appliance
+          once a year. We carry out the check and issue your certificate, so your property
+          stays compliant and your tenants stay safe.
+        </p>
+        <p class="lgs__price">
+          A one-off certificate is <strong>£162</strong> (£135 plus VAT). Bundle it into
+          <a href={routes.homecare}>Landlord Care</a> at £13.99 a month and the first
+          certificate on sign-up is <strong>£81</strong> (£67.50 plus VAT).
+        </p>
+        <Button href={booking.landlordGasSafety} external size="lg">Book a Landlord Gas Safety Check</Button>
+      </div>
+      <ul class="lgs__qa">
+        <li>
+          <h3>How often do I need a landlord gas safety certificate?</h3>
+          <p>Every 12 months. You can renew up to two months before it expires without losing your existing anniversary date, under the Gas Safety Regulations 2018.</p>
+        </li>
+        <li>
+          <h3>When do I have to give the certificate to tenants?</h3>
+          <p>A new tenant must have a copy before they move in. Existing tenants must get a copy within 28 days of the check.</p>
+        </li>
+      </ul>
+    </div>
+  </Section>
+
+  <!-- PREFER COVER -->
+  <Section bg="sunken">
+    <div class="cover reveal">
+      <div>
+        <Eyebrow>Prefer ongoing cover?</Eyebrow>
+        <h2 class="cover__h2">Roll it into one monthly price from £9.99</h2>
+        <p class="cover__body">
+          If you would rather not pay per call-out, our Homecare Plans roll your annual boiler
+          service, gas safety certificate and priority response into one monthly price. Same
+          local team, spread across the year.
+        </p>
+      </div>
+      <Button href={routes.homecare} variant="outline" size="lg">See Homecare Plans</Button>
+    </div>
+  </Section>
+
+  <!-- WHY PEOPLE CALL -->
+  <Reviews eyebrow="Why people call Abbey" heading="Local, Gas Safe, and tidy when they leave" reviews={phReviews} />
+
+  <!-- AREAS -->
+  <Areas heading="Plumbing and heating across Whitby and the coast" bg="white">
+    Plumbing and heating across Whitby and the coast, and the villages between. If you are
+    nearby and not sure whether we reach you, ask.
+  </Areas>
+
+  <!-- FAQ -->
+  <FAQ heading="Plumbing and heating questions, answered" items={faqs} bg="sunken" />
+
+  <!-- ENQUIRY -->
+  <EnquiryForm
+    heading="Get it booked, or get a quote"
+    lead="Call the Whitby office for anything urgent, or leave your details and we will get back to you with a quote."
+    source="Plumbing & Heating"
+    tags="plumbing-heating,quote"
+    submitLabel="Request a Quote"
+    bg="white"
+    fields={[
+      { name: 'name', label: 'Name', required: true, autocomplete: 'name' },
+      { name: 'phone', label: 'Phone', type: 'tel', required: true, autocomplete: 'tel' },
+      { name: 'email', label: 'Email', type: 'email', autocomplete: 'email' },
+      { name: 'postcode', label: 'Postcode', autocomplete: 'postal-code' },
+      { name: 'message', label: 'What you need', type: 'textarea', full: true },
+    ]}
+  >
+    <div class="ph-formside">
+      <Button href={`tel:${nap.phone.tel}`} variant="outline" size="lg">Call the Whitby office</Button>
+      <p class="ph-formside__links">
+        Planning a bigger project? See <a href={routes.renovations}>Renovations</a>.
+        Need electrical work too? See <a href={routes.electrical}>Electrical</a>.
+      </p>
+    </div>
+  </EnquiryForm>
+</BaseLayout>
+
+<style>
+  .h2 { font-size: clamp(32px, 3.2vw, 46px); color: var(--text-heading); margin-top: 10px; }
+
+  /* SERVICES */
+  .svc__head { max-width: 640px; margin-bottom: 36px; }
+  .svc__intro { margin-top: 16px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
+  .svc__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 40px; }
+  .svc__item { display: flex; gap: 14px; align-items: flex-start; font-size: 15px; line-height: var(--leading-relaxed); color: var(--text-body); }
+  .svc__item strong { color: var(--text-heading); }
+  .svc__chip { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex: none; border-radius: var(--radius-signature); background: color-mix(in oklch, var(--accent-plumbing) 14%, var(--white)); color: var(--accent-plumbing-ink); margin-top: 2px; }
+  .svc__cta { margin-top: 32px; }
+
+  /* EMERGENCY */
+  .emg { position: relative; overflow: hidden; padding-block: 80px; background: radial-gradient(900px 560px at 82% 25%, color-mix(in oklch, var(--blue-800) 55%, transparent) 0%, transparent 65%); }
+  .emg__mark { position: absolute; left: -100px; top: 50%; transform: translateY(-50%); width: 360px; opacity: 0.1; pointer-events: none; }
+  .emg__inner { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; max-width: 720px; }
+  .emg__h2 { font-family: var(--font-display); font-size: clamp(30px, 3vw, 44px); color: var(--white); text-wrap: balance; }
+  .emg__body { font-size: var(--text-md); line-height: var(--leading-relaxed); color: var(--text-body-inverse); }
+
+  /* LANDLORD */
+  .lgs { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: start; }
+  .lgs__copy { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+  .lgs__lead { font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
+  .lgs__price { font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
+  .lgs__price strong { color: var(--text-heading); }
+  .lgs__price a { color: var(--text-link); font-weight: var(--weight-semibold); text-decoration: underline; }
+  .lgs__qa { display: flex; flex-direction: column; gap: 16px; }
+  .lgs__qa li { background: var(--surface-sunken); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 22px 24px; }
+  .lgs__qa h3 { font-family: var(--font-body); font-size: var(--text-md); font-weight: var(--weight-semibold); color: var(--text-heading); margin-bottom: 8px; }
+  .lgs__qa p { font-size: 14.5px; line-height: var(--leading-relaxed); color: var(--text-body); }
+
+  /* PREFER COVER */
+  .cover { display: flex; align-items: center; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+  .cover__h2 { font-family: var(--font-display); font-size: clamp(26px, 2.6vw, 38px); color: var(--text-heading); margin-top: 10px; }
+  .cover__body { margin-top: 12px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); max-width: 620px; }
+  .cover :global(.btn) { flex: none; }
+
+  /* FORM SIDE SLOT */
+  .ph-formside { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; margin-top: 8px; }
+  .ph-formside__links { font-size: var(--text-sm); color: var(--text-muted); }
+  .ph-formside__links a { color: var(--text-link); font-weight: var(--weight-semibold); }
+
+  @media (max-width: 960px) {
+    .lgs { grid-template-columns: 1fr; gap: 32px; }
+  }
+  @media (max-width: 640px) {
+    .svc__grid { grid-template-columns: 1fr; }
+  }
+</style>

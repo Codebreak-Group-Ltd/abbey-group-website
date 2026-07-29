@@ -1,0 +1,69 @@
+---
+/* Inline Lucide icons (lucide-static @0.451.0) via ?raw import.
+   Rendered as inline SVG using currentColor — no CDN, no client JS,
+   no mask-image (build standard: use currentColor, not a mask-per-icon). */
+import phone from 'lucide-static/icons/phone.svg?raw';
+import menu from 'lucide-static/icons/menu.svg?raw';
+import x from 'lucide-static/icons/x.svg?raw';
+import star from 'lucide-static/icons/star.svg?raw';
+import shieldCheck from 'lucide-static/icons/shield-check.svg?raw';
+import wrench from 'lucide-static/icons/wrench.svg?raw';
+import mapPin from 'lucide-static/icons/map-pin.svg?raw';
+import flame from 'lucide-static/icons/flame.svg?raw';
+import paintbrush from 'lucide-static/icons/paintbrush.svg?raw';
+import ruler from 'lucide-static/icons/ruler.svg?raw';
+import zap from 'lucide-static/icons/zap.svg?raw';
+import arrowRight from 'lucide-static/icons/arrow-right.svg?raw';
+import calendarCheck from 'lucide-static/icons/calendar-check.svg?raw';
+import truck from 'lucide-static/icons/truck.svg?raw';
+import doorOpen from 'lucide-static/icons/door-open.svg?raw';
+import clock from 'lucide-static/icons/clock.svg?raw';
+import facebook from 'lucide-static/icons/facebook.svg?raw';
+import instagram from 'lucide-static/icons/instagram.svg?raw';
+import check from 'lucide-static/icons/check.svg?raw';
+import plus from 'lucide-static/icons/plus.svg?raw';
+import minus from 'lucide-static/icons/minus.svg?raw';
+import chevronDown from 'lucide-static/icons/chevron-down.svg?raw';
+import badgeCheck from 'lucide-static/icons/badge-check.svg?raw';
+import camera from 'lucide-static/icons/camera.svg?raw';
+
+const ICONS: Record<string, string> = {
+  phone, menu, x, star,
+  'shield-check': shieldCheck,
+  wrench,
+  'map-pin': mapPin,
+  flame, paintbrush, ruler, zap,
+  'arrow-right': arrowRight,
+  'calendar-check': calendarCheck,
+  truck,
+  'door-open': doorOpen,
+  clock, facebook, instagram, check, plus, minus,
+  'chevron-down': chevronDown,
+  'badge-check': badgeCheck,
+  camera,
+};
+
+interface Props {
+  name: keyof typeof ICONS | string;
+  size?: number;
+  strokeWidth?: number;
+  class?: string;
+}
+
+const { name, size = 20, strokeWidth = 2, class: className } = Astro.props;
+
+let svg = ICONS[name] ?? '';
+if (svg) {
+  svg = svg
+    .replace(/\swidth="[^"]*"/, '')
+    .replace(/\sheight="[^"]*"/, '')
+    .replace(/\sstroke-width="[^"]*"/, '')
+    .replace(
+      '<svg',
+      `<svg width="${size}" height="${size}" stroke-width="${strokeWidth}" aria-hidden="true" focusable="false"${
+        className ? ` class="${className}"` : ''
+      }`,
+    );
+}
+---
+<Fragment set:html={svg} />

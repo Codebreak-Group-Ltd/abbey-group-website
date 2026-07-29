@@ -1,0 +1,25 @@
+{
+  "name": "abbey-group-site",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Abbey Group — Whitby home services. Astro static site (Codebreak build standard).",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
+    "@fontsource/dm-serif-display": "^5.1.0",
+    "@fontsource/inter": "^5.1.0",
+    "astro": "^5.1.0",
+    "lucide-static": "^0.451.0",
+    "sharp": "^0.33.5"
+  }
+}

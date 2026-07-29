@@ -1,0 +1,116 @@
+---
+import Icon from './Icon.astro';
+
+/* Button — the only interactive control style on the site.
+   ONE CTA colour site-wide: `primary` is solid orange (var(--cta)).
+   Secondaries are outlines: `outline` on light backgrounds,
+   `inverse-outline` on dark ones. Signature corner radius on all.
+   Renders as <a> when `href` is set, else <button>. */
+
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'outline' | 'inverse-outline';
+  size?: 'sm' | 'md' | 'lg';
+  icon?: string;         // trailing lucide icon name
+  external?: boolean;    // adds target + rel for off-site links (e.g. ServiceM8)
+  block?: boolean;       // full-width
+  type?: 'button' | 'submit';
+  class?: string;
+  'aria-label'?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  icon,
+  external = false,
+  block = false,
+  type = 'button',
+  class: className,
+  ...rest
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+const iconSize = size === 'lg' ? 20 : size === 'sm' ? 16 : 18;
+const classes = ['btn', `btn--${variant}`, `btn--${size}`, block ? 'btn--block' : '', className]
+  .filter(Boolean)
+  .join(' ');
+
+const extraAttrs = href
+  ? { href, ...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {}) }
+  : { type };
+---
+<Tag class={classes} {...extraAttrs} {...rest}>
+  <span><slot /></span>
+  {icon && <Icon name={icon} size={iconSize} />}
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-body);
+    font-weight: var(--weight-bold);
+    line-height: 1;
+    text-align: center;
+    border: 1px solid transparent;
+    border-radius: var(--radius-signature);
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+      filter var(--duration-base) var(--ease-standard),
+      background-color var(--duration-base) var(--ease-standard),
+      border-color var(--duration-base) var(--ease-standard),
+      transform var(--duration-fast) var(--ease-standard);
+  }
+
+  /* sizes */
+  .btn--sm { padding: 9px 16px; font-size: var(--text-sm); gap: 6px; min-height: 40px; }
+  .btn--md { padding: 12px 22px; font-size: var(--text-base); gap: 8px; min-height: 46px; }
+  .btn--lg { padding: 16px 30px; font-size: var(--text-md); gap: 10px; min-height: 54px; }
+
+  .btn--block { display: flex; width: 100%; }
+
+  /* primary — solid orange, the site CTA */
+  .btn--primary {
+    background: var(--cta);
+    color: var(--cta-fg);
+    border-color: var(--cta);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn--primary:hover { filter: brightness(1.06); }
+
+  /* outline — light backgrounds */
+  .btn--outline {
+    background: transparent;
+    color: var(--ink-600);
+    border-color: var(--ink-300);
+  }
+  .btn--outline:hover { background: var(--ink-50); border-color: var(--ink-400); }
+
+  /* inverse-outline — dark backgrounds (hero, bands) */
+  .btn--inverse-outline {
+    background: color-mix(in oklch, var(--white) 6%, transparent);
+    color: var(--white);
+    border-color: var(--border-inverse);
+  }
+  .btn--inverse-outline:hover {
+    background: color-mix(in oklch, var(--white) 14%, transparent);
+    border-color: color-mix(in oklch, var(--white) 40%, transparent);
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn { transition: none; }
+    .btn:active { transform: none; }
+  }
+
+  /* comfortable touch targets on touch devices */
+  @media (pointer: coarse) {
+    .btn--sm { min-height: 44px; }
+  }
+</style>
