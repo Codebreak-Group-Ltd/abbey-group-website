@@ -9,7 +9,8 @@ import Reviews from '../components/Reviews.astro';
 import FAQ from '../components/FAQ.astro';
 import Areas from '../components/Areas.astro';
 import EnquiryForm from '../components/EnquiryForm.astro';
-import { nap, booking, routes } from '../data/site.ts';
+import Photo from '../components/Photo.astro';
+import { nap, booking, routes, site } from '../data/site.ts';
 import type { Review } from '../data/site.ts';
 import { service, faqPage, breadcrumb } from '../lib/schema.ts';
 
@@ -47,9 +48,9 @@ const schemas = [
   breadcrumb([{ name: 'Home', path: routes.home }, { name: 'Plumbing & Heating', path: routes.plumbing }]),
 ];
 ---
-<BaseLayout title={title} description={description} schemas={schemas}>
+<BaseLayout title={title} description={description} schemas={schemas} division="plumbing">
   <PageHero
-    accent="blue"
+    division="plumbing"
     title="Plumbing & Heating Engineers in Whitby"
     lead="Boilers, heating, repairs and gas safety, sorted fast by a local Gas Safe team. Looking for a plumber in Whitby you can actually get hold of? A real person answers the phone, and a local Gas Safe engineer turns up to do the work."
     trust={['Gas Safe registered, No. 303376', 'Local', 'Fast local response', 'Rated 4.6 on Google']}
@@ -67,14 +68,29 @@ const schemas = [
       <h2 class="h2">Plumbing and heating, all from one local team</h2>
       <p class="svc__intro">Whatever the job, you deal with the same Whitby team from the first call to the finished work.</p>
     </div>
-    <ul class="svc__grid reveal">
-      {services.map((s) => (
-        <li class="svc__item">
-          <span class="svc__chip"><Icon name="check" size={16} /></span>
-          <div><strong>{s.t}.</strong> {s.d}</div>
-        </li>
-      ))}
-    </ul>
+    <div class="svc__body reveal">
+      <ul class="svc__grid">
+        {services.map((s) => (
+          <li class="svc__item">
+            <span class="svc__chip"><Icon name="check" size={16} /></span>
+            <div><strong>{s.t}.</strong> {s.d}</div>
+          </li>
+        ))}
+      </ul>
+      <aside class="svc__aside">
+        <Photo
+          src="/images/plumbing-controls.webp"
+          alt="Abbey Group engineer setting a smart heating control in a Whitby home"
+          ratio="4 / 3"
+          width={900}
+          height={675}
+        />
+        <p class="svc__asidenote">
+          <Icon name="badge-check" size={16} />
+          <span>Gas work is carried out by a Gas Safe registered engineer, No. {site.gasSafeNo}.</span>
+        </p>
+      </aside>
+    </div>
     <div class="svc__cta reveal">
       <Button href={booking.quote} external size="lg">Request a Quote</Button>
     </div>
@@ -85,16 +101,28 @@ const schemas = [
     <div class="emg">
       <img class="emg__mark" src="/brand/crescent/crescent-mark.svg" alt="" aria-hidden="true" width="360" height="378" />
       <div class="container emg__inner reveal">
-        <Eyebrow tone="inverse">Emergency and breakdown</Eyebrow>
-        <h2 class="emg__h2">A broken boiler needs sorting today, not next week</h2>
-        <p class="emg__body">
-          When the heating packs in or you have a leak you cannot stop, you want someone local
-          who answers and turns up. The line is open 24 hours a day, so you can always get
-          through and leave a message, and a real person in the Whitby office picks it up and
-          gets an engineer to you as quickly as we can. The office is open Monday to Friday,
-          9am to 5pm.
-        </p>
-        <Button href={`tel:${nap.phone.tel}`} size="lg">Call now on {nap.phone.label}</Button>
+        <div class="emg__copy">
+          <Eyebrow tone="inverse">Emergency and breakdown</Eyebrow>
+          <h2 class="emg__h2">A broken boiler needs sorting today, not next week</h2>
+          <p class="emg__body">
+            When the heating packs in or you have a leak you cannot stop, you want someone local
+            who answers and turns up. The line is open 24 hours a day, so you can always get
+            through and leave a message, and a real person in the Whitby office picks it up and
+            gets an engineer to you as quickly as we can. The office is open Monday to Friday,
+            9am to 5pm.
+          </p>
+          <Button href={`tel:${nap.phone.tel}`} size="lg">Call now on {nap.phone.label}</Button>
+        </div>
+        <div class="emg__media">
+          <Photo
+            src="/images/plumbing-van-services.webp"
+            alt="An Abbey Group van listing plumbing, heating and building services"
+            ratio="16 / 9"
+            radius="lg"
+            width={960}
+            height={540}
+          />
+        </div>
       </div>
     </div>
   </Section>
@@ -190,16 +218,35 @@ const schemas = [
   /* SERVICES */
   .svc__head { max-width: 640px; margin-bottom: 36px; }
   .svc__intro { margin-top: 16px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
-  .svc__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 40px; }
+  .svc__body { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 56px; align-items: start; }
+  .svc__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 32px; }
   .svc__item { display: flex; gap: 14px; align-items: flex-start; font-size: 15px; line-height: var(--leading-relaxed); color: var(--text-body); }
   .svc__item strong { color: var(--text-heading); }
-  .svc__chip { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex: none; border-radius: var(--radius-signature); background: color-mix(in oklch, var(--accent-plumbing) 14%, var(--white)); color: var(--accent-plumbing-ink); margin-top: 2px; }
-  .svc__cta { margin-top: 32px; }
+  .svc__chip {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; flex: none;
+    border-radius: var(--radius-signature);
+    background: var(--page-accent-soft, var(--blue-50));
+    color: var(--page-accent-ink, var(--blue-800));
+    margin-top: 2px;
+  }
+  .svc__aside { display: flex; flex-direction: column; gap: 14px; }
+  .svc__asidenote {
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: var(--text-sm); line-height: var(--leading-snug);
+    color: var(--text-body);
+    padding: 14px 16px;
+    border-left: 2px solid var(--page-accent, var(--blue-500));
+    background: var(--surface-sunken);
+  }
+  .svc__asidenote :global(svg) { color: var(--page-accent-ink, var(--blue-800)); flex: none; margin-top: 1px; }
+  .svc__cta { margin-top: 36px; }
 
   /* EMERGENCY */
-  .emg { position: relative; overflow: hidden; padding-block: 80px; background: radial-gradient(900px 560px at 82% 25%, color-mix(in oklch, var(--blue-800) 55%, transparent) 0%, transparent 65%); }
+  .emg { position: relative; overflow: hidden; padding-block: 80px; background: radial-gradient(900px 560px at 82% 25%, color-mix(in oklch, var(--page-accent-glow, var(--blue-800)) 55%, transparent) 0%, transparent 65%); }
   .emg__mark { position: absolute; left: -100px; top: 50%; transform: translateY(-50%); width: 360px; opacity: 0.1; pointer-events: none; }
-  .emg__inner { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; max-width: 720px; }
+  .emg__inner { position: relative; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; }
+  .emg__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
   .emg__h2 { font-family: var(--font-display); font-size: clamp(30px, 3vw, 44px); color: var(--white); text-wrap: balance; }
   .emg__body { font-size: var(--text-md); line-height: var(--leading-relaxed); color: var(--text-body-inverse); }
 
@@ -226,6 +273,11 @@ const schemas = [
   .ph-formside__links { font-size: var(--text-sm); color: var(--text-muted); }
   .ph-formside__links a { color: var(--text-link); font-weight: var(--weight-semibold); }
 
+  @media (max-width: 1024px) {
+    .svc__body { grid-template-columns: 1fr; gap: 36px; }
+    .svc__aside { max-width: 520px; }
+    .emg__inner { grid-template-columns: 1fr; gap: 36px; }
+  }
   @media (max-width: 960px) {
     .lgs { grid-template-columns: 1fr; gap: 32px; }
   }

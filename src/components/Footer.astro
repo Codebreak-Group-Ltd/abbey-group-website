@@ -73,7 +73,12 @@ const year = new Date().getFullYear(); // build-time, not client
       <ul class="ftr__legal">
         <li><a href={routes.privacy}>Privacy</a></li>
         <li><a href={routes.terms}>Terms &amp; Conditions</a></li>
-        <li><a href={routes.credits}>Website Credits</a></li>
+        <li>
+          <span class="ftr__credit">
+            Website by
+            <a href="https://www.codebreak.co.uk/websites/" target="_blank" rel="noopener noreferrer">Codebreak</a>
+          </span>
+        </li>
       </ul>
       <p class="ftr__copy">
         &copy; {site.name} {year}. {site.legalName}, company no. {site.companyNo}, registered in {site.registeredIn}.
@@ -165,6 +170,8 @@ const year = new Date().getFullYear(); // build-time, not client
     transition: color var(--duration-fast) var(--ease-standard);
   }
   .ftr__legal a:hover { color: var(--white); }
+  .ftr__credit { font-size: 13px; color: var(--text-muted-inverse); }
+  .ftr__credit a { text-decoration: underline; text-underline-offset: 2px; }
   .ftr__copy { font-size: 13px; color: var(--text-muted-inverse); }
 
   @media (max-width: 1024px) {

@@ -13,6 +13,7 @@ import '@fontsource/inter/latin-700.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { site, nap, ratings, social, areasServed } from '../data/site.ts';
+import { divisionVars, type DivisionKey } from '../data/divisions.ts';
 
 interface Props {
   title: string;
@@ -23,6 +24,8 @@ interface Props {
   noindex?: boolean;
   /** Extra JSON-LD objects for this page (LocalBusiness, Service, FAQPage…). */
   schemas?: object[];
+  /** Sub-brand whose colourway themes this page's accents. */
+  division?: DivisionKey;
 }
 
 const {
@@ -32,6 +35,7 @@ const {
   ogImage = '/og/default.png',
   noindex = false,
   schemas = [],
+  division = 'group',
 } = Astro.props;
 
 const canonicalURL = new URL(canonical ?? Astro.url.pathname, Astro.site).href;
@@ -113,7 +117,7 @@ const allSchemas = [orgSchema, websiteSchema, ...schemas];
     ))}
   </head>
 
-  <body>
+  <body style={divisionVars(division)} data-division={division}>
     <a class="skip-link" href="#main">Skip to content</a>
     <Header />
     <main id="main">

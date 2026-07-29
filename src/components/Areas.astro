@@ -2,14 +2,27 @@
 import Section from './Section.astro';
 import Eyebrow from './Eyebrow.astro';
 import Icon from './Icon.astro';
-import { areasServed } from '../data/site.ts';
+import { areasServed, nap } from '../data/site.ts';
 
+/* Areas covered — an editorial index rather than a row of identical pins.
+   Place names sit in a hairline-ruled directory panel, with Whitby marked as
+   the base. Feeds `areaServed` schema from the same data (src/data/site.ts).
+   The panel rule and base marker inherit the page's division accent. */
 interface Props {
   heading: string;
   eyebrow?: string;
   bg?: 'white' | 'sunken';
 }
 const { heading, eyebrow = 'Where we work', bg = 'white' } = Astro.props;
+const base = areasServed[0];
+const rest = areasServed.slice(1);
+
+/* Keep the directory rules tidy when the final row is partial: the last item
+   spans the leftover columns, and final-row items lose their bottom rule. */
+const COLS = 3;
+const remainder = rest.length % COLS;
+const lastRowStart = remainder === 0 ? rest.length - COLS : rest.length - remainder;
+const lastSpan = remainder === 0 ? 1 : COLS - remainder + 1;
 ---
 <Section bg={bg}>
   <div class="areas reveal">
@@ -17,33 +30,125 @@ const { heading, eyebrow = 'Where we work', bg = 'white' } = Astro.props;
       <Eyebrow>{eyebrow}</Eyebrow>
       <h2 class="areas__title">{heading}</h2>
       <p class="areas__lead"><slot /></p>
+      <p class="areas__postcode">
+        <Icon name="map-pin" size={16} />
+        <span>Based at {nap.addressLine}, {nap.locality} {nap.postcode}</span>
+      </p>
     </div>
-    <ul class="areas__list">
-      {areasServed.map((a) => (
-        <li><Icon name="map-pin" size={14} /><span>{a}</span></li>
-      ))}
-    </ul>
+
+    <div class="areas__panel">
+      <div class="areas__panelhead">
+        <span>{base}</span>
+        <span class="areas__basetag">Our base</span>
+      </div>
+      <ul class="areas__list" style={`--last-span:${lastSpan}`}>
+        {rest.map((a, i) => (
+          <li class:list={{ 'is-lastrow': i >= lastRowStart, 'is-last': i === rest.length - 1 }}>{a}</li>
+        ))}
+      </ul>
+      <p class="areas__foot">
+        Plus the villages in between. If you are nearby and not sure whether we reach you, ask.
+      </p>
+    </div>
   </div>
 </Section>
 
 <style>
-  .areas { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 48px; align-items: center; }
+  .areas { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 64px; align-items: start; }
+
   .areas__title { font-size: clamp(28px, 2.8vw, 40px); margin-top: 10px; }
-  .areas__lead { margin-top: 16px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); max-width: 46ch; }
-  .areas__list { display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; }
-  .areas__list li {
-    display: inline-flex;
+  .areas__lead {
+    margin-top: 16px;
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+    max-width: 44ch;
+  }
+  .areas__postcode {
+    display: flex;
     align-items: center;
-    gap: 7px;
-    padding: 8px 14px;
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-signature);
-    background: var(--white);
-    font-size: 14px;
+    gap: 9px;
+    margin-top: 20px;
+    font-size: var(--text-sm);
     font-weight: var(--weight-semibold);
     color: var(--text-heading);
-    box-shadow: var(--shadow-sm);
   }
-  .areas__list :global(svg) { color: var(--accent-plumbing); flex: none; }
-  @media (max-width: 860px) { .areas { grid-template-columns: 1fr; gap: 24px; } }
+  .areas__postcode :global(svg) { color: var(--page-accent-ink, var(--blue-800)); flex: none; }
+
+  /* Directory panel */
+  .areas__panel {
+    background: var(--white);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .areas__panelhead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 2px solid var(--page-accent-ink, var(--blue-800));
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--text-heading);
+  }
+  .areas__basetag {
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--page-accent-ink, var(--blue-800));
+    padding: 5px 10px;
+    border-radius: var(--radius-signature);
+    /* Bordered on white rather than tinted: a tint of the ink darkens its own
+       background and pushed two divisions under AA. */
+    background: var(--white);
+    border: 1px solid color-mix(in oklch, var(--page-accent-ink, var(--blue-800)) 35%, var(--white));
+    white-space: nowrap;
+  }
+
+  .areas__list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .areas__list li {
+    padding: 14px 24px;
+    font-size: 15px;
+    font-weight: var(--weight-medium);
+    color: var(--text-body);
+    border-bottom: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
+  }
+  /* Tidy the grid edges so rules read as a table, not floating lines */
+  @media (min-width: 621px) {
+    .areas__list li:nth-child(3n) { border-right: none; }
+    .areas__list li.is-lastrow { border-bottom: none; }
+    .areas__list li.is-last { grid-column: span var(--last-span, 1); border-right: none; }
+  }
+
+  .areas__foot {
+    padding: 18px 24px;
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: var(--text-muted);
+    background: var(--surface-sunken);
+  }
+
+  @media (max-width: 1024px) {
+    .areas { grid-template-columns: 1fr; gap: 32px; }
+    .areas__lead { max-width: 60ch; }
+  }
+  @media (max-width: 620px) {
+    .areas__list { grid-template-columns: repeat(2, 1fr); }
+    .areas__list li:nth-child(2n) { border-right: none; }
+    .areas__list li:nth-last-child(-n + 2):nth-child(odd),
+    .areas__list li:last-child { border-bottom: none; }
+    .areas__panelhead { font-size: 22px; padding: 18px 20px; }
+    .areas__list li { padding: 13px 20px; font-size: 14.5px; }
+    .areas__foot { padding: 16px 20px; }
+  }
 </style>

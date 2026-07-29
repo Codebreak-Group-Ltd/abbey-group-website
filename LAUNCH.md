@@ -24,6 +24,44 @@ Living tick-list of what is done and what is still open. Update as items land.
 - [x] WCAG AA contrast pass on the actual pairs — failing brand shades banned
       for text (see reconciliations).
 
+## Build-review round 1 (Josh, 29 July 2026) — done
+
+- [x] Footer credit is now "Website by Codebreak" linking to
+      `codebreak.co.uk/websites/`. The `/credits/` route is no longer linked
+      (still defined in `routes` if a credits page is wanted later).
+- [x] Homecare "Most popular" moved to the middle tier (Service Care+); section
+      intro reworded to match; Ultimate Home Care no longer says "everything
+      above". Copy source updated + flagged for client re-proofing.
+- [x] Sign-up offer rewritten as a no-brainer offer block (plain maths, itemised
+      stack, genuine risk-reversal). One number comparison retained.
+- [x] Areas section restyled from repeated map-pin chips to a hairline-ruled
+      directory panel with Whitby marked as the base.
+- [x] **Division identity system** (`src/data/divisions.ts`): a page declares
+      `division` once on BaseLayout and every accent follows via
+      `--page-accent{,-ink,-soft,-glow}`. Per-division single-colour crescent
+      marks generated from the vector brand mark. Trade heroes carry an
+      "Abbey <division>" badge, division watermark, glow and top rule.
+      Plumbing & Heating themed blue with two more service-specific photos.
+- [x] Added `--green-ink` (#4a6529). Electrical green is BANNED as text: even
+      `--green-950` is only 4.31:1 on white. All four division inks now pass AA.
+
+### Still open from that review
+
+- [ ] **Division logo lockups**: supplied art is four ~320px screenshots plus a
+      PDF that contains only a raster (no vector paths). The hero badge is
+      therefore built from the vector crescent + site type. Ask the client for
+      true vector (AI/EPS/SVG) or high-res transparent PNG lockups, then swap in.
+      A 3375px raster of the Electrical lockup can be extracted from the PDF if
+      needed for that page.
+- [ ] **Areas section design reference**: the image Josh attached did not reach
+      the build, so the current treatment is designed on judgment. Re-share to
+      align.
+- [ ] **Copy vs plan-data discrepancy**: page copy says Service Care includes
+      "one free call-out"; the brochure (`02 PLAN DATA`) says "1 hour free call
+      out". Confirm which is correct, it is a material difference.
+- [ ] More per-trade imagery as it arrives (Renovations has the full Riviera set
+      ready; Electrical still has no photography at all).
+
 ## Reconciliations (design handover vs confirmed project content)
 
 Project content wins on *what the site says*; handover wins on *how it looks*.

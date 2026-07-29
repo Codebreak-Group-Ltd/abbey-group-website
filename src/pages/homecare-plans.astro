@@ -19,16 +19,16 @@ const description =
 
 const plans = [
   {
-    name: 'Service Care', price: '£9.99', popular: true,
+    name: 'Service Care', price: '£9.99', popular: false,
     blurb: 'Your full annual boiler service, gas safety certificate and heating health check, with one free call-out and priority response. The honest plan that keeps your boiler right.',
   },
   {
-    name: 'Service Care+', price: '£19.99', popular: false,
+    name: 'Service Care+', price: '£19.99', popular: true,
     blurb: 'Everything in Service Care, plus unlimited call-outs and boiler parts and labour included. If the boiler needs a part, it is covered.',
   },
   {
     name: 'Ultimate Home Care', price: '£34.99', popular: false,
-    blurb: 'Our fullest home plan. Everything above, plus central heating and plumbing parts and labour included, and 20% off any other work. The whole home looked after.',
+    blurb: 'Everything in Service Care+, plus central heating and plumbing parts and labour included, and 20% off any other work. The whole home looked after.',
   },
 ];
 
@@ -80,9 +80,9 @@ const schemas = [
   breadcrumb([{ name: 'Home', path: routes.home }, { name: 'Homecare Plans', path: routes.homecare }]),
 ];
 ---
-<BaseLayout title={title} description={description} schemas={schemas}>
+<BaseLayout title={title} description={description} schemas={schemas} division="homecare">
   <PageHero
-    accent="orange"
+    division="homecare"
     title="Boiler Cover Plans in Whitby, from £9.99 a Month"
     lead="Your boiler serviced, certified and covered by a local Whitby team who turn up fast and do the job properly. You deal with the same people every year, and a real person answers when you call."
     trust={['Gas Safe registered', 'Local', 'Serving Whitby since 2008', 'Rated 4.6 on Google']}
@@ -99,9 +99,10 @@ const schemas = [
       <Eyebrow tone="default">Choose your cover</Eyebrow>
       <h2 class="h2">Boiler cover from £9.99 a month</h2>
       <p class="plans__intro">
-        Three plans, and most homes start with the first one. Our entry cover is £9.99 a
-        month, below what the big national brands charge for similar cover, and it does not
-        jump after the first year.
+        Three plans, and all of them include the same proper annual service. Cover starts at
+        £9.99 a month, below what the big national brands charge for similar cover, and it
+        does not jump after the first year. Most people choose Service Care+, because it
+        covers the parts as well as the labour.
       </p>
     </div>
 
@@ -155,25 +156,43 @@ const schemas = [
       <img class="offer__mark" src="/brand/crescent/crescent-mark.svg" alt="" aria-hidden="true" width="360" height="378" />
       <div class="container offer__inner reveal">
         <div class="offer__copy">
-          <Eyebrow tone="inverse">The easy way to start</Eyebrow>
-          <h2 class="offer__h2">Booking a service? Start your plan and pay half</h2>
+          <Eyebrow tone="inverse">If you are booking a service anyway</Eyebrow>
+          <h2 class="offer__h2">Pay half for the service you already need</h2>
           <p class="offer__lead">
-            Most people find us because they need a boiler service. Book it today and start
-            Service Care at the same time: your service is half price, and your cover is set
-            up before we leave.
+            A one-off boiler service is £96. Start Service Care on the same visit and that
+            service costs you £48, then £9.99 a month. Same engineer, same day, same work.
+          </p>
+          <p class="offer__kicker">
+            The £48 you keep today covers your first four months of cover, and from then on
+            the service is booked in for you every year.
           </p>
           <Button href={booking.boilerService} external size="lg">Book My Service and Start Covered</Button>
+          <p class="offer__risk">
+            You can cancel at any time, there is no cancellation fee, and if you change your
+            mind within 14 days you get a full refund.
+          </p>
         </div>
-        <div class="offer__prices">
-          <div class="offer__price offer__price--was">
-            <span class="offer__label">One-off service</span>
+
+        <div class="offer__card">
+          <div class="offer__row offer__row--was">
+            <span class="offer__label">Service on its own</span>
             <span class="offer__num tnum">£96</span>
           </div>
-          <div class="offer__price offer__price--now">
-            <span class="offer__label">With Service Care today</span>
+          <div class="offer__row offer__row--now">
+            <span class="offer__label">Service today with Service Care</span>
             <span class="offer__num tnum">£48</span>
-            <span class="offer__then">then £9.99/month</span>
+            <span class="offer__then">then £9.99 a month</span>
           </div>
+          <p class="offer__stackhead">And every year after that you get</p>
+          <ul class="offer__stack">
+            {['The full annual service, booked in so you never have to remember it',
+              'Your gas safety certificate issued on the visit',
+              'Priority response when something goes wrong',
+              'One free call-out',
+              '5% off any other work you have done'].map((s) => (
+              <li><Icon name="check" size={15} /><span>{s}</span></li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
@@ -336,24 +355,62 @@ const schemas = [
   .get__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 40px; }
   .get__item { display: flex; gap: 14px; align-items: flex-start; font-size: 15px; line-height: var(--leading-relaxed); color: var(--text-body); }
   .get__item strong { color: var(--text-heading); }
-  .get__chip { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex: none; border-radius: var(--radius-signature); background: color-mix(in oklch, var(--accent-care) 14%, var(--white)); color: var(--accent-care-ink); margin-top: 2px; }
+  .get__chip { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex: none; border-radius: var(--radius-signature); background: var(--page-accent-soft, var(--orange-50)); color: var(--page-accent-ink, var(--orange-800)); margin-top: 2px; }
   .get__foot { margin-top: 28px; font-size: var(--text-base); color: var(--text-body); }
 
   /* OFFER */
-  .offer { position: relative; overflow: hidden; padding-block: 80px; background: radial-gradient(900px 560px at 82% 25%, color-mix(in oklch, var(--orange-900) 55%, transparent) 0%, transparent 65%); }
+  .offer { position: relative; overflow: hidden; padding-block: 80px; background: radial-gradient(900px 560px at 82% 25%, color-mix(in oklch, var(--page-accent-glow, var(--orange-900)) 55%, transparent) 0%, transparent 65%); }
   .offer__mark { position: absolute; left: -100px; top: 50%; transform: translateY(-50%); width: 360px; opacity: 0.1; pointer-events: none; }
-  .offer__inner { position: relative; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 48px; align-items: center; }
+  .offer__inner { position: relative; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
   .offer__copy { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
   .offer__h2 { font-family: var(--font-display); font-size: clamp(30px, 3vw, 44px); color: var(--white); text-wrap: balance; }
   .offer__lead { font-size: var(--text-md); line-height: var(--leading-relaxed); color: var(--text-body-inverse); max-width: 520px; }
-  .offer__prices { display: flex; gap: 16px; }
-  .offer__price { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 22px 20px; border-radius: var(--radius-lg); border: 1px solid var(--border-inverse); }
-  .offer__price--now { background: color-mix(in oklch, var(--white) 8%, transparent); border-color: color-mix(in oklch, var(--orange-400) 60%, transparent); }
+  .offer__kicker {
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    color: var(--white);
+    max-width: 520px;
+    padding-left: 16px;
+    border-left: 2px solid var(--orange-400);
+  }
+  .offer__risk { font-size: var(--text-sm); color: var(--text-muted-inverse); max-width: 460px; }
+
+  /* Offer card — one clear number comparison, then what it buys you */
+  .offer__card {
+    background: color-mix(in oklch, var(--white) 7%, transparent);
+    border: 1px solid color-mix(in oklch, var(--orange-400) 45%, transparent);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    padding: 28px;
+    backdrop-filter: blur(6px);
+  }
+  .offer__row { display: flex; flex-direction: column; gap: 2px; }
+  .offer__row--was { padding-bottom: 16px; border-bottom: 1px solid var(--border-inverse); }
+  .offer__row--now { padding-top: 18px; }
   .offer__label { font-size: 12.5px; font-weight: var(--weight-semibold); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted-inverse); }
-  .offer__num { font-size: 44px; font-weight: var(--weight-bold); color: var(--white); }
-  .offer__price--was .offer__num { color: var(--text-body-inverse); text-decoration: line-through; text-decoration-color: color-mix(in oklch, var(--white) 40%, transparent); }
-  .offer__price--now .offer__num { color: var(--orange-300); }
-  .offer__then { font-size: var(--text-sm); color: var(--text-body-inverse); }
+  .offer__num { font-size: 44px; font-weight: var(--weight-bold); line-height: 1.05; color: var(--white); }
+  .offer__row--was .offer__num {
+    font-size: 30px;
+    color: var(--text-muted-inverse);
+    text-decoration: line-through;
+    text-decoration-color: color-mix(in oklch, var(--white) 45%, transparent);
+  }
+  .offer__row--now .offer__num { color: var(--orange-300); font-size: 52px; }
+  .offer__then { font-size: var(--text-sm); color: var(--text-body-inverse); margin-top: 2px; }
+
+  .offer__stackhead {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-inverse);
+    font-size: 12.5px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted-inverse);
+  }
+  .offer__stack { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+  .offer__stack li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; line-height: var(--leading-snug); color: var(--text-body-inverse); }
+  .offer__stack :global(svg) { color: var(--orange-300); flex: none; margin-top: 3px; }
 
   /* COMPARE */
   .cmp__head { margin-bottom: 32px; }
@@ -362,7 +419,7 @@ const schemas = [
   .cmp caption { text-align: left; }
   .cmp th, .cmp td { padding: 14px 18px; text-align: center; border-bottom: 1px solid var(--border-subtle); }
   .cmp thead th { background: var(--surface-sunken); font-family: var(--font-body); font-size: 14.5px; font-weight: var(--weight-bold); color: var(--text-heading); vertical-align: top; }
-  .cmp__p { display: block; margin-top: 4px; font-size: 13px; font-weight: var(--weight-semibold); color: var(--accent-care-ink); }
+  .cmp__p { display: block; margin-top: 4px; font-size: 13px; font-weight: var(--weight-semibold); color: var(--page-accent-ink, var(--orange-800)); }
   .cmp tbody th[scope='row'] { text-align: left; font-weight: var(--weight-semibold); color: var(--text-heading); font-size: 14.5px; }
   .cmp tbody tr:last-child th, .cmp tbody tr:last-child td { border-bottom: none; }
   .cmp :global(.cmp__yes) { color: var(--success); }
@@ -393,6 +450,7 @@ const schemas = [
   }
   @media (max-width: 640px) {
     .get__grid { grid-template-columns: 1fr; }
-    .offer__prices { flex-direction: column; }
+    .offer__card { padding: 22px; }
+    .offer__row--now .offer__num { font-size: 44px; }
   }
 </style>

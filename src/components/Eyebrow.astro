@@ -15,6 +15,7 @@ const { tone = 'default', class: className } = Astro.props;
     text-transform: uppercase;
     margin: 0;
   }
-  .eyebrow--default { color: var(--blue-800); }
+  /* Follows the page's division accent, falling back to group blue. */
+  .eyebrow--default { color: var(--page-accent-ink, var(--blue-800)); }
   .eyebrow--inverse { color: var(--text-muted-inverse); }
 </style>

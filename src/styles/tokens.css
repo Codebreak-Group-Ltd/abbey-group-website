@@ -145,6 +145,11 @@
   /* Warm review-gold — the one intentional non-brand colour (star fills) */
   --review-star: #e8a33d;
 
+  /* Electrical green is a highlight colour, not a text colour: even --green-950
+     only reaches 4.31:1 on white, so it is BANNED for text. This deeper leaf
+     shade is the AA-safe ink for Electrical accents (6.5:1 on white). */
+  --green-ink: #4a6529;
+
   /* ---- Typography ---- */
   /* Confirmed brand faces, self-hosted via @fontsource (no Google Fonts link,
      no mono face — numbers/phone use Inter with tabular figures). */

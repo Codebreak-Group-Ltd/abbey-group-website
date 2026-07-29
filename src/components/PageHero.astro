@@ -1,32 +1,52 @@
 ---
 import Icon from './Icon.astro';
 import Photo from './Photo.astro';
+import { divisions, type DivisionKey } from '../data/divisions.ts';
 
-/* Interior-page hero — dark navy band with the brand gradient + a static
-   crescent watermark. Title + lead + CTA slot + a trust-strip row.
-   Optional right-column photo (2-col when supplied, matching the homepage
-   hero). The primary CTA stays above the mobile fold (§10). */
+/* Interior-page hero — dark navy band with the division's gradient glow and
+   its own single-colour crescent watermark. Carries a division badge above the
+   H1 so a trade page reads as its own sub-brand rather than a recoloured
+   template. Optional right-column photo. Primary CTA stays above the mobile
+   fold (§10). */
 interface Props {
   eyebrow?: string;
   title: string;
   lead: string;
   trust?: string[];
-  accent?: 'blue' | 'orange' | 'plum' | 'green';
+  /** Sub-brand this page belongs to; drives glow, watermark and badge. */
+  division?: DivisionKey;
+  /** Show the "Abbey <division>" badge above the H1. */
+  badge?: boolean;
   image?: string;
   imageAlt?: string;
 }
-const { eyebrow, title, lead, trust = [], accent = 'blue', image, imageAlt = '' } = Astro.props;
-const glow = {
-  blue: 'var(--blue-800)',
-  orange: 'var(--orange-900)',
-  plum: 'var(--plum-900)',
-  green: 'var(--green-900)',
-}[accent];
+const {
+  eyebrow,
+  title,
+  lead,
+  trust = [],
+  division = 'group',
+  badge = true,
+  image,
+  imageAlt = '',
+} = Astro.props;
+
+const d = divisions[division];
+const showBadge = badge && division !== 'group';
 ---
-<section class="phero" style={`--glow:${glow}`}>
-  <img class="phero__mark" src="/brand/crescent/crescent-mark.svg" alt="" aria-hidden="true" width="420" height="441" />
+<section class="phero" style={`--glow:${d.glow}`}>
+  <img class="phero__mark" src={d.mark} alt="" aria-hidden="true" width="420" height="441" />
   <div class:list={['container', 'phero__inner', { 'phero__inner--split': image }]}>
     <div class="phero__copy">
+      {showBadge && (
+        <p class="phero__badge">
+          <img src={d.mark} alt="" aria-hidden="true" width="30" height="31" />
+          <span class="phero__badge-text">
+            <span class="phero__badge-brand">Abbey</span>
+            <span class="phero__badge-div">{d.label}</span>
+          </span>
+        </p>
+      )}
       {eyebrow && <p class="phero__eyebrow">{eyebrow}</p>}
       <h1 class="phero__h1">{title}</h1>
       <p class="phero__lead">{lead}</p>
@@ -55,22 +75,31 @@ const glow = {
     padding: 150px var(--container-padding) 84px;
     background:
       radial-gradient(1000px 640px at 80% 15%, color-mix(in oklch, var(--glow) 55%, transparent) 0%, transparent 60%),
-      radial-gradient(720px 520px at 10% 95%, color-mix(in oklch, var(--plum-900) 42%, transparent) 0%, transparent 60%),
+      radial-gradient(720px 520px at 10% 95%, color-mix(in oklch, var(--ink-700) 60%, transparent) 0%, transparent 60%),
       var(--ink-500);
+  }
+  /* Thin division rule along the top edge of the page */
+  .phero::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 3px;
+    background: var(--page-accent, var(--blue-500));
+    opacity: 0.9;
   }
   .phero__mark {
     position: absolute;
     right: -90px;
     bottom: -120px;
     width: 420px;
-    opacity: 0.5;
+    opacity: 0.22;
     pointer-events: none;
     filter: drop-shadow(0 30px 70px rgba(0, 0, 0, 0.5));
   }
+
   .phero__inner { position: relative; }
   .phero__copy { max-width: 760px; display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
 
-  /* 2-column when a hero photo is supplied */
   .phero__inner--split {
     display: grid;
     grid-template-columns: 1.1fr 0.9fr;
@@ -79,6 +108,35 @@ const glow = {
   }
   .phero__inner--split .phero__copy { max-width: 620px; }
   .phero__media { width: 100%; max-width: 440px; margin-inline: auto; }
+
+  /* Division badge — crescent + stacked wordmark */
+  .phero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 16px 9px 12px;
+    border: 1px solid color-mix(in oklch, var(--page-accent, var(--blue-500)) 45%, transparent);
+    background: color-mix(in oklch, var(--page-accent, var(--blue-500)) 12%, transparent);
+    border-radius: var(--radius-signature);
+  }
+  .phero__badge img { flex: none; }
+  .phero__badge-text { display: flex; flex-direction: column; line-height: 1.1; }
+  .phero__badge-brand {
+    font-size: 15px;
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+  .phero__badge-div {
+    font-size: 10.5px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: color-mix(in oklch, var(--white) 78%, var(--ink-500));
+    margin-top: 3px;
+  }
+
   .phero__eyebrow {
     font-size: 12.5px;
     font-weight: var(--weight-bold);
@@ -104,7 +162,7 @@ const glow = {
     margin-top: 6px;
   }
   .phero__trust li { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: var(--weight-semibold); color: var(--text-body-inverse); }
-  .phero__trust :global(svg) { color: var(--blue-300); flex: none; }
+  .phero__trust :global(svg) { color: var(--page-accent, var(--blue-300)); flex: none; }
 
   @media (max-width: 900px) {
     .phero__inner--split { grid-template-columns: 1fr; gap: 36px; }
