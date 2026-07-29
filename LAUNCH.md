@@ -125,6 +125,15 @@ Both items were still outstanding when the note arrived; neither had been action
       `divisionVars`), so an orange page has no stray blue links. All four
       division link inks pass AA on both white and sunken grounds.
 
+### Cross-sell band note (learned the hard way)
+
+The Homecare cross-sell on Plumbing & Heating **stays in Plumbing's own blue**.
+An earlier version swapped the band to Home Care's warm colourway to signal "a
+different product" and was rejected: someone that far down the page came for a
+boiler or heating job, so the section has to feel like part of the page they are
+on. The offer content does the work, not a colour change. Same rule applies to
+the Homecare cross-sell wherever it appears on other trade pages.
+
 ### Standing rule
 
 **Adjacent sections must never share a background.** Alternate white / sunken,

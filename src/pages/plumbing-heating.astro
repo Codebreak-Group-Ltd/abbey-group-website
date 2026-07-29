@@ -12,7 +12,7 @@ import EnquiryForm from '../components/EnquiryForm.astro';
 import Photo from '../components/Photo.astro';
 import { nap, booking, routes, site, plumbingReviews } from '../data/site.ts';
 import { service, faqPage, breadcrumb } from '../lib/schema.ts';
-import { divisionVars, divisions } from '../data/divisions.ts';
+import { divisions } from '../data/divisions.ts';
 
 const title = 'Plumbing & Heating in Whitby | Gas Safe | Abbey Group';
 const description =
@@ -154,13 +154,12 @@ const schemas = [
 
   <!-- PREFER COVER -->
   <Section bg="dark" bleed>
-    <!-- A deliberate Home Care moment inside the Plumbing page: the band takes
-         Home Care's whole colourway (warm ground, orange glow and crescent) so
-         the cross-sell reads as a different product rather than another
-         Plumbing section. This is the page's best save-money story, so it gets
-         feature-band treatment, not a footnote. -->
-    <div class="xsell" style={divisionVars('homecare')}>
-      <img class="xsell__mark" src={divisions.homecare.mark} alt="" aria-hidden="true" width="380" height="399" />
+    <!-- The page's best save-money story, so it gets feature-band treatment
+         rather than a footnote. Stays in Plumbing's own blue: someone this far
+         down the page came for a boiler or heating job, so the band has to feel
+         like part of that page, with the Homecare offer shown plainly. -->
+    <div class="xsell">
+      <img class="xsell__mark" src={divisions.plumbing.mark} alt="" aria-hidden="true" width="380" height="399" />
       <div class="container xsell__inner reveal">
         <div class="xsell__copy">
           <Eyebrow tone="inverse">Prefer ongoing cover?</Eyebrow>
@@ -328,11 +327,11 @@ const schemas = [
     font-size: 15px; line-height: var(--leading-snug);
     color: var(--text-body-inverse);
   }
-  .xsell__stack :global(svg) { color: var(--orange-300); flex: none; margin-top: 3px; }
+  .xsell__stack :global(svg) { color: var(--blue-300); flex: none; margin-top: 3px; }
 
   .xsell__card {
     background: color-mix(in oklch, var(--white) 7%, transparent);
-    border: 1px solid color-mix(in oklch, var(--orange-400) 45%, transparent);
+    border: 1px solid color-mix(in oklch, var(--blue-400) 55%, transparent);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-xl);
     padding: 28px;
@@ -346,7 +345,7 @@ const schemas = [
     letter-spacing: var(--tracking-wide); text-transform: uppercase;
     color: var(--text-muted-inverse);
   }
-  .xsell__num { font-size: 52px; font-weight: var(--weight-bold); line-height: 1.05; color: var(--orange-300); }
+  .xsell__num { font-size: 52px; font-weight: var(--weight-bold); line-height: 1.05; color: var(--blue-300); }
   .xsell__row--was .xsell__num {
     font-size: 30px; color: var(--text-muted-inverse);
     text-decoration: line-through;
