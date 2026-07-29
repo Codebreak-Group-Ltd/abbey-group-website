@@ -1,17 +1,21 @@
 ---
 import Icon from './Icon.astro';
+import Photo from './Photo.astro';
 
 /* Interior-page hero — dark navy band with the brand gradient + a static
    crescent watermark. Title + lead + CTA slot + a trust-strip row.
-   The primary CTA stays above the mobile fold (§10). */
+   Optional right-column photo (2-col when supplied, matching the homepage
+   hero). The primary CTA stays above the mobile fold (§10). */
 interface Props {
   eyebrow?: string;
   title: string;
   lead: string;
   trust?: string[];
   accent?: 'blue' | 'orange' | 'plum' | 'green';
+  image?: string;
+  imageAlt?: string;
 }
-const { eyebrow, title, lead, trust = [], accent = 'blue' } = Astro.props;
+const { eyebrow, title, lead, trust = [], accent = 'blue', image, imageAlt = '' } = Astro.props;
 const glow = {
   blue: 'var(--blue-800)',
   orange: 'var(--orange-900)',
@@ -21,17 +25,24 @@ const glow = {
 ---
 <section class="phero" style={`--glow:${glow}`}>
   <img class="phero__mark" src="/brand/crescent/crescent-mark.svg" alt="" aria-hidden="true" width="420" height="441" />
-  <div class="container phero__inner">
-    {eyebrow && <p class="phero__eyebrow">{eyebrow}</p>}
-    <h1 class="phero__h1">{title}</h1>
-    <p class="phero__lead">{lead}</p>
-    <div class="phero__cta"><slot /></div>
-    {trust.length > 0 && (
-      <ul class="phero__trust">
-        {trust.map((t) => (
-          <li><Icon name="badge-check" size={15} /><span>{t}</span></li>
-        ))}
-      </ul>
+  <div class:list={['container', 'phero__inner', { 'phero__inner--split': image }]}>
+    <div class="phero__copy">
+      {eyebrow && <p class="phero__eyebrow">{eyebrow}</p>}
+      <h1 class="phero__h1">{title}</h1>
+      <p class="phero__lead">{lead}</p>
+      <div class="phero__cta"><slot /></div>
+      {trust.length > 0 && (
+        <ul class="phero__trust">
+          {trust.map((t) => (
+            <li><Icon name="badge-check" size={15} /><span>{t}</span></li>
+          ))}
+        </ul>
+      )}
+    </div>
+    {image && (
+      <div class="phero__media">
+        <Photo src={image} alt={imageAlt} ratio="4 / 5" radius="xl" eager width={900} height={1125} />
+      </div>
     )}
   </div>
 </section>
@@ -56,7 +67,18 @@ const glow = {
     pointer-events: none;
     filter: drop-shadow(0 30px 70px rgba(0, 0, 0, 0.5));
   }
-  .phero__inner { position: relative; max-width: 760px; display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+  .phero__inner { position: relative; }
+  .phero__copy { max-width: 760px; display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+
+  /* 2-column when a hero photo is supplied */
+  .phero__inner--split {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .phero__inner--split .phero__copy { max-width: 620px; }
+  .phero__media { width: 100%; max-width: 440px; margin-inline: auto; }
   .phero__eyebrow {
     font-size: 12.5px;
     font-weight: var(--weight-bold);
@@ -84,10 +106,15 @@ const glow = {
   .phero__trust li { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: var(--weight-semibold); color: var(--text-body-inverse); }
   .phero__trust :global(svg) { color: var(--blue-300); flex: none; }
 
+  @media (max-width: 900px) {
+    .phero__inner--split { grid-template-columns: 1fr; gap: 36px; }
+    .phero__media { max-width: 360px; margin-inline: 0; }
+  }
   @media (max-width: 700px) {
     .phero { padding-top: 124px; }
     .phero__cta { width: 100%; }
     .phero__cta :global(.btn) { flex: 1 1 auto; }
     .phero__mark { width: 300px; right: -110px; }
+    .phero__media { max-width: 100%; }
   }
 </style>

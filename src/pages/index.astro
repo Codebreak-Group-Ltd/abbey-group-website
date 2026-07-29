@@ -5,6 +5,7 @@ import Eyebrow from '../components/Eyebrow.astro';
 import Button from '../components/Button.astro';
 import Icon from '../components/Icon.astro';
 import PhotoSlot from '../components/PhotoSlot.astro';
+import Photo from '../components/Photo.astro';
 import Reviews from '../components/Reviews.astro';
 import FAQ from '../components/FAQ.astro';
 import { nap, booking, routes, homeReviews } from '../data/site.ts';
@@ -18,29 +19,30 @@ const divisions = [
   {
     title: 'Homecare Plans', href: routes.homecare, icon: 'shield-check', accent: 'var(--accent-care)', ink: 'var(--accent-care-ink)',
     desc: 'Boiler cover from £9.99 a month. Your annual service, gas safety certificate and priority response, sorted.',
-    link: 'Compare the Plans', photo: 'A serviced boiler and an Abbey engineer',
+    link: 'Compare the Plans', img: '/images/card-homecare.webp', photo: 'Abbey Group Homecare Plans in Whitby',
   },
   {
     title: 'Plumbing & Heating', href: routes.plumbing, icon: 'flame', accent: 'var(--accent-plumbing)', ink: 'var(--accent-plumbing-ink)',
     desc: 'Boilers, heating, repairs and emergencies from a local Gas Safe team.',
-    link: 'Explore Plumbing & Heating', photo: 'Engineer working on a home heating system',
+    link: 'Explore Plumbing & Heating', img: '/images/card-plumbing.webp', photo: 'An Abbey Group branded van near Whitby Abbey',
   },
   {
     title: 'Renovations', href: routes.renovations, icon: 'paintbrush', accent: 'var(--accent-joinery)', ink: 'var(--accent-joinery-ink)',
     desc: 'Kitchens, bathrooms and extensions, project-managed from first drawing to final clean.',
-    link: 'See Our Renovations', photo: 'A finished Abbey kitchen renovation',
+    link: 'See Our Renovations', img: '/images/card-renovations.webp', photo: 'A finished Abbey Group kitchen renovation in Whitby',
   },
   {
     title: 'Building & Joinery', href: routes.joinery, icon: 'ruler', accent: 'var(--accent-joinery)', ink: 'var(--accent-joinery-ink)',
     desc: 'Structural building work and bespoke joinery, made and fitted properly.',
-    link: 'Explore Building & Joinery', photo: 'Bespoke joinery detail',
+    link: 'Explore Building & Joinery', img: '/images/card-joinery.webp', photo: 'Abbey Group building and joinery work in Whitby',
   },
   {
     // Homepage division card uses blue for legibility (green is reserved for
     // large highlights on the Electrical page — it fails as text/small icon on white).
+    // No photo from this shoot for Electrical — keeps the captioned placeholder.
     title: 'Electrical', href: routes.electrical, icon: 'zap', accent: 'var(--accent-plumbing)', ink: 'var(--accent-plumbing-ink)',
     desc: 'Safe, certified electrical work for your home.',
-    link: 'Explore Electrical', photo: 'Consumer unit and certified electrical work',
+    link: 'Explore Electrical', img: null, photo: 'Certified Abbey Group electrical work',
   },
 ];
 
@@ -108,7 +110,15 @@ const schemas = [
       </div>
 
       <div class="hero__media">
-        <PhotoSlot ratio="4 / 5" radius="xl" caption="James and the team — new shoot" />
+        <Photo
+          src="/images/team-fleet-whitby.webp"
+          alt="The Abbey Group team with their branded fleet in front of Whitby Abbey"
+          ratio="3 / 2"
+          radius="xl"
+          eager
+          width={1200}
+          height={800}
+        />
       </div>
     </div>
   </section>
@@ -141,7 +151,9 @@ const schemas = [
       {divisions.map((d) => (
         <li>
           <a class="dv__card" href={d.href} style={`--accent:${d.accent};--accent-ink:${d.ink}`}>
-            <PhotoSlot ratio="16 / 9" radius="none" caption={d.photo} bordered={false} class="dv__photo" />
+            {d.img
+              ? <Photo src={d.img} alt={d.photo} ratio="16 / 9" radius="none" bordered={false} width={840} height={472} class="dv__photo" />
+              : <PhotoSlot ratio="16 / 9" radius="none" caption={d.photo} bordered={false} class="dv__photo" />}
             <div class="dv__body">
               <div class="dv__titlerow">
                 <span class="dv__chip"><Icon name={d.icon} size={17} /></span>
@@ -469,7 +481,7 @@ const schemas = [
   /* ---------- responsive ---------- */
   @media (max-width: 1024px) {
     .hero__grid { grid-template-columns: 1fr; gap: 40px; }
-    .hero__media { max-width: 420px; }
+    .hero__media { max-width: 560px; }
     .way { grid-template-columns: 1fr; gap: 40px; }
     .find { grid-template-columns: 1fr; gap: 40px; }
     .dv__grid { grid-template-columns: repeat(2, 1fr); }

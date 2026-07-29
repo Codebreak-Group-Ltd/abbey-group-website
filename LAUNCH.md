@@ -48,9 +48,14 @@ Project content wins on *what the site says*; handover wins on *how it looks*.
 
 ## Outstanding before go-live (from `_Specs/01 OUTSTANDING FROM CLIENT.md`)
 
-- [ ] **Photography** — all images are `PhotoSlot` placeholders; swap per each
-      page's `image-manifest.md` when Amy's shoot lands. Map on Home is a
-      placeholder (wire a real, lazy, consent-aware embed).
+- [~] **Photography** — real shoot photos wired for the built pages
+      (pre-optimised WebP in `public/images`, sized to <=2x slot, cover-cropped):
+      Home hero (team + fleet + Whitby Abbey), 4 of 5 division cards, Homecare
+      hero (boiler service), Plumbing hero (radiator fit). Still placeholders:
+      **Electrical** (no photo in this shoot), the Home **map/office** slot
+      (office being fit out — wire a real lazy, consent-aware map embed), and all
+      not-yet-built pages. Source originals live in the Dropbox `Images/` folders;
+      About + Renovations (Riviera set) photos are in hand for those pages.
 - [ ] **Per-page OG images** — `public/og/default.png` is a branded placeholder;
       generate 1200×630 per key page.
 - [ ] **GHL webhook** — `EnquiryForm` posts to `PUBLIC_GHL_WEBHOOK` (unset →

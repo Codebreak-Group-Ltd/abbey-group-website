@@ -1,0 +1,55 @@
+---
+/* Real photo in a fixed-ratio slot (cover-cropped, dimensioned for zero CLS).
+   Sources are pre-optimised WebP in /public/images (sized to <=2x slot per
+   build standard §5). Mirrors PhotoSlot's shape so it drops in place. */
+interface Props {
+  src: string;
+  alt: string;
+  ratio?: string;          // e.g. '3 / 2', '16 / 9', '4 / 5'
+  radius?: 'lg' | 'xl' | 'none';
+  eager?: boolean;         // hero/LCP image
+  bordered?: boolean;
+  objectPosition?: string;
+  class?: string;
+  width?: number;
+  height?: number;
+}
+const {
+  src, alt, ratio = '16 / 9', radius = 'lg', eager = false,
+  bordered = true, objectPosition = 'center', class: className, width, height,
+} = Astro.props;
+const radiusVar = radius === 'none' ? '0' : `var(--radius-${radius})`;
+---
+<div
+  class:list={['photo', bordered ? 'photo--bordered' : '', className]}
+  style={`aspect-ratio:${ratio};border-radius:${radiusVar}`}
+>
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    style={`object-position:${objectPosition}`}
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : 'auto'}
+    decoding={eager ? 'auto' : 'async'}
+  />
+</div>
+
+<style>
+  .photo {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: var(--ink-50);
+    box-shadow: var(--shadow-md);
+  }
+  .photo--bordered { border: 1px solid var(--border-subtle); }
+  .photo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>
