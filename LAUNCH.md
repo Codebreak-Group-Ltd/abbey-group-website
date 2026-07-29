@@ -69,6 +69,30 @@ swaps** on division pages, **Renovations = warm timber and stone, plum-anchored*
 - [x] All inner-section watermarks now use the division mark, not the tri-colour
       Group mark.
 
+## Build-review round 3 (Josh, 29 July 2026) — done
+
+- [x] **Footer colour-matches the page.** Each division has a `surfaceFooter`
+      derived by darkening its own `surfaceDark` toward ink-950, so the footer is
+      always the same hue as the page and provably deeper than it. Plus a
+      division accent rule along the top and an accent-tinted Gas Safe chip.
+- [x] **One lockup everywhere** (`Lockup.astro`). The genuine "ABBEY" wordmark
+      was extracted as paths from `group-on-dark.svg` (the art splits cleanly:
+      3 crescent paths, ABBEY as 5 glyphs, GROUP as 5) and cropped to
+      `abbey-wordmark-white.svg`. Header, hero badge and footer now all use the
+      same construction, so Group and every division are visually identical and
+      differ only in crescent colour and descriptor. Only the small descriptor is
+      site type; swap the whole thing here when real vector lockups arrive.
+- [x] **Homepage divisions grid**: sixth tile added (navy "Something else?"
+      catch-all with the Group tri-colour mark and the office number), so the
+      3x2 grid no longer has a hole. Cards lean into their colour with a 5px
+      division tab across the top, a 4% accent-tinted body and accent link text.
+      Electrical now uses its real green, safe since `--green-ink` exists.
+- [x] **Reviews grid self-balances**: column count is derived from the review
+      count, so the last row is never ragged. Homepage now runs 8 verified
+      reviews at 4x2 (added Beverley Sabine and Karen, both previously unused,
+      quoted verbatim including exclamation marks).
+- [x] **Areas panel added to the homepage**, using the Group tri-colour mark.
+
 ### Still to do on the division system
 
 - [ ] **Renovations page**: warm timber and stone, plum-anchored premium

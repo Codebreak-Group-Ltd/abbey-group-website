@@ -8,6 +8,7 @@ import PhotoSlot from '../components/PhotoSlot.astro';
 import Photo from '../components/Photo.astro';
 import Reviews from '../components/Reviews.astro';
 import FAQ from '../components/FAQ.astro';
+import Areas from '../components/Areas.astro';
 import { nap, booking, routes, homeReviews } from '../data/site.ts';
 import { localBusiness, faqPage, breadcrumb } from '../lib/schema.ts';
 
@@ -37,10 +38,10 @@ const divisions = [
     link: 'Explore Building & Joinery', img: '/images/card-joinery.webp', photo: 'Abbey Group building and joinery work in Whitby',
   },
   {
-    // Homepage division card uses blue for legibility (green is reserved for
-    // large highlights on the Electrical page — it fails as text/small icon on white).
+    // Green is safe here now --green-ink exists: the bright green carries the
+    // colour tab and chip tint, the deep ink carries the icon and link text.
     // No photo from this shoot for Electrical — keeps the captioned placeholder.
-    title: 'Electrical', href: routes.electrical, icon: 'zap', accent: 'var(--accent-plumbing)', ink: 'var(--accent-plumbing-ink)',
+    title: 'Electrical', href: routes.electrical, icon: 'zap', accent: 'var(--accent-electrical)', ink: 'var(--green-ink)',
     desc: 'Safe, certified electrical work for your home.',
     link: 'Explore Electrical', img: null, photo: 'Certified Abbey Group electrical work',
   },
@@ -151,6 +152,7 @@ const schemas = [
       {divisions.map((d) => (
         <li>
           <a class="dv__card" href={d.href} style={`--accent:${d.accent};--accent-ink:${d.ink}`}>
+            <span class="dv__bar" aria-hidden="true"></span>
             {d.img
               ? <Photo src={d.img} alt={d.photo} ratio="16 / 9" radius="none" bordered={false} width={840} height={472} class="dv__photo" />
               : <PhotoSlot ratio="16 / 9" radius="none" caption={d.photo} bordered={false} class="dv__photo" />}
@@ -165,6 +167,24 @@ const schemas = [
           </a>
         </li>
       ))}
+
+      <!-- Sixth tile: fills the grid and catches everything not listed above,
+           using the Group tri-colour mark to tie the five divisions together. -->
+      <li>
+        <a class="dv__card dv__card--group" href={`tel:${nap.phone.tel}`}>
+          <img class="dv__groupmark" src="/brand/crescent/crescent-mark.svg" alt="" aria-hidden="true" width="260" height="273" />
+          <div class="dv__groupbody">
+            <h3 class="dv__grouptitle">Something else?</h3>
+            <p class="dv__groupdesc">
+              If it is a job around the house and it is not on this list, ring the office
+              and we will tell you who to send.
+            </p>
+            <span class="dv__grouplink tnum">
+              <Icon name="phone" size={15} /> {nap.phone.label}
+            </span>
+          </div>
+        </a>
+      </li>
     </ul>
   </Section>
 
@@ -210,7 +230,12 @@ const schemas = [
   <!-- 6. REVIEWS -->
   <Reviews heading="What Whitby says about us" reviews={homeReviews} />
 
-  <!-- 7. FIND US -->
+  <!-- 7. AREAS WE COVER -->
+  <Areas heading="Where we work across Whitby and the coast">
+    One local team covering Whitby, the coast and the villages between:
+  </Areas>
+
+  <!-- 8. FIND US -->
   <Section bg="white">
     <div class="find">
       <div class="find__map reveal">
@@ -380,8 +405,24 @@ const schemas = [
     transition: transform var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
   }
   .dv__card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+  /* Division colour tab across the top of each card */
+  .dv__bar {
+    display: block;
+    height: 5px;
+    background: var(--accent);
+    transition: height var(--duration-base) var(--ease-out);
+  }
+  .dv__card:hover .dv__bar { height: 8px; }
+
   .dv__photo { border-bottom: 1px solid var(--border-subtle); }
-  .dv__body { display: flex; flex-direction: column; gap: 10px; padding: 22px 24px 24px; flex: 1; }
+  /* Body carries a whisper of the division colour so the card is tinted, not
+     just badged. Kept very low so body copy contrast is unaffected. */
+  .dv__body {
+    display: flex; flex-direction: column; gap: 10px;
+    padding: 22px 24px 24px; flex: 1;
+    background: color-mix(in oklch, var(--accent) 4%, var(--white));
+  }
   .dv__titlerow { display: flex; align-items: center; gap: 12px; }
   .dv__chip {
     display: inline-flex;
@@ -405,9 +446,46 @@ const schemas = [
     color: var(--accent-ink);
   }
 
+  /* Sixth tile — navy, so it reads as the catch-all rather than a service */
+  .dv__card--group {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(520px 380px at 88% 12%, color-mix(in oklch, var(--blue-800) 45%, transparent) 0%, transparent 65%),
+      var(--ink-500);
+    border-color: transparent;
+    justify-content: center;
+  }
+  .dv__groupmark {
+    position: absolute;
+    right: -60px;
+    bottom: -70px;
+    width: 260px;
+    opacity: 0.16;
+    pointer-events: none;
+  }
+  .dv__groupbody {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 30px 26px;
+  }
+  .dv__grouptitle { font-family: var(--font-display); font-size: 24px; color: var(--white); }
+  .dv__groupdesc { font-size: 14.5px; line-height: var(--leading-relaxed); color: var(--text-body-inverse); }
+  .dv__grouplink {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 2px;
+    font-size: 15px; font-weight: var(--weight-bold);
+    color: var(--white);
+  }
+  .dv__grouplink :global(svg) { color: var(--blue-300); flex: none; }
+  .dv__card--group:hover .dv__grouplink { color: var(--blue-200); }
+
   @media (prefers-reduced-motion: reduce) {
-    .dv__card { transition: none; }
+    .dv__card, .dv__bar { transition: none; }
     .dv__card:hover { transform: none; }
+    .dv__card:hover .dv__bar { height: 5px; }
   }
 
   /* ---------- 4. WHY PEOPLE STAY ---------- */

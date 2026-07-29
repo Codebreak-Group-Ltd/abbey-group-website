@@ -128,4 +128,14 @@ export const homeReviews: Review[] = [
     quote: "Fantastic service, easy to communicate with, very helpful. Had a boiler fitted and couldn't have asked for a better smoother service, lovely fella who actually fitted the boiler and great service from start to finish.",
     name: 'Sally McDermott', source: 'Facebook',
   },
+  {
+    quote: 'James not only is a great plumber but a really nice guy.',
+    name: 'Beverley Sabine', source: 'Google review',
+  },
+  {
+    // Quoted verbatim, exclamation marks included: they are the customer's
+    // words. Abbey's own copy stays exclamation-free.
+    quote: "James was excellent. Great price, even better than the quote! Jobs done cleanly and efficiently. Will definitely be using James again!",
+    name: 'Karen', source: 'Facebook',
+  },
 ];

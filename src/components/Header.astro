@@ -3,6 +3,7 @@ import Button from './Button.astro';
 import Icon from './Icon.astro';
 import { nav, nap, booking, site } from '../data/site.ts';
 import { divisions, type DivisionKey } from '../data/divisions.ts';
+import Lockup from './Lockup.astro';
 
 /* Site header — fixed, transparent over the (dark) hero, shrinking to a
    blurred navy bar on scroll. Navigation is the hamburger menu at ALL
@@ -26,19 +27,13 @@ const isActive = (href: string) =>
   href === '/' ? pathname === '/' : pathname.startsWith(href);
 ---
 <header class="hdr" data-header>
-  {showLockup ? (
-    <a class="hdr__lockup" href="/" aria-label={`Abbey ${d.label} — Abbey Group home`}>
-      <img src={d.mark} alt="" aria-hidden="true" width="38" height="40" />
-      <span class="hdr__lockup-text">
-        <span class="hdr__lockup-brand">Abbey</span>
-        <span class="hdr__lockup-div">{d.label}</span>
-      </span>
-    </a>
-  ) : (
-    <a class="hdr__logo" href="/" aria-label={`${site.name} — home`}>
-      <img src="/brand/logos/group-on-dark.svg" alt={site.name} width="150" height="45" />
-    </a>
-  )}
+  <a
+    class="hdr__brand"
+    href="/"
+    aria-label={division === 'group' ? `${site.name} — home` : `Abbey ${d.label} — ${site.name} home`}
+  >
+    <Lockup division={division} size={18} />
+  </a>
 
   <div class="hdr__right">
     <a class="hdr__phone tnum" href={`tel:${nap.phone.tel}`}>
@@ -105,42 +100,9 @@ const isActive = (href: string) =>
     border-bottom-color: color-mix(in oklch, var(--page-accent, var(--white)) 38%, transparent);
   }
 
-  .hdr__logo { display: flex; align-items: center; }
-  .hdr__logo img {
-    height: 52px;
-    width: auto;
-    transition: height 400ms var(--ease-out);
-  }
-  .hdr[data-scrolled] .hdr__logo img { height: 42px; }
-
-  /* Division lockup */
-  .hdr__lockup { display: inline-flex; align-items: center; gap: 12px; }
-  .hdr__lockup img {
-    height: 40px;
-    width: auto;
-    transition: height 400ms var(--ease-out);
-  }
-  .hdr[data-scrolled] .hdr__lockup img { height: 33px; }
-  .hdr__lockup-text { display: flex; flex-direction: column; line-height: 1.05; }
-  .hdr__lockup-brand {
-    font-size: 19px;
-    font-weight: var(--weight-bold);
-    letter-spacing: 0.17em;
-    text-transform: uppercase;
-    color: var(--white);
-    transition: font-size 400ms var(--ease-out);
-  }
-  .hdr__lockup-div {
-    font-size: 9.5px;
-    font-weight: var(--weight-semibold);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: color-mix(in oklch, var(--white) 76%, var(--ink-500));
-    margin-top: 3px;
-    transition: font-size 400ms var(--ease-out);
-  }
-  .hdr[data-scrolled] .hdr__lockup-brand { font-size: 16px; }
-  .hdr[data-scrolled] .hdr__lockup-div { font-size: 8.5px; }
+  .hdr__brand { display: flex; align-items: center; }
+  /* Shrink the whole lockup on scroll by driving its one size variable. */
+  .hdr[data-scrolled] .hdr__brand :global(.lu) { --lu-size: 15px; --lu-mark: 35px; }
 
   .hdr__right { display: flex; align-items: center; gap: 16px; }
 

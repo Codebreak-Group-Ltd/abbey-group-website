@@ -31,6 +31,9 @@ export interface Division {
       sections, so a trade page reads as its own colour at a glance while
       staying in the navy family. All four keep white text above 9:1. */
   surfaceDark: string;
+  /** Footer ground: the same hue as `surfaceDark` but deeper, so the footer
+      always reads as the base of the page it belongs to. */
+  surfaceFooter: string;
   /** Does this section have its own lockup in the client's brand set? */
   hasLockup: boolean;
 }
@@ -44,6 +47,7 @@ export const divisions: Record<DivisionKey, Division> = {
     glow: 'var(--blue-800)',
     mark: '/brand/crescent/crescent-mark.svg',
     surfaceDark: 'var(--ink-500)',
+    surfaceFooter: '#0e0c2d',
     hasLockup: false,
   },
   plumbing: {
@@ -54,6 +58,7 @@ export const divisions: Record<DivisionKey, Division> = {
     glow: 'var(--blue-800)',
     mark: '/brand/crescent/mark-plumbing.svg',
     surfaceDark: '#133d60',
+    surfaceFooter: '#0f314f',
     hasLockup: true,
   },
   homecare: {
@@ -64,6 +69,7 @@ export const divisions: Record<DivisionKey, Division> = {
     glow: 'var(--orange-900)',
     mark: '/brand/crescent/mark-homecare.svg',
     surfaceDark: '#4c2238',
+    surfaceFooter: '#3e1b2e',
     hasLockup: true,
   },
   joinery: {
@@ -74,6 +80,7 @@ export const divisions: Record<DivisionKey, Division> = {
     glow: 'var(--plum-900)',
     mark: '/brand/crescent/mark-joinery.svg',
     surfaceDark: '#342650',
+    surfaceFooter: '#2a1e42',
     hasLockup: true,
   },
   electrical: {
@@ -87,6 +94,7 @@ export const divisions: Record<DivisionKey, Division> = {
     glow: 'var(--green-950)',
     mark: '/brand/crescent/mark-electrical.svg',
     surfaceDark: '#36483c',
+    surfaceFooter: '#2c3b31',
     hasLockup: true,
   },
 };
@@ -102,5 +110,6 @@ export function divisionVars(key: DivisionKey): string {
     // Overrides the global dark surface so every `Section bg="dark"` on this
     // page picks up the division-tinted ground automatically.
     `--surface-page-dark:${d.surfaceDark}`,
+    `--surface-footer:${d.surfaceFooter}`,
   ].join(';');
 }

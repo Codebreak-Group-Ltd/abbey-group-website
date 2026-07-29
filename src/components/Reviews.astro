@@ -20,6 +20,11 @@ const {
   readAllHref = routes.reviews,
   readAllLabel = 'Read all our reviews',
 } = Astro.props;
+
+/* Pick a column count that divides the review count exactly, so the grid never
+   leaves a ragged final row. Falls back to 3 for awkward counts (5, 7, 11...). */
+const n = reviews.length;
+const cols = [4, 3, 2].find((c) => n % c === 0) ?? 3;
 ---
 <Section bg="sunken">
   <div class="rv__head reveal">
@@ -32,7 +37,7 @@ const {
     </a>
   </div>
 
-  <ul class="rv__grid reveal">
+  <ul class="rv__grid reveal" style={`--rv-cols:${cols}`}>
     {reviews.map((r) => (
       <li class="rv__card">
         <Stars />
@@ -71,9 +76,11 @@ const {
   }
   .rv__all:hover { color: var(--blue-800); }
 
+  /* Columns are set from the review count so the last row is never short:
+     8 reviews sit 4x2, 6 sit 3x2, 3 sit in a single row. */
   .rv__grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(var(--rv-cols, 4), 1fr);
     gap: 16px;
     align-items: start;
   }

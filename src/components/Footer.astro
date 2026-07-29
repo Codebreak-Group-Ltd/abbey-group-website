@@ -1,7 +1,13 @@
 ---
 import Icon from './Icon.astro';
+import Lockup from './Lockup.astro';
 import { site, nap, ratings, social, footerNav, routes } from '../data/site.ts';
+import type { DivisionKey } from '../data/divisions.ts';
 
+interface Props {
+  division?: DivisionKey;
+}
+const { division = 'group' } = Astro.props;
 const year = new Date().getFullYear(); // build-time, not client
 ---
 <footer class="ftr">
@@ -9,13 +15,7 @@ const year = new Date().getFullYear(); // build-time, not client
     <div class="ftr__grid">
       <!-- Brand -->
       <div class="ftr__brand">
-        <img
-          class="ftr__logo"
-          src="/brand/logos/group-on-dark.svg"
-          alt={site.name}
-          width="187"
-          height="56"
-        />
+        <Lockup division={division} size={20} class="ftr__logo" />
         <p class="ftr__pos">{site.positioning}</p>
         <div class="ftr__chips">
           <span class="ftr__chip">
@@ -89,7 +89,8 @@ const year = new Date().getFullYear(); // build-time, not client
 
 <style>
   .ftr {
-    background: var(--ink-600);
+    background: var(--surface-footer, var(--ink-600));
+    border-top: 3px solid var(--page-accent, transparent);
     color: var(--text-body-inverse);
     padding-block: 72px 32px;
   }
@@ -102,7 +103,6 @@ const year = new Date().getFullYear(); // build-time, not client
   }
 
   .ftr__brand { display: flex; flex-direction: column; gap: 18px; }
-  .ftr__logo { height: 56px; width: auto; }
   .ftr__pos {
     font-size: 14.5px;
     line-height: var(--leading-relaxed);
@@ -121,7 +121,7 @@ const year = new Date().getFullYear(); // build-time, not client
     font-weight: var(--weight-semibold);
     color: var(--text-body-inverse);
   }
-  .ftr__chip :global(svg) { color: var(--blue-300); }
+  .ftr__chip :global(svg) { color: var(--page-accent, var(--blue-300)); }
   .ftr__chip :global(.ftr__star) { color: var(--review-star); }
 
   .ftr__heading {

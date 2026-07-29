@@ -1,0 +1,79 @@
+---
+import { divisions, type DivisionKey } from '../data/divisions.ts';
+
+/* Abbey lockup — ONE construction used for the Group and every division, so the
+   header reads identically across the site and only the colour and the
+   descriptor change.
+
+   Built from the client's real logo art: the crescent mark (recoloured per
+   division) plus the genuine "ABBEY" wordmark paths lifted out of
+   `group-on-dark.svg`. Only the small descriptor is set in site type, because
+   the supplied division lockups are ~320px screenshots with no vector for the
+   descriptor letterforms. When the real vector lockups land, this component is
+   the single place to swap them in (see LAUNCH.md).
+
+   Horizontal by design: the client's art is stacked (crescent over ABBEY over
+   descriptor), which shrinks the wordmark too far inside a fixed header. */
+interface Props {
+  division?: DivisionKey;
+  /** Wordmark cap height in px; the crescent and descriptor scale from it. */
+  size?: number;
+  class?: string;
+}
+const { division = 'group', size = 17, class: className } = Astro.props;
+const d = divisions[division];
+// ABBEY wordmark is 7.83:1, so width follows from the requested height.
+const wordWidth = Math.round(size * 7.83);
+const markSize = Math.round(size * 2.35);
+---
+<span
+  class:list={['lu', className]}
+  style={`--lu-size:${size}px;--lu-mark:${markSize}px`}
+>
+  <img class="lu__mark" src={d.mark} alt="" aria-hidden="true" width={markSize} height={markSize} />
+  <span class="lu__stack">
+    <img
+      class="lu__word"
+      src="/brand/logos/abbey-wordmark-white.svg"
+      alt=""
+      aria-hidden="true"
+      width={wordWidth}
+      height={size}
+    />
+    <span class="lu__desc">{d.label}</span>
+  </span>
+</span>
+
+<style>
+  .lu {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--lu-size) * 0.68);
+  }
+  .lu__mark {
+    height: var(--lu-mark);
+    width: auto;
+    flex: none;
+    transition: height 400ms var(--ease-out);
+  }
+  .lu__stack { display: flex; flex-direction: column; align-items: stretch; }
+  .lu__word {
+    height: var(--lu-size);
+    width: auto;
+    display: block;
+    transition: height 400ms var(--ease-out);
+  }
+  .lu__desc {
+    /* Tracked to sit under the full width of the wordmark, as the real art does */
+    font-size: calc(var(--lu-size) * 0.5);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: color-mix(in oklch, var(--white) 78%, var(--ink-500));
+    margin-top: calc(var(--lu-size) * 0.26);
+    white-space: nowrap;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lu__mark, .lu__word { transition: none; }
+  }
+</style>

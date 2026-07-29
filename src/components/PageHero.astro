@@ -1,6 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import Photo from './Photo.astro';
+import Lockup from './Lockup.astro';
 import { divisions, type DivisionKey } from '../data/divisions.ts';
 
 /* Interior-page hero — dark navy band with the division's gradient glow and
@@ -40,11 +41,7 @@ const showBadge = badge && division !== 'group';
     <div class="phero__copy">
       {showBadge && (
         <p class="phero__badge">
-          <img src={d.mark} alt="" aria-hidden="true" width="30" height="31" />
-          <span class="phero__badge-text">
-            <span class="phero__badge-brand">Abbey</span>
-            <span class="phero__badge-div">{d.label}</span>
-          </span>
+          <Lockup division={division} size={15} />
         </p>
       )}
       {eyebrow && <p class="phero__eyebrow">{eyebrow}</p>}
@@ -119,23 +116,6 @@ const showBadge = badge && division !== 'group';
     border: 1px solid color-mix(in oklch, var(--page-accent, var(--blue-500)) 45%, transparent);
     background: color-mix(in oklch, var(--page-accent, var(--blue-500)) 12%, transparent);
     border-radius: var(--radius-signature);
-  }
-  .phero__badge img { flex: none; }
-  .phero__badge-text { display: flex; flex-direction: column; line-height: 1.1; }
-  .phero__badge-brand {
-    font-size: 15px;
-    font-weight: var(--weight-bold);
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--white);
-  }
-  .phero__badge-div {
-    font-size: 10.5px;
-    font-weight: var(--weight-semibold);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: color-mix(in oklch, var(--white) 78%, var(--ink-500));
-    margin-top: 3px;
   }
 
   .phero__eyebrow {
