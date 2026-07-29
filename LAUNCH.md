@@ -160,6 +160,28 @@ Both items were still outstanding when the note arrived; neither had been action
       The team-and-fleet shot is freed up for the About page, which is where it
       belongs (`07 About/Images/about-team-group-with-vans.jpg`).
 
+## Build-review round 6 (Josh, 29 July 2026) — done
+
+- [x] Homepage hero eyebrow changed from "Whitby based" to **"One team, every
+      trade"**, and the crescent mark beside it removed: the Abbey lockup already
+      sits top-left and the two were close on desktop, closer on mobile.
+      Copy source updated and flagged for re-proofing (both lines were signed off).
+- [x] Handover doc gained six more standing rules (12-17) covering the round-5
+      lessons that had only been recorded as "what we did": even grids instead of
+      wrapping rows, no-wrap on phone numbers, one brand mark per screen region,
+      no repeated phrases within a screen, feature treatment for commercially
+      valuable sections, and fix causes not instances. Plus a "what you get free
+      from the global components" note so pages are not rebuilt from scratch.
+
+### OPEN — needs Josh's call before the next page ships
+
+"One team, every trade" is now the hero eyebrow **and** the third trust-strip item
+directly below it, so the phrase appears twice within a screen. Both lines were
+client-signed-off, so the trust strip was left alone rather than changed
+unilaterally. Recommended: change the trust strip item to **"Every trade under one
+roof"** and keep the new eyebrow. Also recorded in
+`_Specs/08 BUILD HANDOVER.md` and `01 Home/Text/Home - COPY.md`.
+
 ### Cross-sell band note (learned the hard way)
 
 The Homecare cross-sell on Plumbing & Heating **stays in Plumbing's own blue**.

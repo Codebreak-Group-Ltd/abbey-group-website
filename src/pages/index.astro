@@ -90,10 +90,9 @@ const schemas = [
 
     <div class="container hero__grid">
       <div class="hero__copy">
-        <p class="hero__eyebrow">
-          <img src="/brand/crescent/crescent-mark.svg" alt="" width="22" height="23" aria-hidden="true" />
-          <span>Whitby based</span>
-        </p>
+        <!-- No brand mark here: the lockup sits top-left already, and the two
+             were close on desktop and closer still on mobile. -->
+        <p class="hero__eyebrow">One team, every trade</p>
         <h1 class="hero__h1">One Local Team for Everything Your Home Needs</h1>
         <p class="hero__lead">
           Boilers, heating, kitchens, bathrooms, extensions and the everyday repairs in
@@ -333,9 +332,6 @@ const schemas = [
   }
   .hero__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 26px; max-width: 620px; }
   .hero__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 14px;
     margin: 0;
     font-size: 13px;
     font-weight: var(--weight-bold);
@@ -343,7 +339,6 @@ const schemas = [
     text-transform: uppercase;
     color: var(--text-muted-inverse);
   }
-  .hero__eyebrow img { opacity: 0.9; }
   .hero__h1 {
     font-family: var(--font-display);
     font-weight: 400;
