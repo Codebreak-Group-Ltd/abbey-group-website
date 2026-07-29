@@ -138,11 +138,30 @@ for `/reviews/`, where showing all ~20 is the point.
 
 ### Still to do on the division system
 
-- [ ] **Renovations page**: warm timber and stone, plum-anchored premium
-      treatment. No sub-brand lockup exists for Renovations in the client's set,
-      so the assumption is: no division badge, header keeps the Group logo,
-      plum used as the anchor accent. **Confirm with James/Amy whether
-      Renovations formally sits under Abbey Building & Joinery.**
+- [ ] **Renovations page** — positioning RESOLVED (Josh, 29 July 2026).
+
+      Renovations and Building & Joinery are the same team but deliberately
+      separate pages:
+      - **Search**: "joiner Whitby" / "bespoke joinery" are searched separately
+        from "home renovation Whitby". Merging loses the joinery searches.
+      - **Different jobs**: Renovations is whole-room and whole-house projects
+        managed start to finish (kitchens, bathrooms, extensions). Building &
+        Joinery is made-to-measure joinery and structural work. Different
+        customer, different intent.
+      - **Different proof**: named projects (Riviera, Customs House, Argyle Road)
+        sit on Renovations; Building & Joinery shows close-up craft. The two
+        pages cross-link.
+      - Renovations is the **more premium and more expensive** service and is to
+        be treated as such.
+
+      Design decision following from that: Renovations is **plum-anchored** (same
+      family as Building & Joinery, same team) but sits visibly above it —
+      warm timber and stone tones, more editorial whitespace, larger photography.
+      It keeps the **Abbey Group** lockup in the header rather than the Abbey
+      Building & Joinery one, because a page headed "Renovations" carrying the
+      Joinery lockup would confuse, and would subordinate the flagship service to
+      the craft sub-brand. Building & Joinery keeps its own plum lockup.
+      Overturn this if the client wants Renovations badged under Joinery.
 - [ ] Apply the division system to Building & Joinery (plum) and Electrical
       (green) when those pages are built. Watch green: it is a highlight only,
       never text (see `--green-ink`).
