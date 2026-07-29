@@ -93,6 +93,49 @@ swaps** on division pages, **Renovations = warm timber and stone, plum-anchored*
       quoted verbatim including exclamation marks).
 - [x] **Areas panel added to the homepage**, using the Group tri-colour mark.
 
+## Build-review round 4 (side-chat note, 29 July 2026) — done
+
+Both items were still outstanding when the note arrived; neither had been actioned.
+
+- [x] **Adjacent sections sharing a background (bug).** `Reviews.astro` hardcoded
+      `bg="sunken"`, so any sunken section before it butted into an identical
+      band. Added a `bg` prop and re-sequenced the tails. **The note listed two
+      pages; there was a third**: the homepage had `Areas` (white) against
+      "Find us on Skinner Street" (white). Fixed on all three.
+      Standard tail is now: Reviews (white) -> Areas (sunken) -> FAQ (white)
+      -> Enquiry (sunken) -> Final CTA (white).
+      Review cards and FAQ items now invert against their section ground
+      (white cards on a sunken band, sunken cards on a white band) so they keep
+      separating whichever way a page is sequenced.
+- [x] **`tools/audit.mjs` pre-deploy audit** (`npm run audit`, or
+      `npm run verify` for build + audit). Walks `dist/` and fails the build on:
+      adjacent sections sharing a background, title >60, meta description >155,
+      H1 count != 1, missing/relative/unslashed canonical, `<img>` without alt,
+      invalid JSON-LD, and any Google Fonts reference. Warns on missing OG tags
+      or absent schema. **Validated by reintroducing the clash: audit exits 1 and
+      names the offending section pair; exits 0 once fixed.**
+- [x] **Six reviews per trade page**, 3x2 via the auto-column grid, most relevant
+      first. Homecare leads with Angela (home plan value); Plumbing leads with
+      Angela Weldon (came within hours). All complete quotes only, verbatim from
+      the reviews master, exclamation marks kept. Sonia Wood now uses her full
+      text, including the opening clause earlier page copy had trimmed.
+      All three review sets moved into `src/data/site.ts` so verified quotes live
+      in one place.
+- [x] Inline links now follow the division accent (`--text-link` is set in
+      `divisionVars`), so an orange page has no stray blue links. All four
+      division link inks pass AA on both white and sunken grounds.
+
+### Standing rule
+
+**Adjacent sections must never share a background.** Alternate white / sunken,
+with dark bands as punctuation. `npm run audit` enforces it, so it cannot ship
+silently as more pages are built.
+
+**Reviews stay a static grid.** A marquee needs client JS, a pause control and
+reduced-motion handling, works against the zero-JS / TBT-zero target, and hides
+most reviews from scanning and from indexable content. The scroller is reserved
+for `/reviews/`, where showing all ~20 is the point.
+
 ### Still to do on the division system
 
 - [ ] **Renovations page**: warm timber and stone, plum-anchored premium

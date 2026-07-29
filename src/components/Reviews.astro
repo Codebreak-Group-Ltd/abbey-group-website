@@ -12,6 +12,9 @@ interface Props {
   reviews: Review[];
   readAllHref?: string;
   readAllLabel?: string;
+  /* Set explicitly on every page: adjacent sections must never share a
+     background (see tools/audit.mjs, which fails the build if they do). */
+  bg?: 'white' | 'sunken';
 }
 const {
   eyebrow = "Don't take our word for it",
@@ -19,14 +22,18 @@ const {
   reviews,
   readAllHref = routes.reviews,
   readAllLabel = 'Read all our reviews',
+  bg = 'white',
 } = Astro.props;
 
 /* Pick a column count that divides the review count exactly, so the grid never
    leaves a ragged final row. Falls back to 3 for awkward counts (5, 7, 11...). */
 const n = reviews.length;
 const cols = [4, 3, 2].find((c) => n % c === 0) ?? 3;
+
+/* Cards invert against the section ground so they always separate. */
+const cardBg = bg === 'white' ? 'var(--surface-sunken)' : 'var(--white)';
 ---
-<Section bg="sunken">
+<Section bg={bg}>
   <div class="rv__head reveal">
     <div>
       <Eyebrow>{eyebrow}</Eyebrow>
@@ -37,7 +44,7 @@ const cols = [4, 3, 2].find((c) => n % c === 0) ?? 3;
     </a>
   </div>
 
-  <ul class="rv__grid reveal" style={`--rv-cols:${cols}`}>
+  <ul class="rv__grid reveal" style={`--rv-cols:${cols};--rv-card-bg:${cardBg}`}>
     {reviews.map((r) => (
       <li class="rv__card">
         <Stars />
@@ -74,7 +81,7 @@ const cols = [4, 3, 2].find((c) => n % c === 0) ?? 3;
     color: var(--text-link);
     white-space: nowrap;
   }
-  .rv__all:hover { color: var(--blue-800); }
+  .rv__all:hover { text-decoration: underline; text-underline-offset: 3px; }
 
   /* Columns are set from the review count so the last row is never short:
      8 reviews sit 4x2, 6 sit 3x2, 3 sit in a single row. */
@@ -88,7 +95,7 @@ const cols = [4, 3, 2].find((c) => n % c === 0) ?? 3;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    background: var(--white);
+    background: var(--rv-card-bg, var(--white));
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);

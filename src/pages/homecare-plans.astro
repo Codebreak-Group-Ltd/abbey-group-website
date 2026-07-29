@@ -9,8 +9,7 @@ import Reviews from '../components/Reviews.astro';
 import FAQ from '../components/FAQ.astro';
 import Areas from '../components/Areas.astro';
 import EnquiryForm from '../components/EnquiryForm.astro';
-import { nap, booking, routes } from '../data/site.ts';
-import type { Review } from '../data/site.ts';
+import { nap, booking, routes, homecareReviews } from '../data/site.ts';
 import { service, faqPage, breadcrumb } from '../lib/schema.ts';
 
 const title = 'Boiler Cover Plans Whitby | From £9.99/Month | Abbey Group';
@@ -55,12 +54,6 @@ const compareRows: { label: string; sc: boolean | string; scp: boolean | string;
   { label: 'Boiler parts and labour', sc: false, scp: true, uhc: true },
   { label: 'Central heating parts and labour', sc: false, scp: false, uhc: true },
   { label: 'Plumbing parts and labour', sc: false, scp: false, uhc: true },
-];
-
-const homecareReviews: Review[] = [
-  { quote: 'As always reliable and efficient. They came within hours when I had no heating. They have a home plan that covers servicing and one callout per year taking the sting out of a big bill.', name: 'Angela', source: 'Google review' },
-  { quote: 'A year on from Abbeygas fitting my boiler it was due a service. As was the boiler fitting the service was seamless from start to finish. Wonderful company to deal with, brilliant engineer and I am very grateful.', name: 'Dan McDermott', source: 'Google review' },
-  { quote: "Efficient and reliable as always. It's good to know that there is someone you can trust for anything central heating related.", name: 'Diana Mortimer', source: 'Google review' },
 ];
 
 const faqs = [
@@ -267,15 +260,15 @@ const schemas = [
   </Section>
 
   <!-- WHY PEOPLE STAY -->
-  <Reviews eyebrow="Why people stay" heading="Cover from people who pick up the phone" reviews={homecareReviews} />
+  <Reviews eyebrow="Why people stay" heading="Cover from people who pick up the phone" reviews={homecareReviews} bg="white" />
 
   <!-- AREAS -->
-  <Areas heading="Boiler cover across Whitby and the coast" bg="white" division="homecare">
+  <Areas heading="Boiler cover across Whitby and the coast" bg="sunken" division="homecare">
     These are the places our covered customers are most often in:
   </Areas>
 
   <!-- FAQ -->
-  <FAQ heading="Boiler cover questions, answered" items={faqs} bg="sunken" />
+  <FAQ heading="Boiler cover questions, answered" items={faqs} bg="white" />
 
   <!-- ENQUIRY -->
   <EnquiryForm
@@ -284,7 +277,7 @@ const schemas = [
     source="Homecare Plans"
     tags="homecare,boiler-cover"
     submitLabel="Get Covered"
-    bg="white"
+    bg="sunken"
     fields={[
       { name: 'name', label: 'Name', required: true, autocomplete: 'name' },
       { name: 'email', label: 'Email', type: 'email', required: true, autocomplete: 'email' },
@@ -294,7 +287,7 @@ const schemas = [
   />
 
   <!-- FINAL CTA -->
-  <Section bg="sunken" borderTop>
+  <Section bg="white" borderTop>
     <div class="final reveal">
       <h2 class="h2">Get your boiler covered from £9.99 a month</h2>
       <p class="final__body">

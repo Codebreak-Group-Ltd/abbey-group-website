@@ -10,8 +10,7 @@ import FAQ from '../components/FAQ.astro';
 import Areas from '../components/Areas.astro';
 import EnquiryForm from '../components/EnquiryForm.astro';
 import Photo from '../components/Photo.astro';
-import { nap, booking, routes, site } from '../data/site.ts';
-import type { Review } from '../data/site.ts';
+import { nap, booking, routes, site, plumbingReviews } from '../data/site.ts';
 import { service, faqPage, breadcrumb } from '../lib/schema.ts';
 
 const title = 'Plumbing & Heating in Whitby | Gas Safe | Abbey Group';
@@ -27,12 +26,6 @@ const services = [
   { t: 'Landlord gas safety certificates', d: 'The annual check landlords are legally required to hold, sorted on time.' },
   { t: 'LPG heating', d: 'Installation and servicing for off-grid and rural homes, and we work with Calor for LPG supply.' },
   { t: 'Emergency and breakdown repairs', d: 'A cold house or a leak sorted quickly by a local engineer.' },
-];
-
-const phReviews: Review[] = [
-  { quote: 'Excellent response when heating system not working, came within hours and carried out the repair. Engineer was friendly and cost was very reasonable.', name: 'Angela Weldon', source: 'Google review' },
-  { quote: 'We could not have been happier with Abbey Group who came to install a new boiler at very short notice. They were very professional, knowledgeable and were tidy workers too.', name: 'Susan Hodgson', source: 'Facebook' },
-  { quote: "Turned up when they said they would and the work was carried out to a great standard, and when they left couldn't tell they had been. Apart from piping hot radiators.", name: 'Sonia Wood', source: 'Facebook' },
 ];
 
 const faqs = [
@@ -175,15 +168,15 @@ const schemas = [
   </Section>
 
   <!-- WHY PEOPLE CALL -->
-  <Reviews eyebrow="Why people call Abbey" heading="Local, Gas Safe, and tidy when they leave" reviews={phReviews} />
+  <Reviews eyebrow="Why people call Abbey" heading="Local, Gas Safe, and tidy when they leave" reviews={plumbingReviews} bg="white" />
 
   <!-- AREAS -->
-  <Areas heading="Plumbing and heating across Whitby and the coast" bg="white" division="plumbing">
+  <Areas heading="Plumbing and heating across Whitby and the coast" bg="sunken" division="plumbing">
     These are the places we are called out to most often:
   </Areas>
 
   <!-- FAQ -->
-  <FAQ heading="Plumbing and heating questions, answered" items={faqs} bg="sunken" />
+  <FAQ heading="Plumbing and heating questions, answered" items={faqs} bg="white" />
 
   <!-- ENQUIRY -->
   <EnquiryForm
@@ -192,7 +185,7 @@ const schemas = [
     source="Plumbing & Heating"
     tags="plumbing-heating,quote"
     submitLabel="Request a Quote"
-    bg="white"
+    bg="sunken"
     fields={[
       { name: 'name', label: 'Name', required: true, autocomplete: 'name' },
       { name: 'phone', label: 'Phone', type: 'tel', required: true, autocomplete: 'tel' },

@@ -111,5 +111,8 @@ export function divisionVars(key: DivisionKey): string {
     // page picks up the division-tinted ground automatically.
     `--surface-page-dark:${d.surfaceDark}`,
     `--surface-footer:${d.surfaceFooter}`,
+    // Inline links follow the division too, so an orange page has no stray
+    // blue links. Group's ink is blue-800, i.e. the site default, unchanged.
+    `--text-link:${d.ink}`,
   ].join(';');
 }

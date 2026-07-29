@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
-  "description": "Abbey Group — Whitby home services. Astro static site (Codebreak build standard).",
+  "description": "Abbey Group \u2014 Whitby home services. Astro static site (Codebreak build standard).",
   "engines": {
     "node": ">=20"
   },
@@ -12,7 +12,9 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "audit": "node tools/audit.mjs",
+    "verify": "astro build && node tools/audit.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",

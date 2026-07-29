@@ -139,3 +139,62 @@ export const homeReviews: Review[] = [
     name: 'Karen', source: 'Facebook',
   },
 ];
+
+/* Homecare Plans — plan value first, then servicing and trust.
+   Six reviews so the grid runs an even 3x2. */
+export const homecareReviews: Review[] = [
+  {
+    quote: 'As always reliable and efficient. They came within hours when I had no heating. They have a home plan that covers servicing and one callout per year taking the sting out of a big bill.',
+    name: 'Angela', source: 'Google review',
+  },
+  {
+    quote: 'A year on from Abbeygas fitting my boiler it was due a service. As was the boiler fitting the service was seamless from start to finish. Wonderful company to deal with, brilliant engineer and I am very grateful.',
+    name: 'Dan McDermott', source: 'Google review',
+  },
+  {
+    quote: "Efficient and reliable as always. It's good to know that there is someone you can trust for anything central heating related.",
+    name: 'Diana Mortimer', source: 'Google review',
+  },
+  {
+    quote: 'Excellent response when heating system not working, came within hours and carried out the repair. Engineer was friendly and cost was very reasonable.',
+    name: 'Angela Weldon', source: 'Google review',
+  },
+  {
+    quote: 'Timely, informative, helpful and a lovely fella. All business should be run like this.',
+    name: 'Ann Mitchell', source: 'Google review',
+  },
+  {
+    quote: 'Very efficient and reliable service. Would certainly use again.',
+    name: 'Karen Hartas', source: 'Google review',
+  },
+];
+
+/* Plumbing & Heating — speed of response first, then installs and tidiness. */
+export const plumbingReviews: Review[] = [
+  {
+    quote: 'Excellent response when heating system not working, came within hours and carried out the repair. Engineer was friendly and cost was very reasonable.',
+    name: 'Angela Weldon', source: 'Google review',
+  },
+  {
+    quote: 'We could not have been happier with Abbey Group who came to install a new boiler at very short notice. They were very professional, knowledgeable and were tidy workers too.',
+    name: 'Susan Hodgson', source: 'Facebook',
+  },
+  {
+    // Full verbatim text from the reviews master, including the opening clause
+    // that earlier page copy had trimmed.
+    quote: "Did some work for us after our upstairs radiators wouldn't work. Turned up when they said they would and the work was carried out to a great standard, and when they left couldn't tell they had been. Apart from piping hot radiators.",
+    name: 'Sonia Wood', source: 'Facebook',
+  },
+  {
+    quote: "Fantastic service, easy to communicate with, very helpful. Had a boiler fitted and couldn't have asked for a better smoother service, lovely fella who actually fitted the boiler and great service from start to finish.",
+    name: 'Sally McDermott', source: 'Facebook',
+  },
+  {
+    quote: 'Excellent service when we had a broken boiler. Thank you.',
+    name: 'Charlotte Elizabeth', source: 'Facebook',
+  },
+  {
+    quote: 'James not only is a great plumber but a really nice guy.',
+    name: 'Beverley Sabine', source: 'Google review',
+  },
+];

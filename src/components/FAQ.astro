@@ -13,6 +13,9 @@ interface Props {
   bg?: 'white' | 'sunken';
 }
 const { eyebrow = 'Questions people ask', heading = 'Good to know', items, bg = 'white' } = Astro.props;
+
+/* Items invert against the section ground, as the review cards do. */
+const itemBg = bg === 'white' ? 'var(--surface-sunken)' : 'var(--white)';
 ---
 <Section bg={bg}>
   <div class="faq">
@@ -20,7 +23,7 @@ const { eyebrow = 'Questions people ask', heading = 'Good to know', items, bg = 
       <Eyebrow>{eyebrow}</Eyebrow>
       <h2 class="faq__title">{heading}</h2>
     </div>
-    <div class="faq__list reveal">
+    <div class="faq__list reveal" style={`--faq-item-bg:${itemBg}`}>
       {items.map((it) => (
         <details class="faq__item">
           <summary class="faq__q">
@@ -47,7 +50,7 @@ const { eyebrow = 'Questions people ask', heading = 'Good to know', items, bg = 
   .faq__item {
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    background: var(--white);
+    background: var(--faq-item-bg, var(--white));
     overflow: hidden;
   }
   .faq__q {
