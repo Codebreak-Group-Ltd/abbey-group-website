@@ -112,12 +112,10 @@ swaps** on division pages, **Renovations = warm timber and stone, plum-anchored*
       true vector (AI/EPS/SVG) or high-res transparent PNG lockups, then swap in.
       A 3375px raster of the Electrical lockup can be extracted from the PDF if
       needed for that page.
-- [ ] **Areas section design reference**: the image Josh attached did not reach
-      the build, so the current treatment is designed on judgment. Re-share to
-      align.
-- [ ] **Copy vs plan-data discrepancy**: page copy says Service Care includes
-      "one free call-out"; the brochure (`02 PLAN DATA`) says "1 hour free call
-      out". Confirm which is correct, it is a material difference.
+- [x] **Areas section design reference** received and applied (round 2/3).
+- [x] **Call-out wording resolved (Josh, 29 July 2026):** "one free call-out" and
+      the brochure's "1 hour free call out" mean the same thing. Site copy stays
+      **"one free call-out"**; no need to state the duration.
 - [ ] More per-trade imagery as it arrives (Renovations has the full Riviera set
       ready; Electrical still has no photography at all).
 
