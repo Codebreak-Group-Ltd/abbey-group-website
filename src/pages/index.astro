@@ -110,17 +110,22 @@ const schemas = [
         </p>
       </div>
 
-      <div class="hero__media">
-        <Photo
-          src="/images/team-fleet-whitby.webp"
-          alt="The Abbey Group team with their branded fleet in front of Whitby Abbey"
-          ratio="3 / 2"
-          radius="xl"
-          eager
-          width={1200}
-          height={800}
-        />
-      </div>
+    </div>
+
+    <!-- The van is the hero visual and drives off to the right as you scroll.
+         It faces right, as supplied, so it exits right: mirroring the photo
+         would reverse the ABBEY GROUP wordmark on the side. The hero clips it,
+         so it can never cause horizontal overflow. -->
+    <div class="hero__van" data-van>
+      <img
+        src="/images/van-side.webp"
+        alt="An Abbey Group branded van"
+        width="1200"
+        height="424"
+        loading="eager"
+        fetchpriority="high"
+        decoding="auto"
+      />
     </div>
   </section>
 
@@ -298,6 +303,9 @@ const schemas = [
     overflow: hidden;
     color: var(--white);
     padding: 170px var(--container-padding) 96px;
+    min-height: min(88vh, 820px);
+    display: flex;
+    align-items: center;
     background:
       radial-gradient(1100px 700px at 82% 20%, color-mix(in oklch, var(--blue-800) 55%, transparent) 0%, transparent 60%),
       radial-gradient(800px 600px at 8% 90%, color-mix(in oklch, var(--orange-900) 50%, transparent) 0%, transparent 60%),
@@ -306,11 +314,12 @@ const schemas = [
   }
   .hero__crescent {
     position: absolute;
-    right: -80px;
-    bottom: -140px;
-    width: 520px;
+    right: -70px;
+    bottom: -120px;
+    z-index: 0;                 /* the van layers over it */
+    width: 460px;
     aspect-ratio: 600 / 630;
-    opacity: 0.5;
+    opacity: 0.3;
     pointer-events: none;
     filter: drop-shadow(0 30px 70px rgba(0, 0, 0, 0.5));
   }
@@ -319,13 +328,10 @@ const schemas = [
 
   .hero__grid {
     position: relative;
-    display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 64px;
-    align-items: center;
+    z-index: 2;
     max-width: calc(var(--container-max) + 2 * var(--container-padding));
   }
-  .hero__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 26px; }
+  .hero__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 26px; max-width: 620px; }
   .hero__eyebrow {
     display: inline-flex;
     align-items: center;
@@ -354,6 +360,20 @@ const schemas = [
     max-width: 520px;
   }
   .hero__cta { display: flex; flex-wrap: wrap; gap: 14px; }
+
+  /* --- Van --- */
+  .hero__van {
+    position: absolute;
+    right: -70px;
+    bottom: 6%;
+    z-index: 1;
+    width: min(880px, 62vw);
+    pointer-events: none;
+    /* JS sets --van-x as you scroll; transform only, so it stays cheap. */
+    transform: translate3d(var(--van-x, 0px), 0, 0);
+    will-change: transform;
+  }
+  .hero__van img { width: 100%; height: auto; display: block; }
   .hero__reassure { font-size: var(--text-sm); color: var(--text-muted-inverse); }
   .hero__reassure a { color: var(--blue-300); font-weight: var(--weight-semibold); }
   .hero__reassure a:hover { color: var(--blue-200); }
@@ -558,8 +578,14 @@ const schemas = [
 
   /* ---------- responsive ---------- */
   @media (max-width: 1024px) {
-    .hero__grid { grid-template-columns: 1fr; gap: 40px; }
-    .hero__media { max-width: 560px; }
+    .hero { min-height: 0; display: block; }
+    .hero__grid { padding-bottom: 0; }
+    .hero__van {
+      position: relative;
+      right: auto; bottom: auto;
+      width: min(720px, 108vw);
+      margin: 32px -6vw 0 auto;
+    }
     .way { grid-template-columns: 1fr; gap: 40px; }
     .find { grid-template-columns: 1fr; gap: 40px; }
     .dv__grid { grid-template-columns: repeat(2, 1fr); }
@@ -570,6 +596,7 @@ const schemas = [
     .hero { padding-top: 132px; }
     .hero__cta { width: 100%; }
     .hero__cta :global(.btn) { flex: 1 1 auto; }
+    .hero__van { width: 124vw; margin: 24px -14vw 0 auto; }
     .dv__grid { grid-template-columns: 1fr; }
     .way__grid { grid-template-columns: 1fr; }
     .trust { grid-template-columns: 1fr; }
@@ -582,6 +609,28 @@ const schemas = [
   /* Hero crescent parallax — pointer offset written straight to transform via
      rAF (no re-render). Disabled under reduced motion. Idle drift is CSS. */
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Van drives off to the right as the hero scrolls away.
+     Scroll progress across the hero maps to a translateX, written to a custom
+     property so the compositor does the work. Skipped under reduced motion,
+     where the van simply sits still. */
+  const van = document.querySelector<HTMLElement>('[data-van]');
+  const heroEl = document.querySelector<HTMLElement>('.hero');
+  if (!prefersReduced && van && heroEl) {
+    let vTicking = false;
+    const drive = () => {
+      const heroBottom = heroEl.offsetTop + heroEl.offsetHeight;
+      const progress = Math.min(Math.max(window.scrollY / Math.max(heroBottom, 1), 0), 1);
+      // Far enough to clear the viewport; the hero's overflow clips it.
+      van.style.setProperty('--van-x', `${progress * (van.offsetWidth + window.innerWidth * 0.2)}px`);
+      vTicking = false;
+    };
+    drive();
+    window.addEventListener('scroll', () => {
+      if (!vTicking) { window.requestAnimationFrame(drive); vTicking = true; }
+    }, { passive: true });
+    window.addEventListener('resize', drive);
+  }
   const hero = document.querySelector<HTMLElement>('.hero');
   const wrap = document.querySelector<HTMLElement>('[data-crescent]');
   if (!prefersReduced && hero && wrap) {

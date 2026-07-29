@@ -125,6 +125,38 @@ Both items were still outstanding when the note arrived; neither had been action
       `divisionVars`), so an orange page has no stray blue links. All four
       division link inks pass AA on both white and sunken grounds.
 
+## Build-review round 5 (Josh, 29 July 2026) — done
+
+- [x] **Stray "banner" strips above and below bands (bug).** `Section` applied its
+      own 96px vertical padding *and* the inner bleed band added its own, so a
+      flat strip of the section colour showed above and below every gradient
+      band. Bleed sections now get `padding-block: 0` (`section--bleed`), since
+      the band owns its padding. Fixed everywhere at once, desktop and mobile.
+- [x] Hero trust row is an even 2x2 grid, not a wrapping flex row that orphaned
+      "Rated 4.6 on Google" onto its own line.
+- [x] Header phone number can never wrap (`white-space: nowrap`), and below 700px
+      it moves into the menu panel entirely.
+- [x] **Mobile header is no longer sticky** (`position: absolute`), so it scrolls
+      away and gives content the full viewport. Replaced by
+      `ScrollTop.astro`: a mobile-only back-to-top button, bottom right, in the
+      page's division accent with a navy glyph (the one glyph colour legible on
+      all four accents), reduced-motion aware.
+- [x] **Mobile menu panel revised**: full width between the gutters, 16.5px links
+      with ~53px touch targets, and the phone number + Get a Quote inside the
+      panel, as `_Global/Header Footer` specifies for mobile.
+- [x] **Footer is two columns on mobile** instead of one long stack.
+- [x] **Homepage hero is now the branded van**, big, bottom right, bleeding past
+      the edge, driving off to the right as the hero scrolls away (scroll
+      progress -> translateX via a custom property, transform only,
+      rAF-throttled, disabled under reduced motion, clipped by the hero so it can
+      never cause horizontal overflow). The supplied van photo already has a
+      transparent background, so it drops straight onto the navy.
+      **It faces right, so it exits right**: mirroring would reverse the ABBEY
+      GROUP wordmark on the side. A left-facing photo would be needed to drive
+      off to the left.
+      The team-and-fleet shot is freed up for the About page, which is where it
+      belongs (`07 About/Images/about-team-group-with-vans.jpg`).
+
 ### Cross-sell band note (learned the hard way)
 
 The Homecare cross-sell on Plumbing & Heating **stays in Plumbing's own blue**.

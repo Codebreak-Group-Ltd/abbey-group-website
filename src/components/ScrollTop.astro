@@ -1,0 +1,79 @@
+---
+import Icon from './Icon.astro';
+
+/* Back-to-top button, mobile only.
+
+   The header is deliberately not sticky on mobile (it scrolls away to give the
+   content the full viewport), so this replaces the "tap the logo" route back to
+   the top. Takes the page's division accent, with a navy glyph: the one glyph
+   colour legible on all four accents, including Electrical green. */
+---
+<button class="stt" type="button" aria-label="Back to top" data-scroll-top hidden>
+  <Icon name="arrow-up" size={20} strokeWidth={2.5} />
+</button>
+
+<style>
+  .stt {
+    position: fixed;
+    right: clamp(16px, 4vw, 24px);
+    bottom: clamp(16px, 4vw, 24px);
+    z-index: var(--z-banner);
+    display: none;              /* mobile only; shown in the query below */
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: var(--radius-signature);
+    background: var(--page-accent, var(--blue-500));
+    color: var(--ink-500);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      transform var(--duration-base) var(--ease-out);
+  }
+  .stt[hidden] { display: none; }
+
+  @media (max-width: 700px) {
+    .stt:not([hidden]) { display: inline-flex; }
+    .stt[data-visible] { opacity: 1; transform: none; }
+  }
+
+  .stt:active { transform: scale(0.94); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stt { transition: none; }
+    .stt:active { transform: none; }
+  }
+</style>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('[data-scroll-top]');
+  if (btn) {
+    /* Only wire it up on mobile widths, where the header does not stick. */
+    const mq = window.matchMedia('(max-width: 700px)');
+    const THRESHOLD = 700;
+    let ticking = false;
+
+    const update = () => {
+      const show = mq.matches && window.scrollY > THRESHOLD;
+      btn.hidden = !mq.matches;
+      if (show) btn.setAttribute('data-visible', '');
+      else btn.removeAttribute('data-visible');
+      ticking = false;
+    };
+
+    update();
+    window.addEventListener('scroll', () => {
+      if (!ticking) { window.requestAnimationFrame(update); ticking = true; }
+    }, { passive: true });
+    mq.addEventListener('change', update);
+
+    btn.addEventListener('click', () => {
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+    });
+  }
+</script>

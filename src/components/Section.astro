@@ -30,7 +30,10 @@ const {
 const classes = [
   'section',
   `section--${bg}`,
-  `section--${pad}`,
+  // A bleed band owns its own vertical padding, so the section must not add
+  // its own on top: doing so leaves a flat strip of the section colour above
+  // and below the band's gradient, which reads as a stray banner.
+  bleed ? 'section--bleed' : `section--${pad}`,
   borderTop ? 'section--bt' : '',
   borderBottom ? 'section--bb' : '',
   className,
@@ -44,6 +47,7 @@ const classes = [
   .section { position: relative; }
 
   .section--default { padding-block: var(--space-24); }   /* 96 */
+  .section--bleed { padding-block: 0; }
   .section--tight   { padding-block: var(--space-6); }    /* 26-ish (trust strip) */
 
   .section--white  { background: var(--surface-page); color: var(--text-body); }

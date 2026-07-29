@@ -136,10 +136,14 @@ const showBadge = badge && division !== 'group';
   }
   .phero__lead { font-size: var(--text-md); line-height: var(--leading-relaxed); color: var(--text-body-inverse); max-width: 600px; }
   .phero__cta { display: flex; flex-wrap: wrap; gap: 14px; }
+  /* An even 2x2 grid, not a wrapping flex row: the hero copy column is too
+     narrow for four of these on one line, and a flex row orphaned the last
+     item ("Rated 4.6 on Google") on a line of its own. */
   .phero__trust {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 22px;
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    justify-content: start;
+    gap: 12px 28px;
     margin-top: 6px;
   }
   .phero__trust li { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: var(--weight-semibold); color: var(--text-body-inverse); }
@@ -155,5 +159,6 @@ const showBadge = badge && division !== 'group';
     .phero__cta :global(.btn) { flex: 1 1 auto; }
     .phero__mark { width: 300px; right: -110px; }
     .phero__media { max-width: 100%; }
+    .phero__trust { grid-template-columns: 1fr; gap: 10px; }
   }
 </style>

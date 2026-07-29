@@ -69,6 +69,12 @@ const isActive = (href: string) =>
         </li>
       ))}
     </ul>
+    <div class="hdr__menu-foot">
+      <a class="hdr__menu-phone tnum" href={`tel:${nap.phone.tel}`}>
+        <Icon name="phone" size={16} /> {nap.phone.label}
+      </a>
+      <Button href={booking.quote} external size="md" block>Get a Quote</Button>
+    </div>
   </nav>
 </header>
 
@@ -110,6 +116,7 @@ const isActive = (href: string) =>
     display: inline-flex;
     align-items: center;
     gap: 7px;
+    white-space: nowrap;   /* never break the number across two lines */
     font-size: var(--text-sm);
     font-weight: var(--weight-semibold);
     color: var(--white);
@@ -173,9 +180,63 @@ const isActive = (href: string) =>
     to   { opacity: 1; transform: none; }
   }
 
-  /* Hide the phone label on very small screens (keeps header calm). */
-  @media (max-width: 560px) {
+  /* The menu's phone + CTA block is for the mobile panel only. */
+  .hdr__menu-foot { display: none; }
+
+  /* Hide the header phone link on small screens: the number lives in the menu
+     panel instead, so it can never be squeezed onto two lines. */
+  @media (max-width: 700px) {
     .hdr__phone { display: none; }
+
+    /* Not sticky on mobile. It sits over the top of the hero and scrolls away,
+       giving content the full viewport; ScrollTop.astro covers getting back up. */
+    .hdr {
+      position: absolute;
+      transition: none;
+    }
+    .hdr[data-scrolled] {
+      padding-block: 18px;
+      background: transparent;
+      backdrop-filter: none;
+      border-bottom-color: transparent;
+    }
+    .hdr[data-scrolled] .hdr__brand :global(.lu) { --lu-size: 18px; --lu-mark: 42px; }
+
+    /* Full-width panel with comfortable targets, rather than a narrow dropdown
+       that was fiddly to read and tap. */
+    .hdr__menu {
+      left: var(--container-padding);
+      right: var(--container-padding);
+      min-width: 0;
+      padding: 12px;
+      max-height: calc(100vh - 110px);
+      overflow-y: auto;
+    }
+    .hdr__menu ul { gap: 2px; }
+    .hdr__menu-link {
+      font-size: 16.5px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+    }
+    .hdr__menu-foot {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 12px;
+      padding: 14px 8px 6px;
+      border-top: 1px solid color-mix(in oklch, var(--white) 14%, transparent);
+    }
+    .hdr__menu-phone {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      white-space: nowrap;
+      font-size: 16px;
+      font-weight: var(--weight-bold);
+      color: var(--white);
+    }
+    .hdr__menu-phone :global(svg) { color: var(--page-accent, var(--blue-300)); }
   }
 </style>
 
