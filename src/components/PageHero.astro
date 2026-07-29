@@ -74,9 +74,10 @@ const showBadge = badge && division !== 'group';
     color: var(--white);
     padding: 150px var(--container-padding) 84px;
     background:
-      radial-gradient(1000px 640px at 80% 15%, color-mix(in oklch, var(--glow) 55%, transparent) 0%, transparent 60%),
-      radial-gradient(720px 520px at 10% 95%, color-mix(in oklch, var(--ink-700) 60%, transparent) 0%, transparent 60%),
-      var(--ink-500);
+      radial-gradient(1000px 640px at 80% 15%, color-mix(in oklch, var(--glow) 62%, transparent) 0%, transparent 62%),
+      radial-gradient(760px 540px at 6% 96%, color-mix(in oklch, var(--page-accent, var(--blue-500)) 15%, transparent) 0%, transparent 60%),
+      /* Division-tinted ground rather than flat navy */
+      var(--surface-page-dark, var(--ink-500));
   }
   /* Thin division rule along the top edge of the page */
   .phero::after {

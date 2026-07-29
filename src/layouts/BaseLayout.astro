@@ -119,7 +119,7 @@ const allSchemas = [orgSchema, websiteSchema, ...schemas];
 
   <body style={divisionVars(division)} data-division={division}>
     <a class="skip-link" href="#main">Skip to content</a>
-    <Header />
+    <Header division={division} />
     <main id="main">
       <slot />
     </main>

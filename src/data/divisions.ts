@@ -27,6 +27,12 @@ export interface Division {
   glow: string;
   /** Single-colour crescent mark path. */
   mark: string;
+  /** Navy tinted toward the division hue: the ground for this page's dark
+      sections, so a trade page reads as its own colour at a glance while
+      staying in the navy family. All four keep white text above 9:1. */
+  surfaceDark: string;
+  /** Does this section have its own lockup in the client's brand set? */
+  hasLockup: boolean;
 }
 
 export const divisions: Record<DivisionKey, Division> = {
@@ -37,6 +43,8 @@ export const divisions: Record<DivisionKey, Division> = {
     soft: 'var(--blue-50)',
     glow: 'var(--blue-800)',
     mark: '/brand/crescent/crescent-mark.svg',
+    surfaceDark: 'var(--ink-500)',
+    hasLockup: false,
   },
   plumbing: {
     label: 'Plumbing & Heating',
@@ -45,6 +53,8 @@ export const divisions: Record<DivisionKey, Division> = {
     soft: 'var(--blue-50)',
     glow: 'var(--blue-800)',
     mark: '/brand/crescent/mark-plumbing.svg',
+    surfaceDark: '#133d60',
+    hasLockup: true,
   },
   homecare: {
     label: 'Home Care',
@@ -53,6 +63,8 @@ export const divisions: Record<DivisionKey, Division> = {
     soft: 'var(--orange-50)',
     glow: 'var(--orange-900)',
     mark: '/brand/crescent/mark-homecare.svg',
+    surfaceDark: '#4c2238',
+    hasLockup: true,
   },
   joinery: {
     label: 'Building & Joinery',
@@ -61,6 +73,8 @@ export const divisions: Record<DivisionKey, Division> = {
     soft: 'var(--plum-50)',
     glow: 'var(--plum-900)',
     mark: '/brand/crescent/mark-joinery.svg',
+    surfaceDark: '#342650',
+    hasLockup: true,
   },
   electrical: {
     // Green is a highlight, never a text colour: even --green-950 fails AA on
@@ -72,6 +86,8 @@ export const divisions: Record<DivisionKey, Division> = {
     soft: 'var(--green-100)',
     glow: 'var(--green-950)',
     mark: '/brand/crescent/mark-electrical.svg',
+    surfaceDark: '#36483c',
+    hasLockup: true,
   },
 };
 
@@ -83,5 +99,8 @@ export function divisionVars(key: DivisionKey): string {
     `--page-accent-ink:${d.ink}`,
     `--page-accent-soft:${d.soft}`,
     `--page-accent-glow:${d.glow}`,
+    // Overrides the global dark surface so every `Section bg="dark"` on this
+    // page picks up the division-tinted ground automatically.
+    `--surface-page-dark:${d.surfaceDark}`,
   ].join(';');
 }

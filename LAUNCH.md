@@ -45,6 +45,41 @@ Living tick-list of what is done and what is still open. Update as items land.
 - [x] Added `--green-ink` (#4a6529). Electrical green is BANNED as text: even
       `--green-950` is only 4.31:1 on white. All four division inks now pass AA.
 
+## Build-review round 2 (Josh, 29 July 2026) — design direction agreed
+
+Direction confirmed: **tinted navy + heavy accent** per division, **header lockup
+swaps** on division pages, **Renovations = warm timber and stone, plum-anchored**,
+**area list stays at the 11 confirmed places**.
+
+- [x] Areas section rebuilt as an inverted panel (navy ground, display-serif
+      heading, 4-column ticked grid, division tick discs) per Josh's reference.
+      Uses Abbey's signature corner geometry at panel scale, not a copy.
+- [x] `surfaceDark` added per division: dark sections now sit on navy tinted
+      toward the division hue, so each trade page reads as its own colour.
+      Plumbing `#133d60`, Homecare `#4c2238`, Joinery `#342650`,
+      Electrical `#36483c`. All keep white text above 9:1.
+      Set via `--surface-page-dark` in `divisionVars()`, so every
+      `Section bg="dark"` on the page follows automatically.
+- [x] Header swaps to the division lockup on division pages (crescent + stacked
+      ABBEY / division), and the scrolled bar takes the page's own dark ground
+      with an accent hairline. Group logo returns on Home/About/Contact.
+- [x] Primary CTA gained a light hairline ring: invisible on white, but keeps the
+      orange button separate on dark and warm grounds (Homecare, where the
+      division colour and the CTA colour are the same family).
+- [x] All inner-section watermarks now use the division mark, not the tri-colour
+      Group mark.
+
+### Still to do on the division system
+
+- [ ] **Renovations page**: warm timber and stone, plum-anchored premium
+      treatment. No sub-brand lockup exists for Renovations in the client's set,
+      so the assumption is: no division badge, header keeps the Group logo,
+      plum used as the anchor accent. **Confirm with James/Amy whether
+      Renovations formally sits under Abbey Building & Joinery.**
+- [ ] Apply the division system to Building & Joinery (plum) and Electrical
+      (green) when those pages are built. Watch green: it is a highlight only,
+      never text (see `--green-ink`).
+
 ### Still open from that review
 
 - [ ] **Division logo lockups**: supplied art is four ~320px screenshots plus a

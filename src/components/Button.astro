@@ -74,12 +74,17 @@ const extraAttrs = href
 
   .btn--block { display: flex; width: 100%; }
 
-  /* primary — solid orange, the site CTA */
+  /* primary — solid orange, the site CTA.
+     The light hairline ring is invisible on white but separates the button
+     from dark or warm-toned grounds (e.g. the Homecare ward, where the
+     division colour and the CTA colour are the same family). */
   .btn--primary {
     background: var(--cta);
     color: var(--cta-fg);
     border-color: var(--cta);
-    box-shadow: var(--shadow-sm);
+    box-shadow:
+      0 0 0 1.5px color-mix(in oklch, var(--white) 26%, transparent),
+      var(--shadow-md);
   }
   .btn--primary:hover { filter: brightness(1.06); }
 
