@@ -12,6 +12,7 @@ import EnquiryForm from '../components/EnquiryForm.astro';
 import Photo from '../components/Photo.astro';
 import { nap, booking, routes, site, plumbingReviews } from '../data/site.ts';
 import { service, faqPage, breadcrumb } from '../lib/schema.ts';
+import { divisionVars, divisions } from '../data/divisions.ts';
 
 const title = 'Plumbing & Heating in Whitby | Gas Safe | Abbey Group';
 const description =
@@ -152,18 +153,50 @@ const schemas = [
   </Section>
 
   <!-- PREFER COVER -->
-  <Section bg="sunken">
-    <div class="cover reveal">
-      <div>
-        <Eyebrow>Prefer ongoing cover?</Eyebrow>
-        <h2 class="cover__h2">Roll it into one monthly price from £9.99</h2>
-        <p class="cover__body">
-          If you would rather not pay per call-out, our Homecare Plans roll your annual boiler
-          service, gas safety certificate and priority response into one monthly price. Same
-          local team, spread across the year.
-        </p>
+  <Section bg="dark" bleed>
+    <!-- A deliberate Home Care moment inside the Plumbing page: the band takes
+         Home Care's whole colourway (warm ground, orange glow and crescent) so
+         the cross-sell reads as a different product rather than another
+         Plumbing section. This is the page's best save-money story, so it gets
+         feature-band treatment, not a footnote. -->
+    <div class="xsell" style={divisionVars('homecare')}>
+      <img class="xsell__mark" src={divisions.homecare.mark} alt="" aria-hidden="true" width="380" height="399" />
+      <div class="container xsell__inner reveal">
+        <div class="xsell__copy">
+          <Eyebrow tone="inverse">Prefer ongoing cover?</Eyebrow>
+          <h2 class="xsell__h2">Or stop paying per visit altogether</h2>
+          <p class="xsell__lead">
+            A one-off boiler service is £96. Homecare Plans roll that annual service, your
+            gas safety certificate and priority response into one monthly price from £9.99,
+            looked after by the same local team. Start on the visit you were booking anyway
+            and today's service is half price.
+          </p>
+          <ul class="xsell__stack">
+            {['Your annual service and gas safety certificate, booked in for you',
+              'Priority response when something goes wrong',
+              'One free call-out',
+              '5% off any other work you have done'].map((t) => (
+              <li><Icon name="check" size={15} /><span>{t}</span></li>
+            ))}
+          </ul>
+          <Button href={routes.homecare} size="lg">See the Homecare Plans</Button>
+        </div>
+
+        <div class="xsell__card">
+          <div class="xsell__row xsell__row--was">
+            <span class="xsell__label">Service on its own</span>
+            <span class="xsell__num tnum">£96</span>
+          </div>
+          <div class="xsell__row xsell__row--now">
+            <span class="xsell__label">Service today with Service Care</span>
+            <span class="xsell__num tnum">£48</span>
+            <span class="xsell__then">then £9.99 a month</span>
+          </div>
+          <p class="xsell__note">
+            Cancel at any time, with no cancellation fee.
+          </p>
+        </div>
       </div>
-      <Button href={routes.homecare} variant="outline" size="lg">See Homecare Plans</Button>
     </div>
   </Section>
 
@@ -254,11 +287,77 @@ const schemas = [
   .lgs__qa h3 { font-family: var(--font-body); font-size: var(--text-md); font-weight: var(--weight-semibold); color: var(--text-heading); margin-bottom: 8px; }
   .lgs__qa p { font-size: 14.5px; line-height: var(--leading-relaxed); color: var(--text-body); }
 
-  /* PREFER COVER */
-  .cover { display: flex; align-items: center; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
-  .cover__h2 { font-family: var(--font-display); font-size: clamp(26px, 2.6vw, 38px); color: var(--text-heading); margin-top: 10px; }
-  .cover__body { margin-top: 12px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); max-width: 620px; }
-  .cover :global(.btn) { flex: none; }
+  /* CROSS-SELL — Home Care feature band inside the Plumbing page.
+     The inner div paints its own opaque ground so it overrides the section's
+     blue-navy base with Home Care's warm one. */
+  .xsell {
+    position: relative;
+    overflow: hidden;
+    padding-block: 84px;
+    background:
+      radial-gradient(900px 600px at 84% 22%, color-mix(in oklch, var(--page-accent-glow) 58%, transparent) 0%, transparent 65%),
+      var(--surface-page-dark);
+  }
+  .xsell__mark {
+    position: absolute; left: -110px; top: 50%; transform: translateY(-50%);
+    width: 380px; opacity: 0.12; pointer-events: none;
+  }
+  .xsell__inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .xsell__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+  .xsell__h2 {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 3vw, 44px);
+    color: var(--white);
+    text-wrap: balance;
+  }
+  .xsell__lead {
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body-inverse);
+    max-width: 560px;
+  }
+  .xsell__stack { display: flex; flex-direction: column; gap: 10px; }
+  .xsell__stack li {
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: 15px; line-height: var(--leading-snug);
+    color: var(--text-body-inverse);
+  }
+  .xsell__stack :global(svg) { color: var(--orange-300); flex: none; margin-top: 3px; }
+
+  .xsell__card {
+    background: color-mix(in oklch, var(--white) 7%, transparent);
+    border: 1px solid color-mix(in oklch, var(--orange-400) 45%, transparent);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    padding: 28px;
+    backdrop-filter: blur(6px);
+  }
+  .xsell__row { display: flex; flex-direction: column; gap: 2px; }
+  .xsell__row--was { padding-bottom: 16px; border-bottom: 1px solid var(--border-inverse); }
+  .xsell__row--now { padding-top: 18px; }
+  .xsell__label {
+    font-size: 12.5px; font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wide); text-transform: uppercase;
+    color: var(--text-muted-inverse);
+  }
+  .xsell__num { font-size: 52px; font-weight: var(--weight-bold); line-height: 1.05; color: var(--orange-300); }
+  .xsell__row--was .xsell__num {
+    font-size: 30px; color: var(--text-muted-inverse);
+    text-decoration: line-through;
+    text-decoration-color: color-mix(in oklch, var(--white) 45%, transparent);
+  }
+  .xsell__then { font-size: var(--text-sm); color: var(--text-body-inverse); margin-top: 2px; }
+  .xsell__note {
+    margin-top: 20px; padding-top: 18px;
+    border-top: 1px solid var(--border-inverse);
+    font-size: var(--text-sm); color: var(--text-muted-inverse);
+  }
 
   /* FORM SIDE SLOT */
   .ph-formside { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; margin-top: 8px; }
@@ -266,6 +365,7 @@ const schemas = [
   .ph-formside__links a { color: var(--text-link); font-weight: var(--weight-semibold); }
 
   @media (max-width: 1024px) {
+    .xsell__inner { grid-template-columns: 1fr; gap: 34px; }
     .svc__body { grid-template-columns: 1fr; gap: 36px; }
     .svc__aside { max-width: 520px; }
     .emg__inner { grid-template-columns: 1fr; gap: 36px; }
@@ -275,5 +375,8 @@ const schemas = [
   }
   @media (max-width: 640px) {
     .svc__grid { grid-template-columns: 1fr; }
+    .xsell { padding-block: 60px; }
+    .xsell__card { padding: 22px; }
+    .xsell__num { font-size: 44px; }
   }
 </style>
