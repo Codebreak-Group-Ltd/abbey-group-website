@@ -27,6 +27,14 @@ export const nap = {
   email: 'office@abbeygroup.uk',
   // Mon–Fri office hours; phone lines take messages 24/7 (not a callout guarantee).
   hours: 'Monday to Friday, 9am to 5pm',
+  /* Latitude/longitude of the Skinner Street office. LEFT NULL DELIBERATELY:
+     coordinates are the strongest single location signal an AI assistant reads,
+     and a guessed pin would place Abbey on the wrong spot in an answer, which is
+     worse than none. Fill from the Google Business Profile pin (open the GBP,
+     "Edit profile" → the map marker gives the exact lat/lng) and the
+     GeoCoordinates block in schema.ts appears automatically. Outstanding §C.
+     Shape when set: `geo: { lat: 54.4863, lng: -0.6133 }`. */
+  geo: null as { lat: number; lng: number } | null,
 } as const;
 
 export const ratings = {
@@ -69,29 +77,41 @@ export const routes = {
   reviews: '/reviews/',
   privacy: '/privacy/',
   terms: '/terms/',
+  /* The Home Care Plan terms are a separate binding consumer contract, not
+     website terms, so they get their own page rather than being buried inside
+     /terms/. */
+  homecareTerms: '/homecare-plan-terms/',
+  cookies: '/cookies/',
   credits: '/credits/',
 } as const;
 
-// ---- Primary navigation ----
+/* ---- Primary navigation ----
+   Order set by Josh, 30 July 2026: Renovations moves to the FOOT of the service
+   list rather than the middle. It is the most expensive service and the least
+   frequently searched, and sitting between Plumbing and Joinery made it read as
+   one more trade in a row. Last in the list, after the everyday work, it reads
+   as the top of the range. The trades run in the order people arrive on them:
+   cover, then heating, then electrical, then building, then renovation. */
 export const nav = [
   { label: 'Home', href: routes.home },
   { label: 'Homecare Plans', href: routes.homecare },
   { label: 'Plumbing & Heating', href: routes.plumbing },
-  { label: 'Renovations', href: routes.renovations },
-  { label: 'Building & Joinery', href: routes.joinery },
   { label: 'Electrical', href: routes.electrical },
+  { label: 'Building & Joinery', href: routes.joinery },
+  { label: 'Renovations', href: routes.renovations },
   { label: 'About', href: routes.about },
   { label: 'Contact', href: routes.contact },
 ] as const;
 
 // ---- Footer link groups ----
 export const footerNav = {
+  // Same order as `nav`, so the two lists never disagree.
   services: [
     { label: 'Homecare Plans', href: routes.homecare },
     { label: 'Plumbing & Heating', href: routes.plumbing },
-    { label: 'Renovations', href: routes.renovations },
-    { label: 'Building & Joinery', href: routes.joinery },
     { label: 'Electrical', href: routes.electrical },
+    { label: 'Building & Joinery', href: routes.joinery },
+    { label: 'Renovations', href: routes.renovations },
   ],
   company: [
     { label: 'About', href: routes.about },
@@ -102,6 +122,115 @@ export const footerNav = {
 
 // ---- Verified reviews (quoted verbatim, incl. punctuation — convention #8) ----
 export type Review = { quote: string; name: string; source: string };
+
+/* The full wall for /reviews/, grouped as the page copy groups them. Adds two
+   fields the service-page sets do not need:
+   - `year`: shown only where the master records an absolute date. The rest were
+     recorded as "5 weeks ago" and so on, and a made-up year would be a fabricated
+     detail on a page whose whole point is verifiability.
+   - `stars`: true only for the Google reviews the master records as 5★. Facebook
+     entries are "recommends", which carries no star rating, so they get a
+     "Recommends" label instead of five invented stars.
+   Amy has ruled out a live Google feed (a couple of lower reviews should not
+   surface), so this curated set is what ships. */
+export type WallReview = Review & { year?: string; stars?: boolean };
+
+export const reviewWall: { heading: string; reviews: WallReview[] }[] = [
+  {
+    heading: 'Heating, boilers and plumbing',
+    reviews: [
+      {
+        quote: 'A year on from Abbeygas fitting my boiler it was due a service. As was the boiler fitting the service was seamless from start to finish. Wonderful company to deal with, brilliant engineer and I am very grateful.',
+        name: 'Dan McDermott', source: 'Google review', stars: true,
+      },
+      {
+        quote: 'Excellent response when heating system not working, came within hours and carried out the repair. Engineer was friendly and cost was very reasonable.',
+        name: 'Angela Weldon', source: 'Google review', year: '2025', stars: true,
+      },
+      {
+        quote: 'As always reliable and efficient. They came within hours when I had no heating. They have a home plan that covers servicing and one callout per year taking the sting out of a big bill.',
+        name: 'Angela', source: 'Google review', year: '2025', stars: true,
+      },
+      {
+        quote: "Efficient and reliable as always. It's good to know that there is someone you can trust for anything central heating related.",
+        name: 'Diana Mortimer', source: 'Google review', stars: true,
+      },
+      {
+        quote: 'James from Abbey Gas fitted all our radiators and re-piped all upstairs. Really efficient from start to finish.',
+        name: 'Danny Cowens', source: 'Google review', stars: true,
+      },
+      {
+        quote: "Fantastic service, easy to communicate with, very helpful. Had a boiler fitted and couldn't have asked for a better smoother service, lovely fella who actually fitted the boiler and great service from start to finish.",
+        name: 'Sally McDermott', source: 'Facebook',
+      },
+      {
+        quote: 'We could not have been happier with Abbey Group who came to install a new boiler at very short notice. They were very professional, knowledgeable and were tidy workers too.',
+        name: 'Susan Hodgson', source: 'Facebook',
+      },
+      {
+        quote: "Did some work for us after our upstairs radiators wouldn't work. Turned up when they said they would and the work was carried out to a great standard, and when they left couldn't tell they had been. Apart from piping hot radiators.",
+        name: 'Sonia Wood', source: 'Facebook',
+      },
+      {
+        quote: 'Excellent service when we had a broken boiler. Thank you.',
+        name: 'Charlotte Elizabeth', source: 'Facebook',
+      },
+    ],
+  },
+  {
+    heading: 'Renovations, building and joinery',
+    reviews: [
+      {
+        quote: 'What an AMAZING company Abbeygas of Whitby are, all the way from the owner, James.',
+        name: 'Colin Robertson', source: 'Google review', stars: true,
+      },
+      {
+        quote: 'James was excellent. Great price, even better than the quote! Jobs done cleanly and efficiently. Will definitely be using James again!',
+        name: 'Karen', source: 'Facebook',
+      },
+      {
+        /* The master's own text elides the middle of this one and then finishes
+           the sentence, so it is quoted exactly as recorded, ellipsis included.
+           Worth asking Amy for the untouched original. */
+        quote: 'Very impressed!! You said you could fit us in in 2 days time. Then 10 minutes after you left, another van arrived... Two hours later the job was completed, efficiently and tidily.',
+        name: 'Anne', source: 'Facebook',
+      },
+    ],
+  },
+  {
+    heading: 'General and trust',
+    reviews: [
+      {
+        quote: 'Timely, informative, helpful and a lovely fella. All business should be run like this.',
+        name: 'Ann Mitchell', source: 'Google review', year: '2023', stars: true,
+      },
+      {
+        quote: 'What a great team! Would I go anywhere else?',
+        name: 'Robert Woodhouse', source: 'Google review', stars: true,
+      },
+      {
+        quote: 'Rang Abbey Gas and got an appointment offered within 3 days of making an enquiry. It was a very positive experience.',
+        name: 'Victoria Rylands', source: 'Google review', stars: true,
+      },
+      {
+        quote: 'Very helpful and kind Engineer! Also I managed to get an appointment really quickly and they are very reasonably priced! Highly recommend.',
+        name: 'Pip Strafford', source: 'Google review', stars: true,
+      },
+      {
+        quote: 'James not only is a great plumber but a really nice guy.',
+        name: 'Beverley Sabine', source: 'Google review', year: '2024', stars: true,
+      },
+      {
+        quote: 'Highly recommend, professional and friendly.',
+        name: 'Lesley Hampson', source: 'Google review', year: '2020', stars: true,
+      },
+      {
+        quote: 'Very efficient and reliable service. Would certainly use again.',
+        name: 'Karen Hartas', source: 'Google review', year: '2020', stars: true,
+      },
+    ],
+  },
+];
 
 export const homeReviews: Review[] = [
   {
@@ -166,6 +295,93 @@ export const homecareReviews: Review[] = [
   {
     quote: 'Very efficient and reliable service. Would certainly use again.',
     name: 'Karen Hartas', source: 'Google review',
+  },
+];
+
+/* Renovations — the craft-and-tidiness themes a renovation buyer is vetting for.
+   FOUR reviews, not six, since 30 July 2026: Colin Robertson moved out of this
+   grid and onto the page as a display pull quote inside "How we work", the
+   section his review is actually about, so he is not shown twice. Four divides
+   into an even single row, and one large quote plus a quiet row of four reads
+   more restrained than six cards, which is the direction of that whole page.
+   Sally McDermott's went too: it is about a boiler fitting, the least relevant
+   of the set, and dropping it kept the row even. All 19 remain on /reviews/. */
+export const renovationsReviews: Review[] = [
+  {
+    quote: "James was excellent. Great price, even better than the quote! Jobs done cleanly and efficiently. Will definitely be using James again!",
+    name: 'Karen', source: 'Facebook',
+  },
+  {
+    quote: "Did some work for us after our upstairs radiators wouldn't work. Turned up when they said they would and the work was carried out to a great standard, and when they left couldn't tell they had been. Apart from piping hot radiators.",
+    name: 'Sonia Wood', source: 'Facebook',
+  },
+  {
+    quote: 'We could not have been happier with Abbey Group who came to install a new boiler at very short notice. They were very professional, knowledgeable and were tidy workers too.',
+    name: 'Susan Hodgson', source: 'Facebook',
+  },
+  {
+    quote: 'Timely, informative, helpful and a lovely fella. All business should be run like this.',
+    name: 'Ann Mitchell', source: 'Google review',
+  },
+];
+
+/* About — the three that name James personally, which is the point of that page.
+   Linda Dent's master entry continues past this ("…a problem with our hive
+   system has been a very testing time, but…"), so only her complete opening
+   sentence is quoted. Three, so the grid runs an even single row. */
+export const aboutReviews: Review[] = [
+  {
+    quote: 'James not only is a great plumber but a really nice guy.',
+    name: 'Beverley Sabine', source: 'Google review',
+  },
+  {
+    quote: 'Timely, informative, helpful and a lovely fella. All business should be run like this.',
+    name: 'Ann Mitchell', source: 'Google review',
+  },
+  {
+    quote: 'We have had first class service from James today.',
+    name: 'Linda Dent', source: 'Google review',
+  },
+];
+
+/* Electrical — no electrical-specific verified reviews exist yet, so these are
+   the general trust ones, exactly as the page copy notes. Three, so the grid
+   runs an even single row. Robert Woodhouse's entry in the master runs on after
+   this ("…"), so only his two complete sentences are quoted, the same treatment
+   Colin Robertson gets elsewhere on the site. */
+export const electricalReviews: Review[] = [
+  {
+    quote: 'Timely, informative, helpful and a lovely fella. All business should be run like this.',
+    name: 'Ann Mitchell', source: 'Google review',
+  },
+  {
+    quote: 'What a great team! Would I go anywhere else?',
+    name: 'Robert Woodhouse', source: 'Google review',
+  },
+  {
+    quote: 'Very helpful and kind Engineer! Also I managed to get an appointment really quickly and they are very reasonably priced! Highly recommend.',
+    name: 'Pip Strafford', source: 'Google review',
+  },
+];
+
+/* Building & Joinery — the multi-trade project first, then price-against-quote
+   and tidiness, which is what a joinery buyer is judging.
+   Three reviews, so the grid runs a single even row of three.
+   NOTE: the page copy listed Anne (Facebook) here, but her quote is truncated
+   mid-sentence in the reviews master ("another van arrived..."), and only
+   complete quotes go on the site (convention #8). Karen replaces her. */
+export const joineryReviews: Review[] = [
+  {
+    quote: 'What an AMAZING company Abbeygas of Whitby are, all the way from the owner, James.',
+    name: 'Colin Robertson', source: 'Google review',
+  },
+  {
+    quote: "Did some work for us after our upstairs radiators wouldn't work. Turned up when they said they would and the work was carried out to a great standard, and when they left couldn't tell they had been. Apart from piping hot radiators.",
+    name: 'Sonia Wood', source: 'Facebook',
+  },
+  {
+    quote: "James was excellent. Great price, even better than the quote! Jobs done cleanly and efficiently. Will definitely be using James again!",
+    name: 'Karen', source: 'Facebook',
   },
 ];
 

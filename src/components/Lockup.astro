@@ -1,9 +1,15 @@
 ---
-import { divisions, type DivisionKey } from '../data/divisions.ts';
+import { divisions, lockupFor, type DivisionKey } from '../data/divisions.ts';
 
 /* Abbey lockup — ONE construction used for the Group and every division, so the
    header reads identically across the site and only the colour and the
    descriptor change.
+
+   Since 30 July 2026 the header and footer both pass `descriptor="Group"`, so
+   the wordmark on every page reads ABBEY GROUP and only the crescent changes
+   colour. The division a visitor is in is announced by the hero's division
+   marker instead, which is louder and does not require sub-brand art the
+   client has not supplied.
 
    Built from the client's real logo art: the crescent mark (recoloured per
    division) plus the genuine "ABBEY" wordmark paths lifted out of
@@ -16,12 +22,23 @@ import { divisions, type DivisionKey } from '../data/divisions.ts';
    descriptor), which shrinks the wordmark too far inside a fixed header. */
 interface Props {
   division?: DivisionKey;
+  /** Descriptor under the wordmark. Header and footer pass `"Group"` so the
+      lockup ALWAYS reads ABBEY GROUP while the crescent keeps the page's
+      division colour (Josh, 30 July 2026): the visitor is on Abbey Group's
+      site whichever trade brought them, and the colour does the signposting.
+      Omit and it falls back to the division's own label. */
+  descriptor?: string;
   /** Wordmark cap height in px; the crescent and descriptor scale from it. */
   size?: number;
   class?: string;
 }
-const { division = 'group', size = 17, class: className } = Astro.props;
-const d = divisions[division];
+const { division = 'group', descriptor, size = 17, class: className } = Astro.props;
+/* Two separate decisions, deliberately:
+   - the CRESCENT takes the page's own division colour, always;
+   - the DESCRIPTOR falls back to Group unless the client really has that
+     sub-brand lockup (`lockupFor`), so nothing here can invent one (rule 21). */
+const mark = divisions[division].mark;
+const label = descriptor ?? divisions[lockupFor(division)].label;
 // ABBEY wordmark is 7.83:1, so width follows from the requested height.
 const wordWidth = Math.round(size * 7.83);
 const markSize = Math.round(size * 2.35);
@@ -30,7 +47,7 @@ const markSize = Math.round(size * 2.35);
   class:list={['lu', className]}
   style={`--lu-size:${size}px;--lu-mark:${markSize}px`}
 >
-  <img class="lu__mark" src={d.mark} alt="" aria-hidden="true" width={markSize} height={markSize} />
+  <img class="lu__mark" src={mark} alt="" aria-hidden="true" width={markSize} height={markSize} />
   <span class="lu__stack">
     <img
       class="lu__word"
@@ -40,7 +57,7 @@ const markSize = Math.round(size * 2.35);
       width={wordWidth}
       height={size}
     />
-    <span class="lu__desc">{d.label}</span>
+    <span class="lu__desc">{label}</span>
   </span>
 </span>
 

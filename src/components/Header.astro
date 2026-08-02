@@ -1,38 +1,35 @@
 ---
 import Button from './Button.astro';
 import Icon from './Icon.astro';
-import { nav, nap, booking, site } from '../data/site.ts';
-import { divisions, type DivisionKey } from '../data/divisions.ts';
+import { nav, nap, booking, site, routes } from '../data/site.ts';
+import type { DivisionKey } from '../data/divisions.ts';
 import Lockup from './Lockup.astro';
 
 /* Site header — fixed, transparent over the (dark) hero, shrinking to a
    blurred navy bar on scroll. Navigation is the hamburger menu at ALL
    widths (a deliberate design decision — no inline desktop nav row).
 
-   On a division page the lockup swaps to that sub-brand: the division's
-   crescent plus a stacked ABBEY / <division> wordmark. Built from the vector
-   crescent and site type because the client's supplied lockups are ~320px
-   screenshots; swap in the real vector art when it lands (see LAUNCH.md).
-   The Group logo returns on Home, About, Contact and the utility pages. */
+   The lockup ALWAYS reads ABBEY GROUP (Josh, 30 July 2026). Only the crescent
+   takes the page's division colour, and the scrolled bar takes the page's dark
+   ground with an accent hairline, so the header is themed without ever
+   renaming the company. Which trade you are in is announced by the hero's
+   division marker, which is far louder than a small stacked descriptor was.
+
+   The menu marks the current page, and Contact carries a permanent CTA
+   treatment since it is the one action item in the list. */
 
 interface Props {
   division?: DivisionKey;
 }
 const { division = 'group' } = Astro.props;
-const d = divisions[division];
-const showLockup = division !== 'group' && d.hasLockup;
 
 const pathname = Astro.url.pathname;
 const isActive = (href: string) =>
   href === '/' ? pathname === '/' : pathname.startsWith(href);
 ---
 <header class="hdr" data-header>
-  <a
-    class="hdr__brand"
-    href="/"
-    aria-label={division === 'group' ? `${site.name} — home` : `Abbey ${d.label} — ${site.name} home`}
-  >
-    <Lockup division={division} size={18} />
+  <a class="hdr__brand" href="/" aria-label={`${site.name} — home`}>
+    <Lockup division={division} descriptor="Group" size={18} />
   </a>
 
   <div class="hdr__right">
@@ -61,10 +58,20 @@ const isActive = (href: string) =>
         <li>
           <a
             href={item.href}
-            class:list={['hdr__menu-link', { 'is-active': isActive(item.href) }]}
+            class:list={[
+              'hdr__menu-link',
+              {
+                'is-active': isActive(item.href),
+                /* Contact is the one action in an otherwise navigational list,
+                   so it is styled as one permanently rather than only when you
+                   are on it (Josh, 30 July 2026). */
+                'is-cta': item.href === routes.contact,
+              },
+            ]}
             aria-current={isActive(item.href) ? 'page' : undefined}
           >
-            {item.label}
+            <span>{item.label}</span>
+            {isActive(item.href) && <span class="hdr__menu-dot" aria-hidden="true"></span>}
           </a>
         </li>
       ))}
@@ -156,7 +163,11 @@ const isActive = (href: string) =>
   .hdr__menu ul { display: flex; flex-direction: column; gap: 4px; }
 
   .hdr__menu-link {
-    display: block;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
     padding: 10px 14px;
     border-radius: var(--radius-md);
     font-size: 14.5px;
@@ -165,7 +176,43 @@ const isActive = (href: string) =>
     transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
   }
   .hdr__menu-link:hover { background: color-mix(in oklch, var(--white) 8%, transparent); color: var(--white); }
-  .hdr__menu-link.is-active { color: var(--blue-300); }
+
+  /* CURRENT PAGE — a tinted ground, a full-strength accent bar down the left
+     edge and a dot on the right. Deliberately three signals, not one: the
+     accent alone was a single 300-shade colour change that read as a hover
+     state on some pages (Josh, 30 July 2026). The bar and dot use the page's
+     own accent, so the marker is the same colour as everything else on it. */
+  .hdr__menu-link.is-active {
+    background: color-mix(in oklch, var(--page-accent, var(--blue-500)) 18%, transparent);
+    color: var(--white);
+    box-shadow: inset 3px 0 0 var(--page-accent, var(--blue-500));
+  }
+  .hdr__menu-dot {
+    width: 6px;
+    height: 6px;
+    flex: none;
+    border-radius: var(--radius-pill);
+    background: var(--page-accent, var(--blue-500));
+  }
+
+  /* CONTACT — permanently styled as the action in the list. Orange, the one CTA
+     colour site-wide (standing rule 3), so it never competes with the accent
+     marker above even when you are on /contact/ and both apply. */
+  .hdr__menu-link.is-cta {
+    margin-top: 6px;
+    background: var(--cta);
+    color: var(--cta-fg);
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--white) 22%, transparent);
+    font-weight: var(--weight-bold);
+  }
+  .hdr__menu-link.is-cta:hover {
+    background: color-mix(in oklch, var(--cta) 88%, var(--white));
+    color: var(--cta-fg);
+  }
+  .hdr__menu-link.is-cta.is-active {
+    box-shadow: inset 3px 0 0 var(--white), inset 0 0 0 1px color-mix(in oklch, var(--white) 22%, transparent);
+  }
+  .hdr__menu-link.is-cta .hdr__menu-dot { background: var(--white); }
 
   @media (prefers-reduced-motion: reduce) {
     .hdr, .hdr__logo img { transition: none; }
