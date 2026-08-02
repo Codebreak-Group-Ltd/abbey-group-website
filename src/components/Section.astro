@@ -13,7 +13,10 @@ interface Props {
   id?: string;
   class?: string;
   containerClass?: string;
-  pad?: 'default' | 'tight';
+  /** `loose` is the editorial rhythm: 96px becomes 136px. Used on Renovations,
+      where whitespace is doing the premium work — the single most reliable
+      signal that a page is expensive is how much room it gives each idea. */
+  pad?: 'default' | 'tight' | 'loose';
 }
 
 const {
@@ -47,6 +50,7 @@ const classes = [
   .section { position: relative; }
 
   .section--default { padding-block: var(--space-24); }   /* 96 */
+  .section--loose   { padding-block: 136px; }             /* editorial rhythm */
   .section--bleed { padding-block: 0; }
   .section--tight   { padding-block: var(--space-6); }    /* 26-ish (trust strip) */
 
@@ -61,8 +65,10 @@ const classes = [
 
   @media (max-width: 1024px) {
     .section--default { padding-block: var(--space-16); } /* 64 */
+    .section--loose   { padding-block: var(--space-20); } /* 80 */
   }
   @media (max-width: 700px) {
     .section--default { padding-block: var(--space-12); } /* 48 */
+    .section--loose   { padding-block: var(--space-16); } /* 64 */
   }
 </style>
