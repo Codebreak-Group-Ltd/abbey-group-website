@@ -1,0 +1,85 @@
+---
+import { divisions, type DivisionKey } from '../data/divisions.ts';
+
+/* A designed stand-in for a photograph that does not exist yet.
+
+   Built for the homepage Electrical card (Josh, 30 July 2026), which sat among
+   five real photographs holding a hatched PhotoSlot. Two options were wrong:
+   stock photography would undercut a card arguing "certified", and an empty
+   placeholder reads as a hole in a finished site.
+
+   So the slot does a job instead: the division's own dark ground, its crescent
+   as a watermark, and a credential the visitor cares about. Every value comes
+   from `divisions.ts`, so it themes itself, and the label is passed in from the
+   page (only confirmed credentials, never a new claim).
+
+   SWAP IT OUT in one line: give that card an `img` and the page renders a
+   `Photo` instead. Nothing else changes.
+   See `_Specs/01 OUTSTANDING FROM CLIENT.md` §C1 for the photography gaps. */
+interface Props {
+  division: DivisionKey;
+  /** Short credential, set in the division accent. */
+  label: string;
+  /** One supporting line beneath it. */
+  sub?: string;
+  ratio?: string;
+  class?: string;
+}
+const { division, label, sub, ratio = '16 / 9', class: className } = Astro.props;
+const d = divisions[division];
+---
+<div
+  class:list={['dslot', className]}
+  style={`aspect-ratio:${ratio};--slot-ground:${d.surfaceDark};--slot-glow:${d.glow};--slot-accent:${d.accent};--slot-ink:${d.accentOnDark}`}
+>
+  <img class="dslot__mark" src={d.mark} alt="" aria-hidden="true" width="300" height="315" />
+  <div class="dslot__body">
+    <p class="dslot__label">{label}</p>
+    {sub && <p class="dslot__sub">{sub}</p>}
+  </div>
+</div>
+
+<style>
+  .dslot {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    background:
+      radial-gradient(560px 400px at 82% 18%, color-mix(in oklch, var(--slot-glow) 55%, transparent) 0%, transparent 66%),
+      var(--slot-ground);
+  }
+  .dslot__mark {
+    position: absolute;
+    right: -46px;
+    bottom: -58px;
+    width: 210px;
+    height: auto;
+    opacity: 0.2;
+    pointer-events: none;
+  }
+  .dslot__body {
+    position: relative;
+    padding: 22px 24px;
+    border-left: 3px solid var(--slot-accent);
+    margin: 0 0 20px 22px;
+  }
+  .dslot__label {
+    font-size: 14px;
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    /* The 400 step, so accent-coloured text clears 5:1 on its own dark ground. */
+    color: var(--slot-ink);
+  }
+  .dslot__sub {
+    margin-top: 7px;
+    font-size: 13.5px;
+    line-height: var(--leading-snug);
+    color: var(--text-body-inverse);
+    max-width: 26ch;
+  }
+  @media (max-width: 480px) {
+    .dslot__body { padding: 18px 20px; margin: 0 0 16px 16px; }
+  }
+</style>

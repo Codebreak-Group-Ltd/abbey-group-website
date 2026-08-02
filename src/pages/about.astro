@@ -1,0 +1,477 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import PageHero from '../components/PageHero.astro';
+import Reviews from '../components/Reviews.astro';
+import FAQ from '../components/FAQ.astro';
+import Areas from '../components/Areas.astro';
+import Photo from '../components/Photo.astro';
+import { nap, routes, site, aboutReviews } from '../data/site.ts';
+import { aboutFaqs } from '../data/faqs.ts';
+import { localBusiness, faqPage, breadcrumb, person } from '../lib/schema.ts';
+
+/* About — the trust page, so it runs on real specifics: named people, dated
+   history, checkable credentials. Group colourway and the Group lockup, as it
+   speaks for the whole business rather than one trade.
+   Every fact here is from Amy's confirmations (21 July 2026) via
+   `07 About/Text/About - COPY.md`. Nothing about the business is stated that the
+   client has not signed off: no staff count, no "family-run" label (James's
+   decision), no certification body beyond Gas Safe, City & Guilds and NAPIT. */
+
+const title = 'About Abbey Group | Local Tradesmen in Whitby Since 2008';
+const description =
+  'Meet the Abbey Group team in Whitby: plumbing, heating, renovations, building and electrical work. Gas Safe registered, serving Whitby since 2008.';
+
+/* Amy's confirmed list. James is the only one with a headshot so far, so the
+   others carry a monogram rather than a stock face (see image-manifest). */
+const team = [
+  {
+    name: 'James Eddon',
+    role: 'Managing Director',
+    bio: 'Founded the business and still runs the work on the ground.',
+    /* A separate square crop framed on his face. The hero's portrait version
+       centre-crops to his jacket in a square card, which read as an empty box. */
+    photo: '/images/about-james-eddon-headshot.webp',
+    alt: 'James Eddon, Managing Director of Abbey Group',
+  },
+  {
+    name: 'Amy',
+    role: 'Operations Manager',
+    bio: 'Keeps Abbey Group running, coordinating the teams, the schedules and the day-to-day.',
+  },
+  {
+    name: 'Natasha',
+    role: 'Customer Experience Coordinator',
+    bio: 'Welcomes customers, manages front of house and coordinates appointments, so every enquiry is looked after from the first call onwards.',
+  },
+  {
+    name: 'Richard',
+    role: 'Heating engineer',
+    bio: "James's brother, and our dedicated heating engineer.",
+  },
+  {
+    name: 'Mal',
+    role: 'Building projects',
+    bio: 'Behind the renovations and structural work.',
+  },
+  {
+    name: 'James Fawcett',
+    role: 'Plumbing',
+    bio: 'Runs the plumbing side of things.',
+  },
+];
+
+const credentials = [
+  {
+    t: 'Gas Safe registered, number 303376',
+    d: 'Any gas work is carried out by a Gas Safe engineer, as the law requires.',
+  },
+  {
+    t: 'City & Guilds qualified tradespeople',
+    d: 'And NAPIT registered for electrical work, signed off to the current wiring regulations.',
+  },
+  {
+    t: 'Local to Whitby, serving the area since 2008',
+    d: 'The same team, in the same town, for over fifteen years.',
+  },
+  {
+    t: 'A registered UK company',
+    d: 'With the full company details in the footer of every page.',
+  },
+];
+
+/* The client-approved FAQ set for this page. It lives in `src/data/faqs.ts`
+   because the page, its FAQPage JSON-LD and `/llms.txt` all read the same
+   text and must never disagree. */
+const faqs = aboutFaqs;
+
+const schemas = [
+  localBusiness({ path: routes.about, description }),
+  person({
+    name: 'James Eddon',
+    jobTitle: 'Managing Director',
+    image: '/images/about-james-eddon.webp',
+  }),
+  faqPage(faqs),
+  breadcrumb([
+    { name: 'Home', path: routes.home },
+    { name: 'About', path: routes.about },
+  ]),
+];
+---
+<BaseLayout title={title} description={description} schemas={schemas}>
+  <PageHero
+    title="Your Local Whitby Team Since 2008"
+    lead="One Whitby team, covering every trade. From a leaking tap to a full renovation, the same people look after your home, and you always know who you are dealing with."
+    trust={['Serving Whitby since 2008', `Gas Safe registered, No. ${site.gasSafeNo}`, 'City & Guilds qualified', 'Rated 4.6 on Google']}
+    image="/images/about-james-eddon.webp"
+    imageAlt="James Eddon, Managing Director of Abbey Group, beside a van with Whitby Abbey behind"
+  >
+    <Button href={routes.homecare} size="lg">See Our Homecare Plans</Button>
+    <Button href={routes.contact} variant="inverse-outline" size="lg">Get in Touch</Button>
+  </PageHero>
+
+  <!-- OUR STORY -->
+  <Section bg="white">
+    <div class="story reveal">
+      <div class="story__copy">
+        <Eyebrow>Our story</Eyebrow>
+        <h2 class="ah2">Started on word of mouth, and it stuck</h2>
+        <p class="story__lead">
+          Abbey Group started as Abbey Gas in 2008, when James Eddon set up as a gas and
+          heating engineer in Whitby. He was better at doing the work than at shouting
+          about it, and the business grew the honest way, on word of mouth and repeat
+          customers.
+        </p>
+        <p class="story__body">
+          As more people asked whether the team could take on the rest of the job, not just
+          the boiler, Abbey grew into a full multi-trade group and became Abbey Group in
+          2024. Today one team covers plumbing and heating, renovations, building and
+          joinery, and electrical work, so you have one number to call for the whole house.
+        </p>
+        <p class="story__body">
+          That is still the idea behind everything: one local team you can trust, for
+          whatever your home needs.
+        </p>
+      </div>
+      <aside class="story__side">
+        <Photo
+          src="/images/about-jacket-trades.webp"
+          alt="An Abbey Group tradesperson at work in a Whitby home"
+          ratio="4 / 3"
+          radius="lg"
+          width={1000}
+          height={750}
+        />
+        <!-- Two dates, both confirmed. The 2021 limited-company date is in the
+             client's notes but not in the public copy, so it is not shown. -->
+        <ol class="story__marks">
+          <li><span class="story__year">2008</span><span>Started as Abbey Gas, in Whitby</span></li>
+          <li><span class="story__year">2024</span><span>Became Abbey Group, covering every trade</span></li>
+        </ol>
+      </aside>
+    </div>
+  </Section>
+
+  <!-- MEET THE TEAM -->
+  <Section bg="sunken">
+    <div class="team__head reveal">
+      <Eyebrow>Meet the team</Eyebrow>
+      <h2 class="ah2">The people who turn up</h2>
+      <p class="alead">
+        Abbey Group is a full-time, multi-skilled local team. These are the people you are
+        most likely to deal with.
+      </p>
+    </div>
+
+    <!-- The genuine team photograph carries the section; the cards name people.
+         Only James has a headshot so far, so the rest take a monogram: an honest
+         placeholder beats a stock face on the page whose job is trust. -->
+    <figure class="team__photo reveal">
+      <Photo
+        src="/images/about-team-group.webp"
+        alt="The Abbey Group team with their vans in front of Whitby Abbey"
+        ratio="2 / 1"
+        radius="lg"
+        bordered={false}
+        width={1700}
+        height={850}
+      />
+      <figcaption>The Abbey Group team and the fleet, in front of Whitby Abbey.</figcaption>
+    </figure>
+
+    <ul class="team__grid reveal">
+      {team.map((m) => (
+        <li class="team__card">
+          {m.photo ? (
+            <Photo src={m.photo} alt={m.alt ?? m.name} ratio="1 / 1" radius="lg" bordered={false} width={400} height={400} class="team__pic" />
+          ) : (
+            <span class="team__mono" aria-hidden="true">{m.name.charAt(0)}</span>
+          )}
+          <div class="team__meta">
+            <p class="team__name">{m.name}</p>
+            <p class="team__role">{m.role}</p>
+            <p class="team__bio">{m.bio}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    <p class="team__wider reveal">
+      Behind them is a wider team of plumbers, engineers and labourers who make it all
+      happen.
+    </p>
+  </Section>
+
+  <!-- WHY ONE TEAM -->
+  <Section bg="dark" bleed>
+    <div class="one">
+      <img class="one__mark" src="/brand/crescent/crescent-mark.svg" alt="" aria-hidden="true" width="380" height="399" />
+      <div class="container one__inner reveal">
+        <div class="one__copy">
+          <Eyebrow tone="inverse">Why one team, one roof</Eyebrow>
+          <h2 class="one__h2">Three trades, three sets of phone calls. Or one.</h2>
+          <p class="one__body">
+            Most homes need three or four different trades over a year: a plumber, an
+            electrician, someone for the building work. Line them up separately and you
+            spend your time chasing quotes and hoping they turn up in the right order.
+          </p>
+          <p class="one__body">
+            With Abbey Group, it is one call. One team who already knows your house,
+            coordinates the trades, and takes responsibility for the whole job. That is
+            easier for you, and it means the work joins up properly.
+          </p>
+        </div>
+        <div class="one__media">
+          <!-- All four division marks on one jacket: the literal proof of the
+               claim this section makes. -->
+          <Photo
+            src="/images/about-working-detail.webp"
+            alt="The four Abbey division marks on the back of a team jacket, beside a van"
+            ratio="4 / 3"
+            radius="lg"
+            width={1000}
+            height={750}
+          />
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <!-- CREDENTIALS -->
+  <Section bg="white">
+    <div class="cred reveal">
+      <div class="cred__copy">
+        <Eyebrow>Credentials you can check</Eyebrow>
+        <h2 class="ah2">The specifics, not "fully qualified"</h2>
+        <ul class="cred__list">
+          {credentials.map((c) => (
+            <li>
+              <span class="cred__disc"><Icon name="badge-check" size={16} /></span>
+              <div><strong>{c.t}.</strong> {c.d}</div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <aside class="cred__media">
+        <Photo
+          src="/images/about-credentials-van.webp"
+          alt="Gas Safe registration and trade marks on the side of an Abbey Group van"
+          ratio="4 / 3"
+          radius="lg"
+          width={1000}
+          height={750}
+        />
+        <p class="cred__cap">Registration marks travel on the vans, so you can check them on the doorstep.</p>
+      </aside>
+    </div>
+  </Section>
+
+  <!-- AREAS -->
+  <Areas heading="Where we work" bg="sunken">
+    Abbey Group covers Whitby and the surrounding coast and villages:
+  </Areas>
+
+  <!-- REVIEWS -->
+  <Reviews
+    eyebrow="What people say"
+    heading="About James and the team"
+    reviews={aboutReviews}
+    bg="white"
+  />
+
+  <!-- FAQ -->
+  <FAQ heading="Questions about Abbey Group" items={faqs} bg="sunken" />
+
+  <!-- FINAL CTA -->
+  <Section bg="white">
+    <div class="final reveal">
+      <Eyebrow>Get to know us properly</Eyebrow>
+      <h2 class="ah2">The easiest way to see how we work</h2>
+      <p class="final__body">
+        Our most popular ongoing service is Homecare Plans: your boiler serviced and
+        covered from £9.99 a month, with the same local team looking after you all year.
+      </p>
+      <div class="final__cta">
+        <Button href={routes.homecare} size="lg">See Our Homecare Plans</Button>
+        <Button href={routes.contact} variant="outline" size="lg">Get in Touch</Button>
+      </div>
+      <p class="final__phone">
+        Or call the Whitby office on <a class="tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>, {nap.hours}.
+      </p>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .ah2 { font-size: clamp(32px, 3.2vw, 46px); color: var(--text-heading); margin-top: 10px; }
+  .alead {
+    margin-top: 16px;
+    max-width: 62ch;
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+  }
+
+  /* OUR STORY ----------------------------------------------------------- */
+  .story { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: start; }
+  .story__lead {
+    margin-top: 18px;
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-heading);
+    max-width: 60ch;
+  }
+  .story__body {
+    margin-top: 16px;
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+    max-width: 62ch;
+  }
+  .story__side { display: flex; flex-direction: column; gap: 22px; }
+  .story__marks { display: flex; flex-direction: column; gap: 14px; }
+  .story__marks li {
+    display: flex; gap: 16px; align-items: baseline;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 15px;
+    line-height: var(--leading-snug);
+    color: var(--text-body);
+  }
+  .story__year {
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--page-accent-ink, var(--blue-800));
+    flex: none;
+  }
+
+  /* MEET THE TEAM ------------------------------------------------------- */
+  .team__head { max-width: 660px; margin-bottom: 36px; }
+  .team__photo { margin: 0 0 40px; }
+  .team__photo figcaption {
+    margin-top: 12px;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+  /* Six people, three columns: an even grid with no orphan on the last row. */
+  .team__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .team__card {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    background: var(--white);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+  }
+  .team__card :global(.team__pic) { width: 86px; flex: none; }
+  /* Monogram, used until a real headshot exists for that person. */
+  .team__mono {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 86px; height: 86px; flex: none;
+    border-radius: var(--radius-lg);
+    background: var(--blue-50);
+    border: 1px solid var(--border-subtle);
+    font-family: var(--font-display);
+    font-size: 34px;
+    color: var(--blue-800);
+  }
+  .team__name { font-size: var(--text-md); font-weight: var(--weight-bold); color: var(--text-heading); }
+  .team__role {
+    margin-top: 2px;
+    font-size: 12.5px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--page-accent-ink, var(--blue-800));
+  }
+  .team__bio { margin-top: 10px; font-size: 14.5px; line-height: var(--leading-relaxed); color: var(--text-body); }
+  .team__wider {
+    margin-top: 28px;
+    font-size: var(--text-base);
+    color: var(--text-body);
+    max-width: 62ch;
+  }
+
+  /* WHY ONE TEAM -------------------------------------------------------- */
+  .one {
+    position: relative;
+    overflow: hidden;
+    padding-block: 84px;
+    background:
+      radial-gradient(900px 580px at 84% 20%, color-mix(in oklch, var(--page-accent-glow, var(--blue-800)) 55%, transparent) 0%, transparent 65%),
+      var(--surface-page-dark);
+  }
+  .one__mark {
+    position: absolute; left: -110px; top: 50%; transform: translateY(-50%);
+    width: 380px; opacity: 0.12; pointer-events: none;
+  }
+  .one__inner {
+    position: relative;
+    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center;
+  }
+  .one__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+  .one__h2 {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 3vw, 44px);
+    color: var(--white);
+    text-wrap: balance;
+  }
+  .one__body {
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body-inverse);
+    max-width: 56ch;
+  }
+
+  /* CREDENTIALS --------------------------------------------------------- */
+  /* 1.15fr, not 1.05fr: at 46px the heading needs 657px to stay on one line and
+     the old column gave it 643, so it broke onto two for the sake of 14px
+     (measured, 30 July 2026). This gives the copy column 703px at a 1280
+     container, and takes it out of the photograph, which has plenty. */
+  .cred { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 56px; align-items: start; }
+  .cred__list { display: flex; flex-direction: column; gap: 16px; margin-top: 26px; }
+  .cred__list li {
+    display: flex; gap: 14px; align-items: flex-start;
+    font-size: 15.5px; line-height: var(--leading-relaxed); color: var(--text-body);
+  }
+  .cred__list strong { color: var(--text-heading); }
+  /* Navy glyph on the accent disc, the one colour legible on every accent. */
+  .cred__disc {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; flex: none;
+    border-radius: var(--radius-pill);
+    background: var(--page-accent, var(--blue-500));
+    color: var(--ink-500);
+    margin-top: 1px;
+  }
+  .cred__media { display: flex; flex-direction: column; gap: 12px; }
+  .cred__cap { font-size: var(--text-sm); color: var(--text-muted); }
+
+  /* FINAL CTA ----------------------------------------------------------- */
+  .final { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; max-width: 720px; }
+  .final__body { font-size: var(--text-md); line-height: var(--leading-relaxed); color: var(--text-body); }
+  .final__cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 6px; }
+  .final__phone { font-size: var(--text-sm); color: var(--text-muted); }
+  .final__phone a { color: var(--text-link); font-weight: var(--weight-semibold); white-space: nowrap; }
+
+  @media (max-width: 1100px) {
+    .team__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 1024px) {
+    .story { grid-template-columns: 1fr; gap: 34px; }
+    .story__side { max-width: 560px; }
+    .one__inner { grid-template-columns: 1fr; gap: 36px; }
+    .cred { grid-template-columns: 1fr; gap: 32px; }
+    .cred__media { max-width: 560px; }
+  }
+  @media (max-width: 700px) {
+    .one { padding-block: 64px; }
+    .team__grid { grid-template-columns: 1fr; }
+    .team__photo { margin-bottom: 30px; }
+  }
+</style>

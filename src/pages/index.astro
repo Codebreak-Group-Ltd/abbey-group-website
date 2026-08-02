@@ -5,18 +5,38 @@ import Eyebrow from '../components/Eyebrow.astro';
 import Button from '../components/Button.astro';
 import Icon from '../components/Icon.astro';
 import PhotoSlot from '../components/PhotoSlot.astro';
+import DivisionSlot from '../components/DivisionSlot.astro';
+import HeroMark from '../components/HeroMark.astro';
 import Photo from '../components/Photo.astro';
 import Reviews from '../components/Reviews.astro';
 import FAQ from '../components/FAQ.astro';
 import Areas from '../components/Areas.astro';
 import { nap, booking, routes, homeReviews } from '../data/site.ts';
+import { homeFaqs } from '../data/faqs.ts';
 import { localBusiness, faqPage, breadcrumb } from '../lib/schema.ts';
+import type { DivisionKey } from '../data/divisions.ts';
 
 const title = 'Abbey Group Whitby | Plumbing, Heating & Home Services';
 const description =
   "Whitby's one local team for plumbing, heating, renovations, building and electrical work. Gas Safe registered and local. Homecare plans from £9.99 a month.";
 
-const divisions = [
+type DivisionCard = {
+  title: string;
+  href: string;
+  icon: string;
+  accent: string;
+  ink: string;
+  desc: string;
+  link: string;
+  /** Photograph for the card, or null where none exists yet. */
+  img: string | null;
+  /** Alt text for the photo, or the caption for the stand-in. */
+  photo: string;
+  /** Designed stand-in used when `img` is null (see DivisionSlot.astro). */
+  slot?: { division: DivisionKey; label: string; sub?: string };
+};
+
+const divisions: DivisionCard[] = [
   {
     title: 'Homecare Plans', href: routes.homecare, icon: 'shield-check', accent: 'var(--accent-care)', ink: 'var(--accent-care-ink)',
     desc: 'Boiler cover from £9.99 a month. Your annual service, gas safety certificate and priority response, sorted.',
@@ -38,12 +58,18 @@ const divisions = [
     link: 'Explore Building & Joinery', img: '/images/card-joinery.webp', photo: 'Abbey Group building and joinery work in Whitby',
   },
   {
-    // Green is safe here now --green-ink exists: the bright green carries the
-    // colour tab and chip tint, the deep ink carries the icon and link text.
-    // No photo from this shoot for Electrical — keeps the captioned placeholder.
+    // Greens corrected to the real Abbey Electrical logo (29 July 2026): the
+    // card tab and chip tint take the logo's main green, and the icon and link
+    // text take --green-ink, which is now the dark end of that same family
+    // rather than an olive stand-in.
+    // No photograph exists for this trade at all (outstanding §C1), so the card
+    // carries a designed division panel with a real credential on it rather
+    // than a hatched placeholder or stock. Give it an `img` and it renders a
+    // photo like the other five, no other change needed.
     title: 'Electrical', href: routes.electrical, icon: 'zap', accent: 'var(--accent-electrical)', ink: 'var(--green-ink)',
     desc: 'Safe, certified electrical work for your home.',
     link: 'Explore Electrical', img: null, photo: 'Certified Abbey Group electrical work',
+    slot: { division: 'electrical' as const, label: 'NAPIT registered', sub: 'Part P self-certified, City & Guilds qualified' },
   },
 ];
 
@@ -54,24 +80,10 @@ const proofs = [
   { icon: 'phone', text: 'One number, answered by Amy or Natasha in the Whitby office, so you talk to someone who knows your job.' },
 ];
 
-const faqs = [
-  {
-    q: 'Is there one company in Whitby that does plumbing, electrical and building work?',
-    a: 'Yes. Abbey Group is a Whitby firm that covers boiler cover, plumbing and heating, renovations, building and joinery, and electrical work, all from one local team. You deal with one number for the whole job rather than chasing separate trades.',
-  },
-  {
-    q: 'What areas around Whitby do you cover?',
-    a: "We cover Whitby and the surrounding coast and villages, including Sandsend, Sleights, Ruswarp, Robin Hood's Bay, Egton and Egton Bridge, Goathland, Staithes and Runswick Bay, as well as Scarborough. If you are nearby and not sure, ask, we're always happy to help.",
-  },
-  {
-    q: 'Is Abbey Group the same company as Abbeygas?',
-    a: 'Yes. Abbey Group is the same local team many people in Whitby know as Abbeygas.',
-  },
-  {
-    q: 'Are your engineers Gas Safe registered?',
-    a: 'Yes. Abbey Group is Gas Safe registered under number 303376. Any gas work is carried out by a Gas Safe engineer, which is a legal requirement for work on boilers and gas appliances.',
-  },
-];
+/* The client-approved FAQ set for this page. It lives in `src/data/faqs.ts`
+   because the page, its FAQPage JSON-LD and `/llms.txt` all read the same
+   text and must never disagree. */
+const faqs = homeFaqs;
 
 const schemas = [
   localBusiness({ path: routes.home, description }),
@@ -82,11 +94,11 @@ const schemas = [
 <BaseLayout title={title} description={description} schemas={schemas}>
   <!-- 1. HERO -->
   <section class="hero">
-    <div class="hero__crescent" aria-hidden="true" data-crescent>
-      <div class="c-layer" data-depth="10"><img class="c-drift" src="/brand/crescent/crescent-outer-blue.svg" alt="" width="520" height="546" /></div>
-      <div class="c-layer" data-depth="20"><img class="c-drift" src="/brand/crescent/crescent-mid-coral.svg" alt="" width="520" height="546" /></div>
-      <div class="c-layer" data-depth="32"><img class="c-drift" src="/brand/crescent/crescent-inner-plum.svg" alt="" width="520" height="546" /></div>
-    </div>
+    <!-- One soft white mark rather than the old tri-colour stack, which competed
+         with the mark on the van's own livery (Josh, 29 July 2026) — but still
+         three separate arcs, so they move independently under the pointer as
+         they used to (Josh, 30 July 2026). Same component on every hero. -->
+    <HeroMark tone="white" width={620} class="hero__crescent" />
 
     <div class="container hero__grid">
       <div class="hero__copy">
@@ -119,8 +131,8 @@ const schemas = [
       <img
         src="/images/van-side.webp"
         alt="An Abbey Group branded van"
-        width="1200"
-        height="424"
+        width="1302"
+        height="475"
         loading="eager"
         fetchpriority="high"
         decoding="auto"
@@ -159,7 +171,9 @@ const schemas = [
             <span class="dv__bar" aria-hidden="true"></span>
             {d.img
               ? <Photo src={d.img} alt={d.photo} ratio="16 / 9" radius="none" bordered={false} width={840} height={472} class="dv__photo" />
-              : <PhotoSlot ratio="16 / 9" radius="none" caption={d.photo} bordered={false} class="dv__photo" />}
+              : d.slot
+                ? <DivisionSlot division={d.slot.division} label={d.slot.label} sub={d.slot.sub} class="dv__photo" />
+                : <PhotoSlot ratio="16 / 9" radius="none" caption={d.photo} bordered={false} class="dv__photo" />}
             <div class="dv__body">
               <div class="dv__titlerow">
                 <span class="dv__chip"><Icon name={d.icon} size={17} /></span>
@@ -243,7 +257,10 @@ const schemas = [
   <Section bg="white">
     <div class="find">
       <div class="find__map reveal">
-        <PhotoSlot ratio="4 / 3" radius="xl" caption="Map — 20 Skinner Street, Whitby YO21 3AJ" />
+        <!-- Placeholder until the consent layer lands and a real Maps embed can
+             load (build standard §6/§7). Caption reworded 30 July 2026: it was
+             the one em dash in visible copy anywhere on the site. -->
+        <PhotoSlot ratio="4 / 3" radius="xl" caption="Map of 20 Skinner Street, Whitby YO21 3AJ" />
       </div>
       <div class="find__copy reveal">
         <Eyebrow>Come and find us</Eyebrow>
@@ -301,8 +318,16 @@ const schemas = [
     position: relative;
     overflow: hidden;
     color: var(--white);
-    padding: 170px var(--container-padding) 96px;
-    min-height: min(88vh, 820px);
+    /* The lead's measure, declared here because the VAN's position is derived
+       from it (see .hero__van). Change this one value and the van keeps clear
+       automatically. Came in from 520px on 30 July 2026 to give the van the room
+       Josh asked for; 470px at 18px is a ~56-character line, which is a better
+       measure than 62 was anyway. */
+    --hero-lead-measure: 470px;
+    /* Padding matches PageHero's, so the homepage hero lands on exactly the
+       same height as every interior one instead of running ~20px taller. */
+    padding: 150px var(--container-padding) 84px;
+    min-height: min(92vh, 820px);
     display: flex;
     align-items: center;
     background:
@@ -311,19 +336,21 @@ const schemas = [
       radial-gradient(700px 500px at 45% 0%, color-mix(in oklch, var(--plum-900) 55%, transparent) 0%, transparent 55%),
       var(--ink-500);
   }
-  .hero__crescent {
+  /* Bigger, fainter, no drop shadow. The container carries the scroll drift and
+     each of the three arcs moves independently under the pointer — the shared
+     hero-mark behaviour from BaseLayout, identical on every page. */
+  .hero :global(.hero__crescent) {
     position: absolute;
-    right: -70px;
-    bottom: -120px;
+    left: 46%;
+    bottom: -180px;
     z-index: 0;                 /* the van layers over it */
-    width: 460px;
-    aspect-ratio: 600 / 630;
-    opacity: 0.3;
+    width: 620px;
+    height: auto;
+    opacity: 0.11;
     pointer-events: none;
-    filter: drop-shadow(0 30px 70px rgba(0, 0, 0, 0.5));
+    transform: translate3d(0, var(--mark-scroll, 0px), 0);
+    will-change: transform;
   }
-  .hero__crescent .c-layer { position: absolute; inset: 0; will-change: transform; }
-  .hero__crescent .c-drift { width: 100%; height: auto; }
 
   .hero__grid {
     position: relative;
@@ -352,17 +379,42 @@ const schemas = [
     font-size: var(--text-md);
     line-height: var(--leading-relaxed);
     color: var(--text-body-inverse);
-    max-width: 520px;
+    max-width: var(--hero-lead-measure);
   }
   .hero__cta { display: flex; flex-wrap: wrap; gap: 14px; }
 
   /* --- Van --- */
   .hero__van {
     position: absolute;
-    right: -70px;
-    bottom: 6%;
+    /* Larger and further off the edge (Josh, 29 July 2026). The van is scaled up
+       (438px tall against the old 326px) and pushed well past the right edge, so
+       it reads bigger and already leaving the frame. The offset is what keeps its
+       left edge clear of the copy column: scaling up without it put the rear of
+       the van over the lead paragraph and the CTA. The hero clips it, so it still
+       cannot cause horizontal overflow.
+
+       Pulled back in and dropped to the floor (Josh, 30 July 2026). The asset is
+       tightly cropped (opaque pixels run x 2-1300 of 1302 and y 1-473 of 475,
+       measured off the file), so `bottom: 0` puts the tyre contact patches
+       exactly on the hero's bottom edge: 0.9px of gap, nothing to fake.
+
+       Horizontally it is now the smaller of two rules, because -340px alone
+       drives the van's rear into the hero lead, and the pixels it would sit
+       behind are the bright crescent on the van's own rear panel: sampled at
+       1.18-2.72:1 against white text, so a few words of the lead would be
+       unreadable. The max() keeps the van's left edge one notch clear of the
+       lead's measure whatever the viewport does. That also fixes a collision
+       that ALREADY existed between 1024px and 1400px with the old -450px, where
+       the van reached ~100px into the paragraph. */
+    --van-w: min(1180px, 88vw);
+    left: max(
+      calc(2 * var(--container-padding) + var(--hero-lead-measure) + 8px),
+      calc(100% + 340px - var(--van-w))
+    );
+    right: auto;
+    bottom: 0;
     z-index: 1;
-    width: min(880px, 62vw);
+    width: var(--van-w);
     pointer-events: none;
     /* JS sets --van-x as you scroll; transform only, so it stays cheap. */
     transform: translate3d(var(--van-x, 0px), 0, 0);
@@ -373,13 +425,9 @@ const schemas = [
   .hero__reassure a { color: var(--blue-300); font-weight: var(--weight-semibold); }
   .hero__reassure a:hover { color: var(--blue-200); }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .c-drift { animation: drift var(--dur, 10s) var(--ease-standard) infinite alternate; }
-    .c-layer[data-depth='10'] .c-drift { --dur: 9s; }
-    .c-layer[data-depth='20'] .c-drift { --dur: 11s; }
-    .c-layer[data-depth='32'] .c-drift { --dur: 13s; }
+  @media (prefers-reduced-motion: reduce) {
+    .hero :global(.hero__crescent), .hero__van { transform: none; will-change: auto; }
   }
-  @keyframes drift { from { transform: translateY(0) rotate(0); } to { transform: translateY(-22px) rotate(-1.4deg); } }
 
   /* ---------- 2. TRUST STRIP ---------- */
   .trust {
@@ -430,7 +478,12 @@ const schemas = [
   }
   .dv__card:hover .dv__bar { height: 8px; }
 
-  .dv__photo { border-bottom: 1px solid var(--border-subtle); }
+  /* `:global()` from a scoped ancestor, because `.dv__photo` is passed INTO
+     Photo/DivisionSlot and so carries THEIR scope id, not this page's. Written
+     as a plain `.dv__photo` rule it matched nothing and the hairline between
+     photo and card body was silently missing (rule 19's gotcha, measured
+     30 July 2026: computed border-bottom-width was 0px). */
+  .dv__card :global(.dv__photo) { border-bottom: 1px solid var(--border-subtle); }
   /* Body carries a whisper of the division colour so the card is tinted, not
      just badged. Kept very low so body copy contrast is unaffected. */
   .dv__body {
@@ -577,7 +630,9 @@ const schemas = [
     .hero__grid { padding-bottom: 0; }
     .hero__van {
       position: relative;
-      right: auto; bottom: auto;
+      /* `left` must be reset too: on a relatively-positioned element it still
+         offsets the box, so the desktop max() would shove the van off-screen. */
+      left: auto; right: auto; bottom: auto;
       width: min(720px, 108vw);
       margin: 32px -6vw 0 auto;
     }
@@ -596,53 +651,50 @@ const schemas = [
     .way__grid { grid-template-columns: 1fr; }
     .trust { grid-template-columns: 1fr; }
     .trust li { justify-content: flex-start; }
-    .hero__crescent { width: 360px; right: -120px; }
+    .hero :global(.hero__crescent) { width: 420px; left: 26%; bottom: -120px; }
   }
 </style>
 
 <script>
-  /* Hero crescent parallax — pointer offset written straight to transform via
-     rAF (no re-render). Disabled under reduced motion. Idle drift is CSS. */
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* Van drives off to the right as the hero scrolls away.
      Scroll progress across the hero maps to a translateX, written to a custom
      property so the compositor does the work. Skipped under reduced motion,
-     where the van simply sits still. */
+     where the van simply sits still.
+
+     Smoothed and slowed (Josh, 29 July 2026): the raw mapping felt fast, partly
+     because scaling the van up had also scaled its travel distance. Two changes
+     — the distance is now a fraction of the viewport rather than the van's own
+     width, and the position eases toward its scroll target each frame instead
+     of jumping straight to it, so it glides with the scroll rather than
+     tracking it exactly. */
   const van = document.querySelector<HTMLElement>('[data-van]');
   const heroEl = document.querySelector<HTMLElement>('.hero');
   if (!prefersReduced && van && heroEl) {
-    let vTicking = false;
-    const drive = () => {
+    let target = 0, current = 0, easing = false;
+
+    const measure = () => {
       const heroBottom = heroEl.offsetTop + heroEl.offsetHeight;
       const progress = Math.min(Math.max(window.scrollY / Math.max(heroBottom, 1), 0), 1);
-      // Far enough to clear the viewport; the hero's overflow clips it.
-      van.style.setProperty('--van-x', `${progress * (van.offsetWidth + window.innerWidth * 0.2)}px`);
-      vTicking = false;
+      target = progress * window.innerWidth * 0.42;
+      if (!easing) { easing = true; window.requestAnimationFrame(ease); }
     };
-    drive();
-    window.addEventListener('scroll', () => {
-      if (!vTicking) { window.requestAnimationFrame(drive); vTicking = true; }
-    }, { passive: true });
-    window.addEventListener('resize', drive);
-  }
-  const hero = document.querySelector<HTMLElement>('.hero');
-  const wrap = document.querySelector<HTMLElement>('[data-crescent]');
-  if (!prefersReduced && hero && wrap) {
-    const layers = Array.from(wrap.querySelectorAll<HTMLElement>('.c-layer'));
-    let mx = 0, my = 0, raf = 0;
-    const apply = () => {
-      for (const l of layers) {
-        const depth = Number(l.dataset.depth ?? 0);
-        l.style.transform = `translate3d(${-mx * depth}px, ${-my * depth}px, 0)`;
+
+    const ease = () => {
+      current += (target - current) * 0.075;
+      van.style.setProperty('--van-x', `${current.toFixed(2)}px`);
+      if (Math.abs(target - current) > 0.2) {
+        window.requestAnimationFrame(ease);
+      } else {
+        easing = false;
       }
-      raf = 0;
     };
-    hero.addEventListener('mousemove', (e) => {
-      const r = hero.getBoundingClientRect();
-      mx = (e.clientX - r.left) / r.width - 0.5;
-      my = (e.clientY - r.top) / r.height - 0.5;
-      if (!raf) raf = requestAnimationFrame(apply);
-    });
+
+    measure();
+    window.addEventListener('scroll', measure, { passive: true });
+    window.addEventListener('resize', measure, { passive: true });
   }
+  /* The hero watermark's pointer parallax and scroll drift live in BaseLayout,
+     shared with every other hero on the site. */
 </script>
