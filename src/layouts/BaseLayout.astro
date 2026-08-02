@@ -13,7 +13,9 @@ import '@fontsource/inter/latin-700.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ScrollTop from '../components/ScrollTop.astro';
-import { site, nap, ratings, social, areasServed } from '../data/site.ts';
+import PlanPrompt from '../components/PlanPrompt.astro';
+import { site } from '../data/site.ts';
+import { organization, website } from '../lib/schema.ts';
 import { divisionVars, type DivisionKey } from '../data/divisions.ts';
 
 interface Props {
@@ -42,47 +44,22 @@ const {
 const canonicalURL = new URL(canonical ?? Astro.url.pathname, Astro.site).href;
 const ogImageURL = new URL(ogImage, Astro.site).href;
 
-/* ---- Site-wide schema: Organization + WebSite ---- */
-const orgSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  '@id': `${site.domain}/#organization`,
-  name: site.name,
-  legalName: site.legalName,
-  url: `${site.domain}/`,
-  logo: `${site.domain}/brand/logos/group.svg`,
-  image: ogImageURL,
-  telephone: nap.phone.tel,
-  email: nap.email,
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: nap.addressLine,
-    addressLocality: nap.locality,
-    addressRegion: nap.region,
-    postalCode: nap.postcode,
-    addressCountry: 'GB',
-  },
-  areaServed: areasServed.map((a) => ({ '@type': 'Place', name: a })),
-  sameAs: [social.facebook, social.instagram],
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: ratings.google.value,
-    reviewCount: ratings.google.count,
-    bestRating: 5,
-  },
-};
+/* ---- Site-wide schema: Organization + WebSite ----
+   Both now live in `src/lib/schema.ts` alongside every other builder, so the
+   entity data (knowsAbout, offer catalogue, founder, company number) has one
+   home and this layout stays a layout. */
+const allSchemas = [organization(), website(), ...schemas];
 
-const websiteSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  '@id': `${site.domain}/#website`,
-  name: site.name,
-  url: `${site.domain}/`,
-  publisher: { '@id': `${site.domain}/#organization` },
-  inLanguage: 'en-GB',
-};
+/* The half-price sign-up offer follows the booking link, not the page, so the
+   prompt is mounted SITE-WIDE rather than remembered page by page (Josh, 31 July
+   2026: "we are doing people a disservice if we don't offer them this"). It only
+   ever reacts to the two specific ServiceM8 links the offer applies to, so it is
+   inert everywhere else.
 
-const allSchemas = [orgSchema, websiteSchema, ...schemas];
+   The one exclusion is the Homecare page itself, where the same offer already
+   has a full band and its CTA already says "Book My Service and Start Covered".
+   Derived from the URL rather than a prop, so it cannot be forgotten. */
+const showPlanPrompt = !Astro.url.pathname.startsWith('/homecare-plans');
 ---
 <!doctype html>
 <html lang="en-GB">
@@ -126,6 +103,104 @@ const allSchemas = [orgSchema, websiteSchema, ...schemas];
     </main>
     <Footer division={division} />
     <ScrollTop />
+    {showPlanPrompt && <PlanPrompt />}
+
+    <script>
+      /* Hero watermark motion — ONE implementation for every hero on the site
+         (the homepage's own mark and PageHero's), so the gesture cannot drift
+         apart per page:
+
+           · pointer parallax: the mark's three arcs each drift by their own
+             depth as the cursor comes near, and only when it comes near. This is
+             the animation that was on the homepage originally (Josh, 29-30 July
+             2026). Eased toward the target each frame rather than set directly,
+             so it glides instead of snapping.
+           · scroll drift: progress through the hero nudges the whole mark down.
+
+         Transform only, both written as custom properties, and the whole thing
+         is skipped under reduced motion — where the CSS also forces
+         `transform: none`, so the mark simply sits still. */
+      (() => {
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const hero = document.querySelector('.hero, [data-phero]');
+        const mark = document.querySelector('[data-hero-mark]');
+        if (prefersReduced || !hero || !mark) return;
+
+        /* Each arc of the mark moves on its own, by its own `data-depth`, so the
+           three separate as the cursor passes rather than sliding as one piece
+           (Josh, 30 July 2026). */
+        const layers = [...mark.querySelectorAll('[data-depth]')].map((el) => ({
+          el,
+          depth: Number(el.dataset.depth ?? 0),
+          x: 0, y: 0, tx: 0, ty: 0,
+        }));
+        if (!layers.length) return;
+
+        /* And it only responds when the cursor is actually near the mark: at
+           more than PROXIMITY away nothing moves at all, and the response is
+           squared so it fades in late rather than creeping. */
+        const PROXIMITY = 260;
+        const SCROLL_TRAVEL = 90;
+
+        let animating = false;
+
+        const ease = () => {
+          let moving = false;
+          for (const layer of layers) {
+            layer.x += (layer.tx - layer.x) * 0.09;
+            layer.y += (layer.ty - layer.y) * 0.09;
+            layer.el.style.setProperty('--lx', `${layer.x.toFixed(2)}px`);
+            layer.el.style.setProperty('--ly', `${layer.y.toFixed(2)}px`);
+            if (Math.abs(layer.tx - layer.x) > 0.1 || Math.abs(layer.ty - layer.y) > 0.1) moving = true;
+          }
+          if (moving) requestAnimationFrame(ease);
+          else animating = false;
+        };
+
+        const setTargets = (px: number, py: number) => {
+          const box = mark.getBoundingClientRect();
+          /* Distance from the cursor to the mark's box: zero while inside it. */
+          const dx = Math.max(box.left - px, 0, px - box.right);
+          const dy = Math.max(box.top - py, 0, py - box.bottom);
+          const distance = Math.hypot(dx, dy);
+          const closeness = Math.max(0, 1 - distance / PROXIMITY) ** 2;
+
+          /* Direction is measured from the mark's own centre, so the arcs lean
+             away from the cursor wherever it approaches from. */
+          const cx = box.left + box.width / 2;
+          const cy = box.top + box.height / 2;
+          const ox = Math.max(-1, Math.min(1, (px - cx) / (box.width / 2 || 1)));
+          const oy = Math.max(-1, Math.min(1, (py - cy) / (box.height / 2 || 1)));
+
+          for (const layer of layers) {
+            layer.tx = -ox * layer.depth * closeness;
+            layer.ty = -oy * layer.depth * closeness;
+          }
+          if (!animating) { animating = true; requestAnimationFrame(ease); }
+        };
+
+        hero.addEventListener('mousemove', (event) => setTargets(event.clientX, event.clientY));
+
+        /* Ease back to rest when the cursor leaves, rather than freezing. */
+        hero.addEventListener('mouseleave', () => {
+          for (const layer of layers) { layer.tx = 0; layer.ty = 0; }
+          if (!animating) { animating = true; requestAnimationFrame(ease); }
+        });
+
+        let scrollQueued = false;
+        const drift = () => {
+          scrollQueued = false;
+          const height = hero.offsetHeight || 1;
+          const progress = Math.min(Math.max(-hero.getBoundingClientRect().top / height, 0), 1);
+          mark.style.setProperty('--mark-scroll', `${(progress * SCROLL_TRAVEL).toFixed(2)}px`);
+        };
+        drift();
+        window.addEventListener('scroll', () => {
+          if (!scrollQueued) { scrollQueued = true; requestAnimationFrame(drift); }
+        }, { passive: true });
+        window.addEventListener('resize', drift, { passive: true });
+      })();
+    </script>
 
     <script>
       /* Scroll reveal — one IntersectionObserver, unobserve on reveal.

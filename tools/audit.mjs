@@ -15,6 +15,7 @@ import { join, relative } from 'node:path';
 
 const DIST = 'dist';
 const LIMITS = { title: 60, description: 155 };
+const SITE_ORIGIN = 'https://abbeygroup.uk';
 
 if (!existsSync(DIST)) {
   console.error(`✗ ${DIST}/ not found. Run \`npm run build\` first.`);
@@ -130,6 +131,36 @@ for (const file of files) {
   /* 8. Nothing render-blocking from Google Fonts (§5 / §7) */
   if (/fonts\.googleapis\.com|fonts\.gstatic\.com/.test(html)) {
     err('references Google Fonts, which is render-blocking and leaks IPs');
+  }
+}
+
+/* ---------- site-wide files (not per-page) ---------- */
+/* The AEO/GEO infrastructure. These are generated from site data, so the real
+   failure mode is not a typo, it is a route quietly not emitting — which then
+   404s on the live domain and takes Abbey out of AI answers. Fail the build if
+   any is missing or obviously wrong. */
+{
+  const siteErr = (msg) => errors.push(`(site) — ${msg}`);
+
+  const robots = join(DIST, 'robots.txt');
+  if (!existsSync(robots)) siteErr('robots.txt is missing (build standard §4)');
+  else {
+    const txt = readFileSync(robots, 'utf8');
+    if (!/Sitemap:\s*https?:\/\//i.test(txt)) siteErr('robots.txt has no Sitemap: line');
+    if (/^\s*Disallow:\s*\/\s*$/im.test(txt)) siteErr('robots.txt disallows the whole site');
+    for (const a of ['GPTBot', 'ClaudeBot', 'PerplexityBot', 'Google-Extended'])
+      if (!txt.includes(a)) warnings.push(`(site) — robots.txt no longer names ${a}`);
+  }
+
+  for (const f of ['llms.txt', 'llms-full.txt']) {
+    const p = join(DIST, f);
+    if (!existsSync(p)) { siteErr(`${f} is missing (build standard §4)`); continue; }
+    const txt = readFileSync(p, 'utf8');
+    /* Guard the two rules the file promises: no em/en dashes (house style), and
+       no unresolved template holes from the generator. */
+    if (/[—–]/.test(txt)) siteErr(`${f} contains an em/en dash`);
+    if (/\bundefined\b|\$\{/.test(txt)) siteErr(`${f} has an unresolved value (undefined or \${})`);
+    if (!txt.includes(SITE_ORIGIN)) warnings.push(`(site) — ${f} never references ${SITE_ORIGIN}`);
   }
 }
 

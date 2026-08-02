@@ -22,7 +22,9 @@ export default defineConfig({
   integrations: [
     sitemap({
       // Hidden/ad landing + thank-you pages get excluded here later (§4).
-      filter: (page) => !page.includes('/thank-you/'),
+      // `/preview/` holds unshipped experiments (e.g. the house-journey demo);
+      // they are noindex and must never enter the sitemap.
+      filter: (page) => !page.includes('/thank-you/') && !page.includes('/preview/'),
     }),
   ],
 });
