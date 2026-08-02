@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Section from '../components/Section.astro';
 import Eyebrow from '../components/Eyebrow.astro';
+import PlanPicker from '../components/PlanPicker.astro';
 import Button from '../components/Button.astro';
 import Icon from '../components/Icon.astro';
 import PageHero from '../components/PageHero.astro';
@@ -10,6 +11,7 @@ import FAQ from '../components/FAQ.astro';
 import Areas from '../components/Areas.astro';
 import EnquiryForm from '../components/EnquiryForm.astro';
 import { nap, booking, routes, homecareReviews } from '../data/site.ts';
+import { homecareFaqs } from '../data/faqs.ts';
 import { service, faqPage, breadcrumb } from '../lib/schema.ts';
 
 const title = 'Boiler Cover Plans Whitby | From £9.99/Month | Abbey Group';
@@ -56,16 +58,10 @@ const compareRows: { label: string; sc: boolean | string; scp: boolean | string;
   { label: 'Plumbing parts and labour', sc: false, scp: false, uhc: true },
 ];
 
-const faqs = [
-  { q: 'How much does boiler cover cost per month?', a: 'Abbey Group boiler cover starts at £9.99 a month for our Service Care plan. That is below what the big national cover providers charge for comparable annual cover, and some of their plans rise sharply after the first year. With us the price stays fair, and it is set by a local team rather than a national call centre.' },
-  { q: 'Is boiler cover worth it?', a: 'A single boiler call-out usually starts at over £100, and most home insurance will not cover a breakdown. Cover is worth it if you would rather pay a small fixed amount each month than face a surprise bill, and if you want your annual service handled without having to remember it. For landlords and holiday-let owners, it also keeps the yearly certificate and paperwork sorted.' },
-  { q: 'How often should a boiler be serviced?', a: 'Once a year. An annual service keeps most manufacturer warranties valid, catches small faults before they turn expensive, and keeps the boiler running safely and efficiently. Every Abbey Group plan includes that yearly service, so it is booked in and handled for you.' },
-  { q: 'What is included in a boiler cover plan?', a: 'Every plan includes a full boiler service, a gas safety certificate, flue gas analysis, a heating filter clean, a balance of your radiators and a heating health check, with priority response and one free call-out. Higher plans add parts and labour cover and unlimited call-outs. The full breakdown is in the comparison table above.' },
-  { q: 'Does boiler cover include landlord gas safety certificates?', a: 'Yes. Our Landlord Care plan at £13.99 a month bundles the annual gas safety certificate landlords are legally required to hold, alongside the full boiler service. Your certification stays current without a separate booking each year. If you only need a one-off certificate, see our Plumbing & Heating page.' },
-  { q: 'Can I cancel my boiler cover plan anytime?', a: 'Yes. There is no minimum contract and no cancellation fee, so you can cancel at any time by emailing or writing to us. If you cancel within the first 14 days and we have not yet carried out any work or a service, you get a full refund. After that, the plan spreads your annual service across the year, so if you cancel before your next service we cannot refund payments already made or carry out that service. Full terms are in your Homecare plan agreement.' },
-  { q: 'Do you cover holiday lets and second homes?', a: 'Yes, though the cover depends on how the property is used. A holiday let is treated as a rental, so it needs a Landlord Gas Safety Certificate, priced at £162. Guest houses and B&Bs normally fall under our Ultimate Commercial Cover, priced from £74.99 a month after a site inspection, though this depends on the size and number of appliances.' },
-  { q: 'What is the difference between a one-off boiler service and a boiler cover plan?', a: 'A one-off boiler service is a single visit you book and pay for each time, usually around £96. A boiler cover plan spreads that yearly service across monthly payments and adds priority response, call-outs and discounts on other work. If you just need a single service or repair, see our Plumbing & Heating page.' },
-];
+/* The client-approved FAQ set for this page. It lives in `src/data/faqs.ts`
+   because the page, its FAQPage JSON-LD and `/llms.txt` all read the same
+   text and must never disagree. */
+const faqs = homecareFaqs;
 
 const schemas = [
   service({ name: 'Boiler Cover Plans', path: routes.homecare, serviceType: 'Boiler cover and servicing', description }),
@@ -111,7 +107,8 @@ const schemas = [
       ))}
     </ul>
     <p class="plans__note reveal">
-      Not sure which fits? Call the Whitby office on
+      Not sure which fits? <a href="#which-plan">Answer three quick questions</a> and we
+      will tell you, or call the Whitby office on
       <a class="tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>
       and we will talk it through honestly.
     </p>
@@ -141,6 +138,26 @@ const schemas = [
       You also get priority response when you need us, and a discount on any other work you
       have done.
     </p>
+  </Section>
+
+  <!-- IS HOMECARE RIGHT FOR YOU? — the plan picker.
+       Sits here on purpose: white between the sunken band above and the dark
+       sign-up offer below, so the alternation holds; and after "what every plan
+       includes", so the visitor has the context to answer. Its Service Care
+       result deliberately does NOT restate the £96/£48 offer, because that band
+       is immediately below this one. -->
+  <Section bg="white" id="which-plan">
+    <div class="which__head reveal">
+      <Eyebrow>Not sure which one</Eyebrow>
+      <h2 class="h2">Is Homecare right for you?</h2>
+      <p class="which__intro">
+        Three questions, and we will tell you which plan actually fits and what it saves
+        you. It takes about ten seconds.
+      </p>
+    </div>
+    <div class="reveal">
+      <PlanPicker />
+    </div>
   </Section>
 
   <!-- SIGN-UP OFFER -->
@@ -298,9 +315,11 @@ const schemas = [
         <Button href="#enquiry" size="lg">Get Covered from £9.99/Month</Button>
         <Button href={`tel:${nap.phone.tel}`} variant="outline" size="lg">Call the Whitby office</Button>
       </div>
+      <!-- Two routes, two lines: as one paragraph they ran together and read as
+           a single sentence with two questions in it (Josh, 30 July 2026). -->
       <p class="final__links">
-        Prefer a one-off repair instead of a plan? See <a href={routes.plumbing}>Plumbing &amp; Heating</a>.
-        Want to know who you are dealing with first? Read our story on <a href={routes.about}>About</a>.
+        <span>Prefer a one-off repair instead of a plan? See <a href={routes.plumbing}>Plumbing &amp; Heating</a>.</span>
+        <span>Want to know who you are dealing with first? Read our story on <a href={routes.about}>About</a>.</span>
       </p>
     </div>
   </Section>
@@ -311,6 +330,8 @@ const schemas = [
 
   /* PLANS */
   .plans__head { max-width: 640px; margin-bottom: 40px; }
+  .which__head { max-width: 640px; margin-bottom: 40px; }
+  .which__intro { margin-top: 16px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
   .plans__intro { margin-top: 16px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
   .plans__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
   .plan {
@@ -432,7 +453,10 @@ const schemas = [
   .final { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px; }
   .final__body { font-size: var(--text-base); color: var(--text-body); max-width: 560px; line-height: var(--leading-relaxed); }
   .final__cta { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
-  .final__links { font-size: var(--text-sm); color: var(--text-muted); max-width: 620px; }
+  .final__links { font-size: var(--text-sm); color: var(--text-muted); max-width: 660px; }
+  /* One cross-link per line, each still balanced within its own line. */
+  .final__links span { display: block; text-wrap: balance; }
+  .final__links span + span { margin-top: 6px; }
   .final__links a { color: var(--text-link); font-weight: var(--weight-semibold); }
 
   @media (max-width: 1024px) {

@@ -1,0 +1,409 @@
+---
+import Button from './Button.astro';
+import { nap, routes } from '../data/site.ts';
+
+/* PlanPicker — "Is Homecare right for you?"
+   Rebuilt 31 July 2026 after Josh's review of v1.
+
+   WHAT WAS WRONG WITH v1, in his words: the questions assumed you already knew
+   what Homecare was, and "if it broke tomorrow, what would you want" is not a
+   real question because "obviously, I want everything covered". It asked the
+   visitor to do the segmenting. It also made the plan look free by never
+   mentioning the half-price service.
+
+   WHAT FIXED IT: the client's own terms. `Abbey Care Brochure JAN2026`, Section
+   2, 1(a)(vi) and 5(e): **a boiler ten years or older cannot have Service Care+
+   at all** and is offered Service Care only. So boiler age is not a preference,
+   it is an eligibility gate — a fact the visitor already knows about their own
+   house, that genuinely decides the answer, and that no competitor's tool tells
+   them. It also stops the tool recommending a plan Abbey would have to refuse.
+
+   So the three questions are now: who it is for, how old the boiler is, and one
+   question about the STATE OF THE BOILER rather than a wish list. Nobody is
+   asked to choose a level of cover.
+
+   FLOW (Josh's spec): one question at a time, nothing revealed until the
+   previous one is answered, and no result until all three are answered and the
+   button is pressed.
+
+   STILL ZERO JAVASCRIPT. Progressive reveal, the submit gate and the result are
+   all `:has()`. Nothing is stored on the device. `@supports` hides the whole
+   tool where `:has()` is unavailable, so nobody meets a dead end.
+
+   MONEY LINES. Service Care and Landlord Care carry the confirmed half-price
+   sign-up offer (Amy's email: £96 service → £48, £162 landlord check → £81).
+   Service Care+ and Ultimate Home Care do NOT, because that offer is confirmed
+   for those two plans only — it appears nowhere in the brochure, including the
+   January 2026 one. See `_Specs/01 OUTSTANDING FROM CLIENT.md`: if Amy confirms
+   it applies to every plan, it is one line per result here. */
+
+const who = [
+  { id: 'home', label: 'My own home' },
+  { id: 'landlord', label: 'A property I let out' },
+  { id: 'business', label: 'A guest house, B&B or business' },
+];
+
+const age = [
+  { id: 'under', label: 'Under 10 years old' },
+  { id: 'over', label: '10 years or older' },
+  { id: 'unsure', label: 'I am not sure' },
+];
+
+/* Deliberately about the boiler's CONDITION, not about levels of cover. */
+const state = [
+  { id: 'fine', label: 'Fine. I just want it serviced and certified properly' },
+  { id: 'trouble', label: 'It has had the odd problem and I would rather a repair was covered' },
+  { id: 'whole', label: 'I would want the heating and plumbing looked after too' },
+];
+---
+<form class="pp" data-plan-picker>
+  <div class="pp__questions">
+    <fieldset class="pp__q">
+      <legend class="pp__legend"><span class="pp__num" aria-hidden="true">1</span> Who is the cover for?</legend>
+      <div class="pp__opts">
+        {who.map((o) => (
+          <span class="pp__opt">
+            <input type="radio" name="pp-who" id={`pp-who-${o.id}`} />
+            <label for={`pp-who-${o.id}`}>{o.label}</label>
+          </span>
+        ))}
+      </div>
+    </fieldset>
+
+    <fieldset class="pp__q pp__q--2">
+      <legend class="pp__legend"><span class="pp__num" aria-hidden="true">2</span> How old is the boiler?</legend>
+      <div class="pp__opts">
+        {age.map((o) => (
+          <span class="pp__opt">
+            <input type="radio" name="pp-age" id={`pp-age-${o.id}`} />
+            <label for={`pp-age-${o.id}`}>{o.label}</label>
+          </span>
+        ))}
+      </div>
+    </fieldset>
+
+    <fieldset class="pp__q pp__q--3">
+      <legend class="pp__legend"><span class="pp__num" aria-hidden="true">3</span> How is it at the moment?</legend>
+      <div class="pp__opts pp__opts--stack">
+        {state.map((o) => (
+          <span class="pp__opt">
+            <input type="radio" name="pp-state" id={`pp-state-${o.id}`} />
+            <label for={`pp-state-${o.id}`}>{o.label}</label>
+          </span>
+        ))}
+      </div>
+    </fieldset>
+
+    <div class="pp__submit">
+      <input type="checkbox" id="pp-go" class="pp__gocheck" />
+      <label class="pp__go" for="pp-go">Show my plan</label>
+    </div>
+  </div>
+
+  <!-- RESULT. Hidden until all three are answered and the button is pressed. -->
+  <div class="pp__result" role="status" aria-live="polite">
+    <div class="pp__waiting">
+      <p class="pp__prompt">
+        Answer the three questions and your plan appears here. Nothing is stored, and there
+        is nothing to submit.
+      </p>
+    </div>
+
+    <div class="pp__answer">
+      <article class="pp__r pp__r--service">
+        <p class="pp__rlabel">Your plan</p>
+        <h3 class="pp__rname">Service Care</h3>
+        <p class="pp__rprice"><span class="tnum">£9.99</span> <span>a month</span></p>
+
+        <!-- Shown only when the boiler is 10+ or unknown, where it is the REASON
+             for the recommendation rather than a nice-to-know. -->
+        <p class="pp__why pp__why--age">
+          Once a boiler is ten years or older we cannot put parts cover on it, so Service
+          Care is the plan available to you. It still covers the full annual service, the
+          safety certificate and a call-out.
+        </p>
+        <p class="pp__why pp__why--fine">
+          You want it serviced properly and certified, and not much else. That is exactly
+          what this covers.
+        </p>
+
+        <p class="pp__rmoney">
+          Your annual service is <strong class="tnum">£96</strong> on its own. Start Service
+          Care on the same visit and that service is <strong class="tnum">£48</strong>, then
+          <strong class="tnum">£9.99</strong> a month.
+        </p>
+        <p class="pp__rsave">You save <strong class="tnum">£48</strong> on day one.</p>
+        <Button href="#enquiry" size="lg">Start Service Care</Button>
+
+        <!-- Shown for a 10+ or unknown-age boiler only (Josh's suggestion, 31 July
+             2026). Someone who has just been told parts cover is not available on
+             their boiler is exactly the person who should hear that replacing it
+             is an option, and a new boiler is worth far more to Abbey than a
+             £9.99 plan. It is the honest answer as well as the commercial one.
+
+             It signposts, it does NOT claim a discount: neither the brochure nor
+             abbeyhomecare.co.uk says the "5% off future work" applies to a new
+             boiler installation, so that is a question for Amy (Outstanding C3)
+             and not a claim made here. The efficiency line is Abbey's own, from
+             abbeygas.com. -->
+        <p class="pp__alt">
+          <strong>Boiler getting on a bit?</strong> Once a boiler is older it tends to cost
+          more to run than a new one, so a replacement is sometimes the better spend. We fit
+          those too, and we will tell you honestly which is worth doing.
+          <a href={routes.plumbing}>See Plumbing &amp; Heating</a>
+        </p>
+      </article>
+
+      <article class="pp__r pp__r--plus">
+        <p class="pp__rlabel">Your plan</p>
+        <h3 class="pp__rname">Service Care+</h3>
+        <p class="pp__rprice"><span class="tnum">£19.99</span> <span>a month</span></p>
+        <p class="pp__why">
+          A boiler that has given you trouble is the one worth covering. This adds the parts
+          and the labour, so a repair does not become a bill.
+        </p>
+        <p class="pp__rmoney">
+          One call-out starts at around <strong class="tnum">£120</strong>, before any parts.
+          Service Care+ is <strong class="tnum">£19.99</strong> a month with unlimited
+          call-outs, boiler parts and labour included, and 10% off other work.
+        </p>
+        <Button href="#enquiry" size="lg">Start Service Care+</Button>
+      </article>
+
+      <article class="pp__r pp__r--all">
+        <p class="pp__rlabel">Your plan</p>
+        <h3 class="pp__rname">Ultimate Home Care</h3>
+        <p class="pp__rprice"><span class="tnum">£34.99</span> <span>a month</span></p>
+        <p class="pp__why">
+          You want the house looked after, not just the boiler. This covers the heating and
+          the plumbing as well, so one plan handles the lot.
+        </p>
+        <p class="pp__rmoney">
+          One call-out starts at around <strong class="tnum">£120</strong>, before any parts.
+          Ultimate Home Care is <strong class="tnum">£34.99</strong> a month with heating and
+          plumbing parts and labour included, and 20% off other work.
+        </p>
+        <Button href="#enquiry" size="lg">Start Ultimate Home Care</Button>
+      </article>
+
+      <article class="pp__r pp__r--landlord">
+        <p class="pp__rlabel">Your plan</p>
+        <h3 class="pp__rname">Landlord Care</h3>
+        <p class="pp__rprice"><span class="tnum">£13.99</span> <span>a month</span></p>
+        <p class="pp__why">
+          Letting a property means a gas safety certificate every year by law. This bundles
+          it with the annual service so the paperwork cannot lapse.
+        </p>
+        <p class="pp__rmoney">
+          A landlord gas safety check is <strong class="tnum">£162</strong> on its own. Start
+          Landlord Care with one and it is <strong class="tnum">£81</strong> on the day, then
+          <strong class="tnum">£13.99</strong> a month.
+        </p>
+        <p class="pp__rsave">You save <strong class="tnum">£81</strong> on day one.</p>
+        <Button href="#enquiry" size="lg">Start Landlord Care</Button>
+      </article>
+
+      <article class="pp__r pp__r--commercial">
+        <p class="pp__rlabel">Your route</p>
+        <h3 class="pp__rname">Ultimate Commercial Cover</h3>
+        <p class="pp__rprice"><span class="tnum">From £74.99</span> <span>a month</span></p>
+        <p class="pp__why">
+          A guest house or business has more appliances and more at stake, so cover is built
+          around the premises rather than sold off a shelf.
+        </p>
+        <p class="pp__rmoney">
+          Priced after a quick site visit, from <strong class="tnum">£74.99</strong> a month,
+          based on the number of appliances and the size of the premises.
+        </p>
+        <Button href={`tel:${nap.phone.tel}`} size="lg">Call {nap.phone.label}</Button>
+      </article>
+
+      <p class="pp__foot">
+        <input type="reset" class="pp__reset" value="Start again" />
+      </p>
+    </div>
+  </div>
+</form>
+
+<style>
+  /* No :has(), no tool. The plans grid and comparison table above stand alone. */
+  @supports not selector(:has(*)) {
+    .pp { display: none; }
+  }
+
+  .pp { display: grid; grid-template-columns: 1fr 0.85fr; gap: 56px; align-items: start; }
+  .pp__questions { display: flex; flex-direction: column; gap: 30px; }
+
+  .pp__q { border: 0; padding: 0; margin: 0; }
+  .pp__legend {
+    display: flex; align-items: center; gap: 12px;
+    padding: 0; margin-bottom: 14px;
+    font-size: var(--text-md); font-weight: var(--weight-semibold); color: var(--text-heading);
+  }
+  .pp__num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; flex: none;
+    border-radius: var(--radius-pill);
+    background: var(--page-accent, var(--orange-500));
+    color: var(--ink-500);
+    font-size: 14px; font-weight: var(--weight-bold);
+  }
+
+  .pp__opts { display: flex; flex-wrap: wrap; gap: 10px; }
+  .pp__opts--stack { flex-direction: column; align-items: flex-start; }
+
+  /* Visually hidden, NOT display:none — the radio stays focusable and in the
+     accessibility tree; the label is the visible control. */
+  .pp__opt input,
+  .pp__gocheck {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
+  .pp__opt label {
+    display: inline-flex; align-items: center;
+    padding: 11px 18px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-signature);
+    background: var(--white);
+    font-size: 15px; font-weight: var(--weight-medium); color: var(--text-body);
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--ease-standard),
+                background-color var(--duration-fast) var(--ease-standard),
+                color var(--duration-fast) var(--ease-standard);
+  }
+  .pp__opt label:hover { border-color: var(--page-accent, var(--orange-500)); color: var(--text-heading); }
+  .pp__opt input:focus-visible + label,
+  .pp__gocheck:focus-visible + .pp__go { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+  .pp__opt input:checked + label {
+    background: var(--page-accent, var(--orange-500));
+    border-color: var(--page-accent, var(--orange-500));
+    /* Navy on orange is 5.67:1; white would be 3.1:1 and fail. */
+    color: var(--ink-500);
+    font-weight: var(--weight-semibold);
+  }
+
+  /* ---- ONE AT A TIME. Each step appears only once the one before it is
+     answered, and the button only once all three are. ---- */
+  .pp__q--2, .pp__q--3, .pp__submit { display: none; }
+  .pp:has([name='pp-who']:checked) .pp__q--2 { display: block; }
+  .pp:has([name='pp-age']:checked) .pp__q--3 { display: block; }
+  .pp:has([name='pp-state']:checked) .pp__submit { display: block; }
+
+  .pp__go {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 14px 28px;
+    border-radius: var(--radius-signature);
+    background: var(--cta); color: var(--cta-fg);
+    font-size: 16px; font-weight: var(--weight-bold);
+    cursor: pointer;
+  }
+  .pp__go:hover { background: color-mix(in oklch, var(--cta) 88%, var(--white)); }
+  /* Once the answer is showing, the button has done its job. */
+  .pp:has(#pp-go:checked) .pp__submit { display: none; }
+
+  /* ---- RESULT ---- */
+  .pp__result {
+    position: sticky; top: 96px;
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-subtle);
+    border-top: 3px solid var(--page-accent, var(--orange-500));
+    border-radius: var(--radius-lg);
+    padding: 30px 32px 32px;
+  }
+  .pp__prompt { font-size: 15.5px; line-height: var(--leading-relaxed); color: var(--text-muted); }
+
+  /* Nothing until the button is pressed. */
+  .pp__answer { display: none; }
+  .pp:has(#pp-go:checked) .pp__answer { display: block; }
+  .pp:has(#pp-go:checked) .pp__waiting { display: none; }
+
+  .pp__r, .pp__why, .pp__alt { display: none; }
+
+  .pp__rlabel {
+    font-size: 12px; font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wider); text-transform: uppercase;
+    color: var(--page-accent-ink, var(--orange-800));
+  }
+  .pp__rname { font-family: var(--font-display); font-weight: 400; font-size: 30px; margin-top: 8px; color: var(--text-heading); }
+  .pp__rprice { margin-top: 4px; font-size: 22px; font-weight: var(--weight-bold); color: var(--text-heading); }
+  .pp__rprice span:last-child { font-size: 15px; font-weight: var(--weight-medium); color: var(--text-muted); }
+  .pp__why { margin-top: 16px; font-size: 15.5px; line-height: var(--leading-relaxed); color: var(--text-body); }
+  .pp__rmoney {
+    margin-top: 16px; padding: 16px 18px;
+    background: var(--white); border-radius: var(--radius-md);
+    font-size: 15.5px; line-height: var(--leading-relaxed); color: var(--text-body);
+  }
+  .pp__rmoney strong { color: var(--text-heading); white-space: nowrap; }
+  .pp__rsave {
+    margin-top: 12px;
+    font-size: var(--text-md); font-weight: var(--weight-bold);
+    color: var(--page-accent-ink, var(--orange-800));
+  }
+  .pp__r :global(.btn) { margin-top: 20px; }
+
+  /* ---- THE LOGIC ---- */
+
+  /* Who it is for can settle it outright. */
+  .pp:has(#pp-who-business:checked) .pp__r--commercial { display: block; }
+  .pp:has(#pp-who-landlord:checked) .pp__r--landlord { display: block; }
+
+  /* Own home, boiler 10+ or unknown: Service Care is the only plan Abbey can
+     offer (brochure T&Cs 2.1(a)(vi) and 5(e)), whatever they said to Q3. */
+  .pp:has(#pp-who-home:checked):has(#pp-age-over:checked) .pp__r--service,
+  .pp:has(#pp-who-home:checked):has(#pp-age-unsure:checked) .pp__r--service { display: block; }
+  .pp:has(#pp-who-home:checked):has(#pp-age-over:checked) .pp__why--age,
+  .pp:has(#pp-who-home:checked):has(#pp-age-unsure:checked) .pp__why--age,
+  .pp:has(#pp-who-home:checked):has(#pp-age-over:checked) .pp__alt,
+  .pp:has(#pp-who-home:checked):has(#pp-age-unsure:checked) .pp__alt { display: block; }
+
+  /* Own home, boiler under 10: the state of the boiler chooses the tier. */
+  .pp:has(#pp-who-home:checked):has(#pp-age-under:checked):has(#pp-state-fine:checked) .pp__r--service { display: block; }
+  .pp:has(#pp-who-home:checked):has(#pp-age-under:checked):has(#pp-state-fine:checked) .pp__why--fine { display: block; }
+  .pp:has(#pp-who-home:checked):has(#pp-age-under:checked):has(#pp-state-trouble:checked) .pp__r--plus { display: block; }
+  .pp:has(#pp-who-home:checked):has(#pp-age-under:checked):has(#pp-state-whole:checked) .pp__r--all { display: block; }
+  /* Service Care+ and Ultimate carry a single always-on reason line. */
+  .pp__r--plus .pp__why, .pp__r--all .pp__why,
+  .pp__r--landlord .pp__why, .pp__r--commercial .pp__why { display: block; }
+
+  /* Secondary route, deliberately quieter than the plan CTA above it. */
+  .pp__alt {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 14.5px;
+    line-height: var(--leading-relaxed);
+    color: var(--text-muted);
+  }
+  .pp__alt strong { color: var(--text-heading); }
+  .pp__alt a {
+    display: inline-block;
+    margin-top: 6px;
+    color: var(--text-link);
+    font-weight: var(--weight-semibold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .pp__foot { margin-top: 20px; }
+  .pp__reset {
+    padding: 0; border: 0; background: none;
+    font-family: inherit; font-size: var(--text-sm); font-weight: var(--weight-semibold);
+    color: var(--text-muted); text-decoration: underline; text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .pp__reset:hover { color: var(--text-heading); }
+
+  @media (max-width: 900px) {
+    .pp { grid-template-columns: 1fr; gap: 32px; }
+    .pp__result { position: static; }
+  }
+  @media (max-width: 480px) {
+    .pp__opts { flex-direction: column; align-items: stretch; }
+    .pp__opt label { justify-content: flex-start; }
+    .pp__go { width: 100%; }
+    .pp__result { padding: 24px 22px 26px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pp__opt label { transition: none; }
+  }
+</style>

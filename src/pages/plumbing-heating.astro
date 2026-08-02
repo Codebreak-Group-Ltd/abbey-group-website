@@ -11,6 +11,7 @@ import Areas from '../components/Areas.astro';
 import EnquiryForm from '../components/EnquiryForm.astro';
 import Photo from '../components/Photo.astro';
 import { nap, booking, routes, site, plumbingReviews } from '../data/site.ts';
+import { plumbingFaqs } from '../data/faqs.ts';
 import { service, faqPage, breadcrumb } from '../lib/schema.ts';
 import { divisions } from '../data/divisions.ts';
 
@@ -29,12 +30,10 @@ const services = [
   { t: 'Emergency and breakdown repairs', d: 'A cold house or a leak sorted quickly by a local engineer.' },
 ];
 
-const faqs = [
-  { q: 'How much does an emergency plumber cost in Whitby?', a: 'Emergency call-outs in the area typically run from around £120 to £230, depending on the time of day and how complex the job is. We will always be straight with you about the cost before we start, so there are no surprises on the bill.' },
-  { q: 'How long does a boiler installation take?', a: 'A straightforward boiler swap usually takes a day. A bigger job, such as moving the boiler, changing fuel type or upgrading the whole system, can take two to three days. We give you a clear timescale with your quote so you know what to expect.' },
-  { q: 'Can I get LPG heating in a rural property near Whitby?', a: 'Yes. Many homes on the coast and moors are off the gas grid, and we install and service LPG boilers and heating for them. We work with Calor for LPG supply, so we can sort both the system and the fuel side.' },
-  { q: 'What is the difference between a boiler service and a boiler cover plan?', a: 'A boiler service is a single visit you book and pay for each time, usually around £96. A boiler cover plan spreads your annual service across monthly payments and adds priority response and call-outs. If you want ongoing cover rather than a one-off visit, see our Homecare Plans page.' },
-];
+/* The client-approved FAQ set for this page. It lives in `src/data/faqs.ts`
+   because the page, its FAQPage JSON-LD and `/llms.txt` all read the same
+   text and must never disagree. */
+const faqs = plumbingFaqs;
 
 const schemas = [
   service({ name: 'Plumbing & Heating', path: routes.plumbing, serviceType: 'Plumbing and heating engineers', description }),
@@ -85,8 +84,15 @@ const schemas = [
         </p>
       </aside>
     </div>
+    <!-- "Boiler service" is in the list above, but until 31 July 2026 there was
+         no way to book one from this page: the only boiler-service link on the
+         whole site sat on /book-online/, which almost nobody finds, and on the
+         Homecare page. So the page most likely to have someone wanting a service
+         was sending them off to hunt for it. Now it is one click, and it is the
+         click that triggers the half-price sign-up offer. -->
     <div class="svc__cta reveal">
-      <Button href={booking.quote} external size="lg">Request a Quote</Button>
+      <Button href={booking.boilerService} external size="lg">Book a Boiler Service</Button>
+      <Button href={booking.quote} external variant="outline" size="lg">Request a Quote</Button>
     </div>
   </Section>
 
@@ -264,7 +270,7 @@ const schemas = [
     background: var(--surface-sunken);
   }
   .svc__asidenote :global(svg) { color: var(--page-accent-ink, var(--blue-800)); flex: none; margin-top: 1px; }
-  .svc__cta { margin-top: 36px; }
+  .svc__cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 36px; }
 
   /* EMERGENCY */
   .emg { position: relative; overflow: hidden; padding-block: 80px; background: radial-gradient(900px 560px at 82% 25%, color-mix(in oklch, var(--page-accent-glow, var(--blue-800)) 55%, transparent) 0%, transparent 65%); }

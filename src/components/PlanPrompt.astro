@@ -1,0 +1,276 @@
+---
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import { booking, routes } from '../data/site.ts';
+
+/* PlanPrompt — offer the plan at the exact moment someone books a job the plan
+   already covers (Josh's own idea, 31 July 2026).
+
+   THE MECHANIC. Someone clicks "Book an annual boiler service". That service is
+   £96 on its own, or £48 on the day if they start Service Care at the same time.
+   Right then is the only moment that offer is genuinely useful, and until now it
+   was only stated on the Homecare page, which a person booking from
+   /book-online/ or /plumbing-heating/ may never have seen. Same for the landlord
+   gas safety check: £162, or £81 with Landlord Care.
+
+   This is the highest-value conversion mechanic on the site, because it is the
+   thing that turns a one-off job into a subscription.
+
+   RULES IT OBEYS:
+   - It never blocks the booking, but only the EXPLICIT "no thanks, just book my
+     ..." link continues to it. The X, Escape and the backdrop just close the
+     dialog and leave the visitor where they were (Josh, 31 July 2026: closing
+     with the X and having a booking tab open anyway is not what an X means).
+     Anyone who still wants to book clicks the same button again and goes
+     straight through, because the offer only ever shows once per job.
+   - It is triggered by a user action, never on page load, so it is outside
+     Google's intrusive-interstitial rules.
+   - It stores NOTHING on the device (the PECR rule this site is built to). It
+     will not nag within a session either, but that is held in a plain variable
+     that dies with the page, not in storage.
+   - Both offers are rendered in the HTML and CSS picks one, so no copy is
+     injected by script and the numbers cannot drift from the plan data.
+   - Native <dialog> + showModal(), so the focus trap, Escape and inertness are
+     the browser's job, not ours.
+
+   NOT on the Homecare page: the £96/£48 offer already has its own band there and
+   its CTA already says "Book My Service and Start Covered". Prompting a second
+   time would be the same offer twice.
+
+   TO REMOVE: delete the <PlanPrompt /> line from the two pages that include it.
+   Every booking link then behaves exactly as it did before. */
+
+const offers = [
+  {
+    key: 'service',
+    href: booking.boilerService,
+    job: 'boiler service',
+    heading: 'Pay half for the service you are already booking',
+    lead:
+      'You are booking the annual boiler service. If you start Service Care on the same visit, that service costs you half, and the boiler is looked after every year after that.',
+    wasLabel: 'Boiler service on its own',
+    was: '£96',
+    nowLabel: 'Today, starting Service Care',
+    now: '£48',
+    then: 'then £9.99 a month',
+    stack: [
+      'The same visit, same engineer, same work',
+      'Your gas safety certificate issued on the day',
+      'One free call-out and priority response every year',
+      'Cancel any time, and a full refund inside 14 days',
+    ],
+  },
+  {
+    key: 'landlord',
+    href: booking.landlordGasSafety,
+    job: 'gas safety check',
+    heading: 'Pay half for the check you are already booking',
+    lead:
+      'You are booking the landlord gas safety check. Start Landlord Care on the same visit and it costs you half, and next year the certificate is booked in for you so it cannot lapse.',
+    wasLabel: 'Gas safety check on its own',
+    was: '£162',
+    nowLabel: 'Today, starting Landlord Care',
+    now: '£81',
+    then: 'then £13.99 a month',
+    stack: [
+      'The annual certificate the law requires, booked in every year',
+      'The full boiler service included',
+      'One free call-out and priority response',
+      'Cancel any time, and a full refund inside 14 days',
+    ],
+  },
+];
+
+/* The script needs to know which hrefs to watch. Passed as data rather than
+   hard-coded in the script, so a changed ServiceM8 link only changes site.ts. */
+const watch = JSON.stringify(offers.map((o) => ({ key: o.key, href: o.href })));
+---
+<dialog class="pop" data-plan-prompt data-watch={watch} aria-label="Save on the visit you are booking">
+  <button class="pop__close" type="button" data-pop-close aria-label="Close and continue to booking">
+    <Icon name="x" size={18} />
+  </button>
+
+  {offers.map((o) => (
+    <article class="pop__offer" data-offer={o.key}>
+      <p class="pop__eyebrow">Before you book</p>
+      <h2 class="pop__h2">{o.heading}</h2>
+      <p class="pop__lead">{o.lead}</p>
+
+      <div class="pop__compare">
+        <div class="pop__row pop__row--was">
+          <span class="pop__label">{o.wasLabel}</span>
+          <span class="pop__num tnum">{o.was}</span>
+        </div>
+        <div class="pop__row pop__row--now">
+          <span class="pop__label">{o.nowLabel}</span>
+          <span class="pop__num tnum">{o.now}</span>
+          <span class="pop__then">{o.then}</span>
+        </div>
+      </div>
+
+      <ul class="pop__stack">
+        {o.stack.map((s) => (
+          <li><Icon name="check" size={15} /><span>{s}</span></li>
+        ))}
+      </ul>
+
+      <div class="pop__actions">
+        <Button href={`${routes.homecare}#which-plan`} size="lg">Show Me the Plan</Button>
+        <a class="pop__continue" href={o.href} data-pop-continue rel="noopener noreferrer" target="_blank">
+          No thanks, just book my {o.job}
+        </a>
+      </div>
+    </article>
+  ))}
+</dialog>
+
+<style>
+  .pop {
+    width: min(560px, calc(100vw - 32px));
+    max-height: min(88vh, 760px);
+    overflow-y: auto;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-xl);
+    background: var(--white);
+    box-shadow: var(--shadow-xl);
+    color: var(--text-body);
+  }
+  .pop::backdrop { background: color-mix(in oklch, var(--ink-950) 62%, transparent); }
+  .pop:not([open]) { display: none; }
+
+  /* One offer at a time, chosen by the attribute the script sets. */
+  .pop__offer { display: none; padding: 34px 34px 32px; }
+  .pop[data-active-offer='service'] .pop__offer[data-offer='service'],
+  .pop[data-active-offer='landlord'] .pop__offer[data-offer='landlord'] { display: block; }
+
+  .pop__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--surface-sunken);
+    color: var(--text-body);
+    cursor: pointer;
+  }
+  .pop__close:hover { background: var(--ink-100); color: var(--text-heading); }
+
+  .pop__eyebrow {
+    font-size: 12px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--orange-800);
+  }
+  .pop__h2 {
+    margin-top: 10px;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(26px, 3.4vw, 32px);
+    line-height: var(--leading-snug);
+    color: var(--text-heading);
+    text-wrap: balance;
+  }
+  .pop__lead { margin-top: 14px; font-size: 15.5px; line-height: var(--leading-relaxed); }
+
+  /* One comparison, two rows. Never a stack of prices (copy conventions §3). */
+  .pop__compare {
+    margin-top: 22px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .pop__row { display: flex; align-items: baseline; gap: 12px; padding: 14px 18px; }
+  .pop__row--was { background: var(--surface-sunken); }
+  .pop__row--was .pop__num { text-decoration: line-through; color: var(--text-muted); }
+  .pop__row--now { background: var(--white); border-top: 1px solid var(--border-subtle); flex-wrap: wrap; }
+  .pop__label { flex: 1; font-size: 14.5px; }
+  .pop__num { font-size: 24px; font-weight: var(--weight-bold); color: var(--text-heading); }
+  .pop__row--now .pop__num { color: var(--orange-800); }
+  .pop__then { width: 100%; font-size: 13.5px; color: var(--text-muted); }
+
+  .pop__stack { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+  .pop__stack li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; line-height: var(--leading-snug); }
+  .pop__stack :global(svg) { color: var(--orange-800); flex: none; margin-top: 2px; }
+
+  .pop__actions { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 26px; }
+  .pop__actions :global(.btn) { width: 100%; justify-content: center; }
+  .pop__continue {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .pop__continue:hover { color: var(--text-heading); }
+
+  @media (max-width: 480px) {
+    .pop__offer { padding: 28px 22px 26px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pop[open] { animation: popIn 220ms var(--ease-out); }
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+</style>
+
+<script>
+  /* Intercept a click on a booking the plan already covers, show the offer once,
+     and never stand in the way of the booking itself. */
+  const dialog = document.querySelector<HTMLDialogElement>('[data-plan-prompt]');
+
+  if (dialog && typeof dialog.showModal === 'function') {
+    const watch: { key: string; href: string }[] = JSON.parse(dialog.dataset.watch ?? '[]');
+
+    /* Session-only, in memory. Deliberately NOT sessionStorage: this site sets
+       nothing on the visitor's device, and one prompt per page view is enough. */
+    const seen = new Set<string>();
+    let pending: string | null = null;
+
+    /* Two different exits, deliberately. */
+    const dismiss = () => { pending = null; dialog.close(); };
+    const proceed = () => {
+      const href = pending;
+      pending = null;
+      dialog.close();
+      /* They asked to book, so send them, in a new tab as the original link did. */
+      if (href) window.open(href, '_blank', 'noopener,noreferrer');
+    };
+
+    document.addEventListener('click', (event) => {
+      const link = (event.target as HTMLElement)?.closest?.('a[href]') as HTMLAnchorElement | null;
+      if (!link || link.closest('[data-plan-prompt]')) return;
+
+      const match = watch.find((w) => link.href === w.href || link.getAttribute('href') === w.href);
+      if (!match || seen.has(match.key)) return;
+
+      event.preventDefault();
+      seen.add(match.key);
+      pending = link.href;
+      dialog.setAttribute('data-active-offer', match.key);
+      dialog.showModal();
+    });
+
+    /* ONLY the explicit "no thanks, just book my ..." link continues to the
+       booking. */
+    dialog.querySelectorAll('[data-pop-continue]').forEach((a) =>
+      a.addEventListener('click', (e) => { e.preventDefault(); proceed(); }),
+    );
+
+    /* The X, Escape and the backdrop mean "close this", not "do the thing". */
+    dialog.querySelector('[data-pop-close]')?.addEventListener('click', dismiss);
+    dialog.addEventListener('cancel', () => { pending = null; });
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dismiss();
+    });
+  }
+</script>
