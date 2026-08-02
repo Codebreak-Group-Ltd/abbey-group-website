@@ -1,0 +1,114 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { nap, routes } from '../data/site.ts';
+import { consentRegistry, categoryLabels } from '../data/consent-registry.ts';
+
+/* Cookie policy — the table is GENERATED from the consent registry, so it can
+   never drift from what the site actually loads (build standard §6/§7).
+
+   The registry is empty today and the page says so, which is the truthful
+   position: self-hosted fonts, no analytics, no pixels, no embeds, and the
+   enquiry form no longer writes anything to the device. Add a service to the
+   registry in the same change as the code that loads it and this page updates
+   itself. */
+
+const title = 'Cookie Policy | Abbey Group Whitby';
+const description =
+  'What this website stores on your device. Abbey Group currently sets no cookies: fonts are self-hosted and there is no analytics or advertising tracking.';
+
+const hasServices = consentRegistry.length > 0;
+---
+<LegalLayout
+  title={title}
+  description={description}
+  heading="Cookie Policy"
+  path={routes.cookies}
+  intro="What this website stores on your device, and how you control it."
+>
+  <h2>What cookies are</h2>
+  <p>
+    Cookies are small files a website stores on your device. Some are needed for a site
+    to work. Others are optional, and are used to measure how a site is used or to
+    support advertising.
+  </p>
+
+  <h2>What this site uses</h2>
+  {hasServices ? (
+    <>
+      <p>
+        The table below is generated from the list of services this site actually loads,
+        so it always matches the site itself.
+      </p>
+      <table>
+        <thead>
+          <tr><th>Category</th><th>Service</th><th>Provider</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          {consentRegistry.map((s) => (
+            <tr>
+              <td>{categoryLabels[s.category]}</td>
+              <td>{s.name}</td>
+              <td>{s.provider}</td>
+              <td>{s.purpose}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  ) : (
+    <>
+      <p>
+        <strong>This website does not currently set any cookies.</strong> There is no
+        analytics, no advertising tracking, and no third-party content embedded in the
+        pages. Specifically:
+      </p>
+      <ul>
+        <li>
+          Our fonts are stored on our own server rather than loaded from Google, so
+          nothing about your visit is sent to them.
+        </li>
+        <li>
+          The enquiry form stores nothing on your device. If you arrive from an advert,
+          the advert reference is read from the web address at the moment you press
+          send, and travels with your enquiry rather than being saved on your device.
+        </li>
+        <li>
+          Our online booking is handled by ServiceM8 and opens in a new tab. Anything it
+          stores is covered by ServiceM8's own cookie and privacy policies, not this
+          one, and only once you go there.
+        </li>
+        <li>
+          Maps are not embedded in this site. The "Get Directions" link opens Google
+          Maps in a new tab, so Google receives nothing unless you choose to follow it.
+        </li>
+      </ul>
+      <p>
+        Because there is nothing optional to agree to, there is no cookie banner. If we
+        later add analytics or advertising, this page and the banner will arrive
+        together, nothing of that kind will load before you have agreed to it, and
+        declining will be as easy as accepting.
+      </p>
+    </>
+  )}
+
+  <h2>Managing your preferences</h2>
+  {hasServices ? (
+    <p>
+      You can accept or decline anything that is not strictly necessary when you first
+      visit, and change your mind at any time using the cookie preferences link in the
+      footer of every page.
+    </p>
+  ) : (
+    <p>
+      There is nothing to manage at the moment. You can still clear or block cookies for
+      any site in your browser settings, and doing so will not affect this one.
+    </p>
+  )}
+
+  <h2>More information</h2>
+  <p>
+    Our <a href={routes.privacy}>Privacy Policy</a> explains how we use the personal
+    information you send us. Any questions about this page, email
+    <a href={`mailto:${nap.email}`}>{nap.email}</a>.
+  </p>
+</LegalLayout>

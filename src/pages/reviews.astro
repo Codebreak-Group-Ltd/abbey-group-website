@@ -1,0 +1,314 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import PageHero from '../components/PageHero.astro';
+import Stars from '../components/Stars.astro';
+import { nap, booking, routes, ratings, reviewWall } from '../data/site.ts';
+import { reviewList, breadcrumb } from '../lib/schema.ts';
+
+/* Reviews — the destination for every "read all our reviews" link on the site.
+   Abbey's own copy stays out of the way: the customers do the talking.
+
+   Everything here is verbatim from `_Global/Reviews/VERIFIED REVIEWS MASTER.md`.
+   Amy has ruled out a live Google feed, so this is the curated verified set.
+   Copy: `10 Reviews/Text/Reviews - COPY.md`. */
+
+const title = 'Abbey Group Reviews | What Whitby Says About Us';
+const description =
+  'Verified reviews for Abbey Group in Whitby. Fast response, fair pricing and clean work across plumbing, heating, renovations and more. Rated 4.6 on Google.';
+
+const themes = [
+  { icon: 'clock', t: 'Fast response', d: 'People with no heating seen within hours.' },
+  { icon: 'badge-check', t: 'Fair pricing', d: 'The quote is the price, and it is reasonable.' },
+  { icon: 'check', t: 'Clean work', d: 'Tidy sites, and homes left as they were found.' },
+  { icon: 'map-pin', t: 'Trusted locally', d: 'A team people in Whitby recommend and use again.' },
+];
+
+const allReviews = reviewWall.flatMap((group) => group.reviews);
+
+const schemas = [
+  reviewList(allReviews),
+  breadcrumb([
+    { name: 'Home', path: routes.home },
+    { name: 'Reviews', path: routes.reviews },
+  ]),
+];
+---
+<BaseLayout title={title} description={description} schemas={schemas}>
+  <PageHero
+    title="What Whitby Says About Us"
+    lead="You do not have to take our word for it. Here is what our customers across Whitby and the coast say, in their own words."
+  >
+    <Button href={routes.homecare} size="lg">See Our Homecare Plans</Button>
+    <Button href={booking.quote} external variant="inverse-outline" size="lg">Get a Quote</Button>
+
+    <!-- The real figures, and only the real figures: 4.6 from 19 Google reviews
+         and 7 Facebook recommendations, straight from the reviews master. -->
+    <div class="score" slot="aside">
+      <div class="score__top">
+        <p class="score__value tnum">{ratings.google.value}</p>
+        <div>
+          <Stars />
+          <p class="score__from">from {ratings.google.count} Google reviews</p>
+        </div>
+      </div>
+      <dl class="score__rows">
+        <div>
+          <dt>Google</dt>
+          <dd class="tnum">{ratings.google.value} average, {ratings.google.count} reviews</dd>
+        </div>
+        <div>
+          <dt>Facebook</dt>
+          <dd class="tnum">{ratings.facebook.count} recommendations, {ratings.facebook.recommend}% positive</dd>
+        </div>
+      </dl>
+      <p class="score__note">
+        Every review on this page is a real one, quoted as it was written.
+      </p>
+    </div>
+  </PageHero>
+
+  <!-- THE WALL -->
+  <Section bg="white">
+    {reviewWall.map((group, gi) => (
+      <div class:list={['wall', { 'wall--spaced': gi > 0 }]}>
+        <h2 class="wall__h2 reveal">{group.heading}</h2>
+        <!-- A column wall rather than a row grid. Quotes here run from six words
+             to sixty, and 19 of them will not divide into even rows: columns
+             balance by height instead, so there is no orphan cell and no ragged
+             final row to engineer around. -->
+        <ul class="wall__cols reveal">
+          {group.reviews.map((r) => (
+            <li class="rv">
+              {r.stars ? <Stars /> : (
+                <p class="rv__recommends">
+                  <Icon name="badge-check" size={15} /><span>Recommends</span>
+                </p>
+              )}
+              <blockquote class="rv__quote">{r.quote}</blockquote>
+              <p class="rv__meta">
+                <span class="rv__name">{r.name}</span>
+                <span class="rv__src">{r.source}{r.year ? `, ${r.year}` : ''}</span>
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </Section>
+
+  <!-- THEMES -->
+  <Section bg="sunken">
+    <div class="th__head reveal">
+      <Eyebrow>The themes</Eyebrow>
+      <h2 class="rh2">The same things, again and again</h2>
+      <p class="rlead">Read enough of these and the same points come up.</p>
+    </div>
+    <!-- Four items, four columns: an even grid (2x2 on tablet, stacked on phones). -->
+    <ul class="th__grid reveal">
+      {themes.map((t) => (
+        <li class="th__item">
+          <span class="th__disc"><Icon name={t.icon} size={18} /></span>
+          <h3 class="th__t">{t.t}</h3>
+          <p class="th__d">{t.d}</p>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <!-- LEAVE A REVIEW -->
+  <Section bg="white">
+    <div class="lv reveal">
+      <div class="lv__copy">
+        <Eyebrow>Leave a review</Eyebrow>
+        <h2 class="rh2">Had a good experience?</h2>
+        <p class="rlead">
+          If we have done a good job for you, a quick Google review helps other people in
+          Whitby find us. It only takes a minute, and we read every one.
+        </p>
+      </div>
+      <div class="lv__cta">
+        <Button href={ratings.googleReviewLink} external size="lg">Leave a Google Review</Button>
+      </div>
+    </div>
+  </Section>
+
+  <!-- FINAL CTA -->
+  <Section bg="dark" bleed>
+    <div class="fin">
+      <div class="container fin__inner reveal">
+        <div class="fin__copy">
+          <Eyebrow tone="inverse">Ready when you are</Eyebrow>
+          <h2 class="fin__h2">See what we can do for you</h2>
+          <p class="fin__body">
+            Homecare Plans keep your boiler serviced and covered from £9.99 a month, or tell
+            us about a job and we will quote it.
+          </p>
+        </div>
+        <div class="fin__cta">
+          <Button href={routes.homecare} size="lg">See Our Homecare Plans</Button>
+          <Button href={booking.quote} external variant="inverse-outline" size="lg">Get a Quote</Button>
+        </div>
+      </div>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .rh2 { font-size: clamp(30px, 3vw, 42px); color: var(--text-heading); margin-top: 10px; }
+  .rlead {
+    margin-top: 14px;
+    max-width: 60ch;
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+  }
+
+  /* SCORE CARD, in the hero -------------------------------------------- */
+  .score {
+    background: color-mix(in oklch, var(--white) 8%, transparent);
+    border: 1px solid var(--border-inverse);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    padding: 26px 28px 24px;
+    backdrop-filter: blur(6px);
+  }
+  .score__top { display: flex; align-items: center; gap: 20px; }
+  .score__value {
+    font-family: var(--font-display);
+    font-size: 62px;
+    line-height: 1;
+    color: var(--white);
+  }
+  .score__from { margin-top: 6px; font-size: var(--text-sm); color: var(--text-body-inverse); }
+  .score__rows {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-top: 22px; padding-top: 20px;
+    border-top: 1px solid var(--border-inverse);
+  }
+  .score__rows > div { display: grid; grid-template-columns: 92px 1fr; gap: 14px; align-items: baseline; }
+  .score__rows dt {
+    font-size: 12.5px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted-inverse);
+  }
+  .score__rows dd { margin: 0; font-size: 15px; color: var(--white); font-weight: var(--weight-semibold); }
+  .score__note {
+    margin-top: 18px;
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body-inverse);
+  }
+
+  /* THE WALL ----------------------------------------------------------- */
+  .wall--spaced { margin-top: 64px; }
+  .wall__h2 {
+    font-size: clamp(24px, 2.2vw, 32px);
+    color: var(--text-heading);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .wall__cols { columns: 3; column-gap: 20px; }
+  .rv {
+    break-inside: avoid;
+    display: flow-root;             /* keeps margins inside the card */
+    margin-bottom: 20px;
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 22px 22px 20px;
+  }
+  .rv__recommends {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 12.5px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--page-accent-ink, var(--blue-800));
+  }
+  .rv__quote {
+    margin: 12px 0 0;
+    font-size: 14.5px;
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+  }
+  .rv__meta {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+    margin-top: 14px;
+  }
+  .rv__name { font-size: 13.5px; font-weight: var(--weight-bold); color: var(--text-heading); }
+  .rv__src { font-size: 12.5px; color: var(--text-muted); text-align: right; }
+
+  /* THEMES ------------------------------------------------------------- */
+  .th__head { max-width: 620px; margin-bottom: 36px; }
+  .th__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .th__item {
+    background: var(--white);
+    border: 1px solid var(--border-subtle);
+    border-top: 3px solid var(--page-accent, var(--blue-500));
+    border-radius: var(--radius-lg);
+    padding: 24px 24px 22px;
+  }
+  .th__disc {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px;
+    border-radius: var(--radius-signature);
+    background: var(--page-accent-soft, var(--blue-50));
+    color: var(--page-accent-ink, var(--blue-800));
+  }
+  .th__t { margin-top: 14px; font-size: 21px; color: var(--text-heading); }
+  .th__d { margin-top: 8px; font-size: 15px; line-height: var(--leading-relaxed); color: var(--text-body); }
+
+  /* LEAVE A REVIEW ----------------------------------------------------- */
+  .lv { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: center; }
+  .lv__cta { display: flex; justify-content: flex-start; }
+
+  /* FINAL CTA ---------------------------------------------------------- */
+  .fin {
+    position: relative;
+    overflow: hidden;
+    padding-block: 72px;
+    background:
+      radial-gradient(820px 480px at 84% 22%, color-mix(in oklch, var(--page-accent-glow, var(--blue-800)) 50%, transparent) 0%, transparent 64%),
+      var(--surface-page-dark);
+  }
+  .fin__inner { position: relative; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
+  .fin__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+  .fin__h2 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 2.8vw, 40px);
+    color: var(--white);
+    text-wrap: balance;
+  }
+  .fin__body {
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body-inverse);
+    max-width: 52ch;
+  }
+  .fin__cta { display: flex; flex-wrap: wrap; gap: 14px; }
+
+  @media (max-width: 1100px) {
+    .wall__cols { columns: 2; }
+    .th__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 1024px) {
+    .lv { grid-template-columns: 1fr; gap: 24px; }
+    .fin__inner { grid-template-columns: 1fr; gap: 28px; }
+  }
+  @media (max-width: 700px) {
+    .wall__cols { columns: 1; }
+    .wall--spaced { margin-top: 48px; }
+    .th__grid { grid-template-columns: 1fr; }
+    .fin { padding-block: 56px; }
+    .score { padding: 22px 22px 20px; }
+    .score__value { font-size: 52px; }
+  }
+</style>

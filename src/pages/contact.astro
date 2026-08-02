@@ -1,0 +1,316 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import PageHero from '../components/PageHero.astro';
+import FAQ from '../components/FAQ.astro';
+import EnquiryForm from '../components/EnquiryForm.astro';
+import { nap, booking, routes, site } from '../data/site.ts';
+import { contactFaqs } from '../data/faqs.ts';
+import { localBusiness, faqPage, breadcrumb } from '../lib/schema.ts';
+
+/* Contact — the SEO-bearing half of the Contact / Book Online pair, so it owns
+   the NAP and the LocalBusiness schema. Book Online stays a thin booking page and
+   deliberately repeats none of it (cannibalisation, per the brief).
+
+   The essentials live in the HERO rather than a section below it: on a contact
+   page the phone number is the content, and it means the number is above the fold
+   without the hero being padded out with nothing.
+   Copy: `08 Contact/Text/Contact - COPY.md` (Amy's confirmations, 21 July 2026). */
+
+/* The copy file's title was 62 characters once the ampersand is counted, which
+   the audit rejects (max 60). Reworded to keep the brand, Whitby and all three
+   trades inside the limit: 59. */
+const title = 'Contact Abbey Group Whitby | Plumbing, Electrical, Building';
+const description =
+  'Contact Abbey Group in Whitby. Call a real local person on 01947 821 374, send an enquiry, or book a visit online. 20 Skinner Street, Whitby.';
+
+/* The client-approved FAQ set for this page. It lives in `src/data/faqs.ts`
+   because the page, its FAQPage JSON-LD and `/llms.txt` all read the same
+   text and must never disagree. */
+const faqs = contactFaqs;
+
+const schemas = [
+  localBusiness({ path: routes.contact, description }),
+  faqPage(faqs),
+  breadcrumb([
+    { name: 'Home', path: routes.home },
+    { name: 'Contact', path: routes.contact },
+  ]),
+];
+
+/* Directions rather than an embedded map: a Google Maps iframe would set
+   third-party cookies before anyone has consented, and the consent layer is not
+   built yet (build standard §6/§7). This opens Maps in a new tab instead, and the
+   real embed goes in with the consent banner. */
+const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+  `${site.name}, ${nap.addressFull}`,
+)}`;
+---
+<BaseLayout title={title} description={description} schemas={schemas}>
+  <PageHero
+    title="Contact Abbey Group"
+    lead="One number, answered by a real person in our Whitby office. You get someone local who can actually help, rather than a call centre reading from a script."
+  >
+    <Button href={`tel:${nap.phone.tel}`} size="lg">Call {nap.phone.label}</Button>
+    <Button href="#enquiry" variant="inverse-outline" size="lg">Send an Enquiry</Button>
+
+    <div class="ess" slot="aside">
+      <dl class="ess__list">
+        <div class="ess__row">
+          <dt><Icon name="phone" size={15} /><span>Office</span></dt>
+          <dd><a class="tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a></dd>
+        </div>
+        <div class="ess__row">
+          <dt><Icon name="phone" size={15} /><span>Mobile</span></dt>
+          <dd><a class="tnum" href={`tel:${nap.mobile.tel}`}>{nap.mobile.label}</a></dd>
+        </div>
+        <div class="ess__row">
+          <dt><Icon name="mail" size={15} /><span>Email</span></dt>
+          <dd><a href={`mailto:${nap.email}`}>{nap.email}</a></dd>
+        </div>
+        <div class="ess__row">
+          <dt><Icon name="map-pin" size={15} /><span>Find us</span></dt>
+          <dd>{nap.addressLine}, {nap.locality},<br />{nap.region}, {nap.postcode}</dd>
+        </div>
+        <div class="ess__row">
+          <dt><Icon name="clock" size={15} /><span>Open</span></dt>
+          <dd>{nap.hours}</dd>
+        </div>
+      </dl>
+      <p class="ess__note">
+        The line is open 24 hours a day, so you can always leave a message.
+      </p>
+    </div>
+  </PageHero>
+
+  <!-- ENQUIRY FORM -->
+  <EnquiryForm
+    heading="Send us a message"
+    lead="Tell us what you need and we will get back to you. For anything urgent, calling is quickest."
+    source="Contact"
+    tags="contact,enquiry"
+    submitLabel="Send Enquiry"
+    bg="white"
+    fields={[
+      { name: 'name', label: 'Name', required: true, autocomplete: 'name' },
+      { name: 'phone', label: 'Phone', type: 'tel', required: true, autocomplete: 'tel' },
+      { name: 'email', label: 'Email', type: 'email', autocomplete: 'email' },
+      { name: 'postcode', label: 'Postcode', autocomplete: 'postal-code' },
+      { name: 'message', label: 'How can we help?', type: 'textarea', full: true },
+    ]}
+  >
+    <div class="ct-formside">
+      <Button href={`tel:${nap.phone.tel}`} variant="outline" size="lg">Call the Whitby office</Button>
+      <p class="ct-formside__note">
+        A real person in the Whitby office picks this up, {nap.hours}.
+      </p>
+    </div>
+  </EnquiryForm>
+
+  <!-- BOOK ONLINE -->
+  <Section bg="sunken">
+    <div class="bk reveal">
+      <div class="bk__copy">
+        <Eyebrow>Book online</Eyebrow>
+        <h2 class="ch2">Prefer to book a visit online?</h2>
+        <p class="clead">Pick a time that suits you and we will be there. It takes a couple of minutes.</p>
+      </div>
+      <div class="bk__cta">
+        <Button href={routes.book} size="lg">Book a Visit Online</Button>
+      </div>
+    </div>
+  </Section>
+
+  <!-- FIND US -->
+  <Section bg="white">
+    <div class="find reveal">
+      <div class="find__copy">
+        <Eyebrow>Find us</Eyebrow>
+        <h2 class="ch2">20 Skinner Street, Whitby</h2>
+        <p class="clead">
+          We are based in the middle of Whitby, and we cover the town, the coast and the
+          villages around it. The office is open {nap.hours}.
+        </p>
+        <Button href={directionsUrl} external variant="outline" size="lg">Get Directions</Button>
+      </div>
+      <address class="find__card">
+        <span class="find__label">Abbey Group</span>
+        <span class="find__line">{nap.addressLine}</span>
+        <span class="find__line">{nap.locality}</span>
+        <span class="find__line">{nap.region}</span>
+        <span class="find__line tnum">{nap.postcode}</span>
+        <a class="find__phone tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>
+      </address>
+    </div>
+  </Section>
+
+  <!-- EMERGENCY -->
+  <Section bg="dark" bleed>
+    <div class="emg">
+      <div class="container emg__inner reveal">
+        <div class="emg__copy">
+          <Eyebrow tone="inverse">Something urgent?</Eyebrow>
+          <h2 class="emg__h2">Call the office and we will get to you</h2>
+          <p class="emg__body">
+            If you have an emergency, such as a broken boiler, no heating or an electrical
+            fault, call the office. The line is open 24 hours a day, so you can always get
+            through and leave a message, and we will get someone to you as quickly as we can.
+          </p>
+          <p class="emg__links">
+            For more on urgent call-outs, see <a href={routes.plumbing}>Plumbing &amp; Heating</a>
+            or <a href={routes.electrical}>Electrical</a>.
+          </p>
+        </div>
+        <div class="emg__cta">
+          <Button href={`tel:${nap.phone.tel}`} size="lg">Call now on {nap.phone.label}</Button>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <!-- FAQ -->
+  <FAQ heading="Getting hold of us" items={faqs} bg="white" />
+</BaseLayout>
+
+<style>
+  .ch2 { font-size: clamp(30px, 3vw, 42px); color: var(--text-heading); margin-top: 10px; }
+  .clead {
+    margin-top: 14px;
+    max-width: 58ch;
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+  }
+
+  /* THE ESSENTIALS, in the hero ---------------------------------------- */
+  .ess {
+    background: color-mix(in oklch, var(--white) 8%, transparent);
+    border: 1px solid var(--border-inverse);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    padding: 28px 30px 26px;
+    backdrop-filter: blur(6px);
+  }
+  .ess__list { display: flex; flex-direction: column; gap: 0; }
+  .ess__row {
+    display: grid;
+    grid-template-columns: 108px 1fr;
+    gap: 16px;
+    align-items: baseline;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--border-inverse);
+  }
+  .ess__row:last-child { border-bottom: 0; padding-bottom: 4px; }
+  .ess__row dt {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12.5px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted-inverse);
+  }
+  .ess__row dt :global(svg) { color: var(--page-accent, var(--blue-300)); flex: none; }
+  .ess__row dd {
+    margin: 0;
+    font-size: var(--text-base);
+    line-height: var(--leading-snug);
+    color: var(--white);
+    font-weight: var(--weight-semibold);
+  }
+  /* Phone numbers and the email never wrap (standing rule 13). */
+  .ess__row dd a { color: var(--white); white-space: nowrap; }
+  .ess__row dd a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .ess__note {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-inverse);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body-inverse);
+  }
+
+  /* FORM SIDE ---------------------------------------------------------- */
+  .ct-formside { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; margin-top: 8px; }
+  .ct-formside__note { font-size: var(--text-sm); color: var(--text-muted); }
+
+  /* BOOK ONLINE -------------------------------------------------------- */
+  .bk { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: center; }
+  .bk__cta { display: flex; justify-content: flex-start; }
+
+  /* FIND US ------------------------------------------------------------ */
+  .find { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 56px; align-items: start; }
+  .find__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+  .find__card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-style: normal;
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--page-accent, var(--blue-500));
+    border-radius: var(--radius-lg);
+    padding: 26px 28px;
+    max-width: 360px;
+  }
+  .find__label {
+    font-size: 12.5px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--page-accent-ink, var(--blue-800));
+    margin-bottom: 8px;
+  }
+  .find__line { font-size: var(--text-md); color: var(--text-heading); line-height: var(--leading-snug); }
+  .find__phone {
+    margin-top: 14px;
+    font-size: var(--text-md);
+    font-weight: var(--weight-bold);
+    color: var(--text-link);
+    white-space: nowrap;
+  }
+
+  /* EMERGENCY ---------------------------------------------------------- */
+  .emg {
+    position: relative;
+    overflow: hidden;
+    padding-block: 72px;
+    background:
+      radial-gradient(800px 460px at 86% 20%, color-mix(in oklch, var(--page-accent-glow, var(--blue-800)) 50%, transparent) 0%, transparent 64%),
+      var(--surface-page-dark);
+  }
+  .emg__inner {
+    position: relative;
+    display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: center;
+  }
+  .emg__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+  .emg__h2 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 2.8vw, 40px);
+    color: var(--white);
+    text-wrap: balance;
+  }
+  .emg__body {
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body-inverse);
+    max-width: 56ch;
+  }
+  .emg__links { font-size: var(--text-sm); color: var(--text-muted-inverse); }
+  .emg__links a { color: var(--blue-300); font-weight: var(--weight-semibold); text-decoration: underline; }
+  .emg__cta { display: flex; justify-content: flex-start; }
+
+  @media (max-width: 1024px) {
+    .bk { grid-template-columns: 1fr; gap: 24px; }
+    .find { grid-template-columns: 1fr; gap: 32px; }
+    .find__card { max-width: 100%; }
+    .emg__inner { grid-template-columns: 1fr; gap: 28px; }
+  }
+  @media (max-width: 700px) {
+    .emg { padding-block: 56px; }
+    .ess { padding: 22px 22px 20px; }
+    .ess__row { grid-template-columns: 96px 1fr; gap: 12px; }
+  }
+</style>

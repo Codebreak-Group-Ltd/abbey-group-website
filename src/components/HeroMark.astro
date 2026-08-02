@@ -1,0 +1,64 @@
+---
+import { divisions, type DivisionKey } from '../data/divisions.ts';
+import { crescentViewBox, crescentRatio, crescentPaths, crescentDepths } from '../data/crescent.ts';
+
+/* Hero crescent watermark, inlined so its three arcs are separate elements and
+   can move independently of each other — the parallax that was on the original
+   homepage and that Josh asked to keep (30 July 2026).
+
+   `data-depth` is how far each arc travels under the pointer, so they separate as
+   the cursor passes. The motion itself lives in BaseLayout, once, for every hero
+   on the site. The flat .svg files are still what the static watermarks on inner
+   bands use, where nothing moves.
+
+   NOTE for whoever styles this: a class passed in from a PAGE will not match that
+   page's scoped CSS, because this element belongs to the component's template and
+   carries the component's scope id. Position it with a `:global()` rule. That bit
+   me once already, and the mark silently dropped into normal flow. */
+interface Props {
+  division?: DivisionKey;
+  /** Force all three arcs to white, for the navy homepage hero. */
+  tone?: 'division' | 'white';
+  width?: number;
+  class?: string;
+}
+const { division = 'group', tone = 'division', width = 420, class: className } = Astro.props;
+const d = divisions[division];
+
+/* Group keeps the tri-colour brand mark and Electrical uses the three greens of
+   its real logo; every other division is its single accent, three times over. */
+const layers =
+  tone === 'white'
+    ? ['var(--white)', 'var(--white)', 'var(--white)']
+    : (d.markLayers ?? [d.accent, d.accent, d.accent]);
+
+const height = Math.round(width / crescentRatio);
+---
+<svg
+  class:list={['hm', className]}
+  viewBox={crescentViewBox}
+  width={width}
+  height={height}
+  aria-hidden="true"
+  focusable="false"
+  data-hero-mark
+>
+  {crescentPaths.map((path, i) => (
+    <g class="hm__layer" data-depth={crescentDepths[i]}>
+      <path fill={layers[i]} d={path} />
+    </g>
+  ))}
+</svg>
+
+<style>
+  .hm { pointer-events: none; }
+  /* JS writes --lx / --ly per arc. Transform only, so each one is composited on
+     its own and nothing reflows. */
+  .hm__layer {
+    transform: translate3d(var(--lx, 0px), var(--ly, 0px), 0);
+    will-change: transform;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hm__layer { transform: none; will-change: auto; }
+  }
+</style>

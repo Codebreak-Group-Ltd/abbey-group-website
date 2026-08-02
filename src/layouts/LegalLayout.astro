@@ -1,0 +1,218 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Section from '../components/Section.astro';
+import { routes } from '../data/site.ts';
+import { legalUpdated } from '../data/legal.ts';
+import { breadcrumb } from '../lib/schema.ts';
+
+/* Shared shell for the legal pages, so all five read identically.
+
+   Deliberately NOT PageHero: an 820px marketing hero on a privacy policy is
+   wrong, and these pages are for reading, not converting. A compact dark header
+   keeps the site's look without the weight.
+
+   The body comes in through a slot, so its styles must be `:global()` — slotted
+   content belongs to the page, not to this layout, and scoped rules would miss
+   it entirely. */
+interface Props {
+  title: string;
+  description: string;
+  heading: string;
+  path: string;
+  intro?: string;
+}
+const { title, description, heading, path, intro } = Astro.props;
+
+const legalPages = [
+  { label: 'Privacy Policy', href: routes.privacy },
+  { label: 'Website Terms of Use', href: routes.terms },
+  { label: 'Home Care Plan Terms', href: routes.homecareTerms },
+  { label: 'Cookie Policy', href: routes.cookies },
+  { label: 'Website Credits', href: routes.credits },
+];
+
+const schemas = [
+  breadcrumb([
+    { name: 'Home', path: routes.home },
+    { name: heading, path },
+  ]),
+];
+---
+<BaseLayout title={title} description={description} schemas={schemas}>
+  <section class="lhead">
+    <div class="container lhead__inner">
+      <h1 class="lhead__h1">{heading}</h1>
+      {intro && <p class="lhead__intro">{intro}</p>}
+      <p class="lhead__date">Last updated: {legalUpdated}</p>
+    </div>
+  </section>
+
+  <Section bg="white">
+    <div class="legal">
+      <div class="legal__body">
+        <slot />
+      </div>
+
+      <nav class="legal__nav" aria-label="Legal pages">
+        <p class="legal__navlabel">The rest of the legal detail</p>
+        <ul>
+          {legalPages
+            .filter((p) => p.href !== path)
+            .map((p) => (
+              <li><a href={p.href}>{p.label}</a></li>
+            ))}
+        </ul>
+      </nav>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  /* Compact header, not a hero. */
+  .lhead {
+    position: relative;
+    color: var(--white);
+    padding: 140px var(--container-padding) 56px;
+    background:
+      radial-gradient(900px 500px at 82% 10%, color-mix(in oklch, var(--page-accent-glow, var(--blue-800)) 45%, transparent) 0%, transparent 62%),
+      var(--surface-page-dark, var(--ink-500));
+  }
+  .lhead::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 3px;
+    background: var(--page-accent, var(--blue-500));
+    opacity: 0.9;
+  }
+  .lhead__inner { position: relative; max-width: calc(var(--container-max) + 2 * var(--container-padding)); }
+  .lhead__h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(34px, 3.6vw, 52px);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    color: var(--white);
+  }
+  .lhead__intro {
+    margin-top: 16px;
+    max-width: 64ch;
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body-inverse);
+  }
+  .lhead__date { margin-top: 18px; font-size: var(--text-sm); color: var(--text-muted-inverse); }
+
+  .legal { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 64px; align-items: start; }
+
+  /* Slotted prose: :global, because the content belongs to the page. */
+  .legal__body { max-width: 74ch; }
+  .legal__body :global(h2) {
+    font-size: clamp(24px, 2.2vw, 30px);
+    color: var(--text-heading);
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .legal__body :global(h2:first-child) { margin-top: 0; padding-top: 0; border-top: 0; }
+  .legal__body :global(h3) {
+    font-family: var(--font-body);
+    font-size: var(--text-md);
+    font-weight: var(--weight-bold);
+    color: var(--text-heading);
+    margin-top: 30px;
+  }
+  .legal__body :global(p) {
+    margin-top: 14px;
+    font-size: 15.5px;
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+  }
+  .legal__body :global(ul),
+  .legal__body :global(ol) {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .legal__body :global(li) {
+    position: relative;
+    padding-left: 22px;
+    font-size: 15.5px;
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+  }
+  .legal__body :global(li)::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 11px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--page-accent, var(--blue-500));
+  }
+  .legal__body :global(strong) { color: var(--text-heading); font-weight: var(--weight-semibold); }
+  .legal__body :global(a) { color: var(--text-link); font-weight: var(--weight-semibold); text-decoration: underline; text-underline-offset: 2px; }
+  .legal__body :global(table) {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  .legal__body :global(th),
+  .legal__body :global(td) {
+    text-align: left;
+    vertical-align: top;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-subtle);
+    line-height: var(--leading-snug);
+    color: var(--text-body);
+  }
+  .legal__body :global(th) {
+    font-size: 12.5px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-heading);
+    border-bottom-color: var(--border-default);
+  }
+  /* A visible marker for anything still awaiting the client, so a gap can never
+     be mistaken for finished text. */
+  .legal__body :global(.legal-gap) {
+    display: block;
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-left: 3px solid var(--cta);
+    background: var(--surface-sunken);
+    font-size: 14.5px;
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+  }
+
+  .legal__nav {
+    position: sticky;
+    top: 110px;
+    border-left: 1px solid var(--border-subtle);
+    padding-left: 24px;
+  }
+  .legal__navlabel {
+    font-size: 12.5px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .legal__nav ul { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+  .legal__nav a { font-size: 15px; color: var(--text-link); font-weight: var(--weight-semibold); }
+  .legal__nav a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  @media (max-width: 1024px) {
+    .legal { grid-template-columns: 1fr; gap: 48px; }
+    .legal__nav { position: static; border-left: 0; border-top: 1px solid var(--border-subtle); padding-left: 0; padding-top: 24px; }
+    .legal__nav ul { flex-direction: row; flex-wrap: wrap; gap: 12px 24px; }
+  }
+  @media (max-width: 700px) {
+    .lhead { padding-top: 118px; padding-bottom: 44px; }
+  }
+</style>

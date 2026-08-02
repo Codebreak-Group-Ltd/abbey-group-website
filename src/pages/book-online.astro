@@ -1,0 +1,217 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import PageHero from '../components/PageHero.astro';
+import { nap, booking, routes } from '../data/site.ts';
+import { breadcrumb } from '../lib/schema.ts';
+
+/* Book Online — deliberately thin. Contact carries the NAP, the LocalBusiness
+   schema and the keyword weight for this pair, and this page repeats none of it
+   (cannibalisation, per the brief). Its whole job is the booking action.
+
+   The booking itself is ServiceM8, opened in a new tab. It is NOT embedded as an
+   iframe: that would load a third party before anyone has consented, and the
+   consent layer is not built yet (build standard §6/§7). Every other page's CTAs
+   already deep-link the same way, so this is consistent, not a compromise.
+   Copy: `09 Book Online/Text/Book Online - COPY.md`. */
+
+const title = 'Book Online | Abbey Group Whitby';
+const description =
+  'Book a plumber, electrician or heating engineer online with Abbey Group in Whitby. Pick a time that suits you, handled by a real local team.';
+
+/* Amy's confirmed ServiceM8 deep links (27 July 2026), so people can start on the
+   job they actually want rather than hunting through the booking form. */
+const bookings = [
+  {
+    t: 'A free onsite quote',
+    d: 'For a renovation, a new boiler, joinery, electrical work or anything you want pricing up.',
+    href: booking.quote,
+    icon: 'wrench',
+  },
+  {
+    t: 'An annual boiler service',
+    d: 'The yearly service that keeps your boiler safe, efficient and warranty-valid.',
+    href: booking.boilerService,
+    icon: 'flame',
+  },
+  {
+    t: 'A landlord gas safety check',
+    d: 'The annual gas safety check and certificate landlords are legally required to hold.',
+    href: booking.landlordGasSafety,
+    icon: 'shield-check',
+  },
+];
+
+const expect = [
+  'You pick the job and a time that suits you.',
+  'A real local person in the Whitby office picks it up and confirms your visit.',
+  `We come back to you in working hours, ${nap.hours}.`,
+];
+
+const schemas = [
+  breadcrumb([
+    { name: 'Home', path: routes.home },
+    { name: 'Book Online', path: routes.book },
+  ]),
+];
+---
+<BaseLayout title={title} description={description} schemas={schemas}>
+  <PageHero
+    title="Book a Visit Online"
+    lead="Pick a time that suits you and we will be there. It takes a couple of minutes."
+  >
+    <Button href={booking.main} external size="lg">Book Now</Button>
+    <Button href={`tel:${nap.phone.tel}`} variant="inverse-outline" size="lg">Call {nap.phone.label}</Button>
+
+    <div class="xp" slot="aside">
+      <p class="xp__label">What happens next</p>
+      <ol class="xp__list">
+        {expect.map((step, i) => (
+          <li>
+            <span class="xp__num" aria-hidden="true">{i + 1}</span>
+            <span>{step}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </PageHero>
+
+  <!-- WHAT YOU CAN BOOK -->
+  <Section bg="white">
+    <div class="bk__head reveal">
+      <Eyebrow>What you can book</Eyebrow>
+      <h2 class="bh2">Start with the job you need</h2>
+      <p class="blead">
+        These go straight to the right booking, so you are not working out which option
+        you want. Anything else, use Book Now above or call the office.
+      </p>
+    </div>
+    <ul class="bk__grid reveal">
+      {bookings.map((b) => (
+        <li class="bk__card">
+          <span class="bk__disc"><Icon name={b.icon} size={18} /></span>
+          <h3 class="bk__t">{b.t}</h3>
+          <p class="bk__d">{b.d}</p>
+          <a class="bk__link" href={b.href} target="_blank" rel="noopener noreferrer">
+            Book this <Icon name="arrow-right" size={15} />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <!-- PREFER TO TALK -->
+  <Section bg="sunken">
+    <div class="talk reveal">
+      <div class="talk__copy">
+        <Eyebrow>Prefer to talk first?</Eyebrow>
+        <h2 class="bh2">A real person answers the phone</h2>
+        <p class="blead">
+          Would rather speak to someone before booking? Call the office on
+          <a class="tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>, or
+          <a href={routes.contact}>send us an enquiry</a> and we will help you sort it.
+        </p>
+      </div>
+      <div class="talk__cta">
+        <Button href={`tel:${nap.phone.tel}`} size="lg">Call the Whitby office</Button>
+        <Button href={routes.contact} variant="outline" size="lg">Contact Us</Button>
+      </div>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .bh2 { font-size: clamp(30px, 3vw, 42px); color: var(--text-heading); margin-top: 10px; }
+  .blead {
+    margin-top: 14px;
+    max-width: 60ch;
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+  }
+  .blead a { color: var(--text-link); font-weight: var(--weight-semibold); }
+  .blead a.tnum { white-space: nowrap; }
+
+  /* WHAT HAPPENS NEXT, in the hero ------------------------------------- */
+  .xp {
+    background: color-mix(in oklch, var(--white) 8%, transparent);
+    border: 1px solid var(--border-inverse);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    padding: 28px 30px;
+    backdrop-filter: blur(6px);
+  }
+  .xp__label {
+    font-size: 12.5px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--text-muted-inverse);
+  }
+  .xp__list { display: flex; flex-direction: column; gap: 16px; margin-top: 18px; }
+  .xp__list li {
+    display: flex; gap: 14px; align-items: flex-start;
+    font-size: 15.5px; line-height: var(--leading-snug); color: var(--text-body-inverse);
+  }
+  .xp__num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; flex: none;
+    border-radius: var(--radius-pill);
+    background: var(--page-accent, var(--blue-500));
+    /* Navy glyph on the accent disc, legible on every division accent. */
+    color: var(--ink-500);
+    font-family: var(--font-display);
+    font-size: 15px;
+    line-height: 1;
+  }
+
+  /* WHAT YOU CAN BOOK -------------------------------------------------- */
+  .bk__head { max-width: 640px; margin-bottom: 36px; }
+  /* Three cards, three columns: an even grid. */
+  .bk__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .bk__card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-subtle);
+    border-top: 3px solid var(--page-accent, var(--blue-500));
+    border-radius: var(--radius-lg);
+    padding: 26px 26px 24px;
+  }
+  .bk__disc {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px;
+    border-radius: var(--radius-signature);
+    background: var(--page-accent-soft, var(--blue-50));
+    color: var(--page-accent-ink, var(--blue-800));
+  }
+  .bk__t { margin-top: 16px; font-size: 22px; color: var(--text-heading); }
+  .bk__d {
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+    flex: 1;
+  }
+  .bk__link {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 18px;
+    font-size: 15px;
+    font-weight: var(--weight-bold);
+    color: var(--text-link);
+  }
+  .bk__link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* PREFER TO TALK ----------------------------------------------------- */
+  .talk { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: center; }
+  .talk__cta { display: flex; flex-wrap: wrap; gap: 14px; }
+
+  @media (max-width: 1024px) {
+    .bk__grid { grid-template-columns: 1fr; }
+    .talk { grid-template-columns: 1fr; gap: 26px; }
+  }
+</style>

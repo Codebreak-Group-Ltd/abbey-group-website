@@ -1,0 +1,94 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { site, nap, routes } from '../data/site.ts';
+import { vatNumber } from '../data/legal.ts';
+
+/* Website terms of use. The Home Care Plan contract is a separate document at
+   routes.homecareTerms — this page covers the website itself.
+   Draft for Abbey Group and their solicitor to review before go-live. */
+
+const title = 'Website Terms of Use | Abbey Group Whitby';
+const description =
+  'The terms that apply to using the Abbey Group website, requesting a quote and booking a visit online.';
+---
+<LegalLayout
+  title={title}
+  description={description}
+  heading="Website Terms of Use"
+  path={routes.terms}
+  intro="The terms that apply to your use of this website, and to enquiries, quotes and bookings made through it."
+>
+  <h2>Who runs this site</h2>
+  <p>
+    This website, {site.domain.replace('https://', '')}, is operated by {site.legalName},
+    trading as {site.tradingAs}. We are registered in {site.registeredIn}, company number
+    {site.companyNo}, with our registered office at {nap.addressFull}.
+  </p>
+  {!vatNumber && (
+    <span class="legal-gap">
+      <strong>To add before publication:</strong> the VAT registration number.
+    </span>
+  )}
+
+  <h2>Using this site</h2>
+  <p>
+    You are welcome to browse the site, request quotes, book visits and contact us.
+    Please do not misuse it, try to gain unauthorised access to it, or use it in any way
+    that could damage or disrupt it.
+  </p>
+
+  <h2>Enquiries, quotes and bookings</h2>
+  <p>
+    The information on this site, including prices and Homecare Plan details, is given in
+    good faith and kept as accurate and up to date as we can. It is not a binding offer.
+  </p>
+  <p>
+    A quote or a booking becomes a contract between you and us only once we have
+    confirmed it to you in writing, including by email. Prices for work outside a
+    published plan or offer are subject to survey and confirmation. Where a price is
+    shown excluding VAT, we say so.
+  </p>
+
+  <h2>Homecare Plans and other work</h2>
+  <p>
+    Joining an Abbey Home Care Plan is governed by our separate
+    <a href={routes.homecareTerms}>Abbey Home Care Plan Terms and Conditions</a>. Other
+    work is agreed under its own quote, and the terms of that quote apply to that work.
+  </p>
+
+  <h2>Online booking</h2>
+  <p>
+    Our online booking runs on a third-party platform, ServiceM8, which opens in a new
+    tab. We are not responsible for the technical operation of that platform, though we
+    are of course responsible for confirming and carrying out any booking made through
+    it.
+  </p>
+
+  <h2>Intellectual property</h2>
+  <p>
+    The content of this site, including its text, images and design, belongs to us or to
+    our licensors, and may not be copied or reused without our permission.
+  </p>
+
+  <h2>Liability</h2>
+  <p>
+    We provide this website in good faith and take reasonable care to keep it accurate
+    and available, but we do not guarantee that it will always be error-free or
+    uninterrupted. Nothing in these terms limits our liability for death or personal
+    injury caused by our negligence, for fraud, or for anything else that cannot be
+    limited by law. Nothing here affects your statutory rights as a consumer.
+  </p>
+
+  <h2>Governing law</h2>
+  <p>
+    These terms are governed by the law of England and Wales, and any dispute will be
+    dealt with by the courts of England and Wales.
+  </p>
+
+  <h2>Contact us</h2>
+  <p>
+    Any questions about these terms, email
+    <a href={`mailto:${nap.email}`}>{nap.email}</a> or call
+    <a href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>.
+  </p>
+</LegalLayout>

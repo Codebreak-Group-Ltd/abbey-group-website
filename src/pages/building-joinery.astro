@@ -1,0 +1,431 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import PageHero from '../components/PageHero.astro';
+import Reviews from '../components/Reviews.astro';
+import FAQ from '../components/FAQ.astro';
+import Areas from '../components/Areas.astro';
+import EnquiryForm from '../components/EnquiryForm.astro';
+import Photo from '../components/Photo.astro';
+import { nap, booking, routes, joineryReviews } from '../data/site.ts';
+import { joineryFaqs } from '../data/faqs.ts';
+import { service, faqPage, breadcrumb } from '../lib/schema.ts';
+import { divisions } from '../data/divisions.ts';
+
+/* Building & Joinery — the craft page, and a genuine sub-brand, so it carries
+   the Abbey Building & Joinery lockup and hero badge (unlike Renovations).
+   Deliberately a trade page in build, not a second premium showcase: the
+   proven ticked service list rather than Renovations' editorial numerals, and
+   the argument is carried by a gallery of real work.
+   Copy: `05 Building & Joinery/Text/Building & Joinery - COPY.md`. */
+
+const title = 'Bespoke Joinery & Building Work Whitby | Abbey Group';
+const description =
+  'Bespoke joinery and structural building in Whitby. Fitted wardrobes, staircases and made-to-measure carpentry, crafted by a local team. Abbey Group.';
+
+const makes = [
+  { t: 'Bespoke joinery', d: 'Made-to-measure woodwork designed and built for your home.' },
+  { t: 'Fitted wardrobes', d: 'Storage built to your room, using the space properly from floor to ceiling.' },
+  { t: 'Custom staircases', d: 'Staircases designed and built as a feature, not just a way up.' },
+  { t: 'Custom carpentry', d: 'Shelving, panelling, alcoves and the finishing details that lift a room.' },
+  { t: 'Structural building work', d: 'Removing walls, forming openings and the structural side of a project, done safely.' },
+  { t: 'Structural alterations', d: 'Changing how a space works, from the structure up.' },
+];
+
+/* Real work, from the photography in hand. Riviera is confirmed nameable; the
+   other two projects are not named because Amy has not confirmed which they
+   are (see the page's image-manifest). */
+const gallery = [
+  {
+    src: '/images/building-staircase-oak-glass.webp',
+    alt: 'Oak and glass staircase balustrade fitted by Abbey Group in Whitby',
+    label: 'Oak and glass staircase',
+    project: 'Riviera, Whitby',
+  },
+  {
+    src: '/images/building-fitted-media-wall.webp',
+    alt: 'Fitted media wall with cabinetry and lit alcoves built by Abbey Group',
+    label: 'Fitted media wall',
+    project: 'Riviera, Whitby',
+  },
+  {
+    src: '/images/building-alcove-shelving.webp',
+    alt: 'Bespoke alcove shelving either side of a chimney breast by Abbey Group',
+    label: 'Alcove shelving',
+    project: 'Riviera, Whitby',
+  },
+  {
+    src: '/images/building-fitting-floating-shelves.webp',
+    alt: 'Abbey Group joiner fitting floating shelves to a feature wall',
+    label: 'Fitting floating shelves',
+    project: 'On site',
+  },
+  {
+    src: '/images/building-bar-fit-out.webp',
+    alt: 'Bar front and oak worktop in a function room fitted out by Abbey Group',
+    label: 'Bar and function room fit-out',
+    project: 'Recent project',
+  },
+  {
+    // The wide shot above and this detail are the same fit-out, shown as a pair:
+    // the brief asks for craft close-ups, and this is the one in the set.
+    src: '/images/building-oak-bar-worktop.webp',
+    alt: 'Close-up of the oak worktop and timber bar front fitted by Abbey Group',
+    label: 'Oak worktop, close up',
+    project: 'Recent project',
+  },
+];
+
+const standards = [
+  'Built to current building regulations.',
+  'Inspected and signed off by building control.',
+  'Properly certified once it is signed off.',
+];
+
+/* The client-approved FAQ set for this page. It lives in `src/data/faqs.ts`
+   because the page, its FAQPage JSON-LD and `/llms.txt` all read the same
+   text and must never disagree. */
+const faqs = joineryFaqs;
+
+const schemas = [
+  service({
+    name: 'Building & Joinery',
+    path: routes.joinery,
+    serviceType: 'Bespoke joinery and structural building work',
+    description,
+  }),
+  faqPage(faqs),
+  breadcrumb([
+    { name: 'Home', path: routes.home },
+    { name: 'Building & Joinery', path: routes.joinery },
+  ]),
+];
+---
+<BaseLayout title={title} description={description} schemas={schemas} division="joinery">
+  <PageHero
+    division="joinery"
+    title="Bespoke Joinery & Structural Building Work in Whitby"
+    lead="Made-to-measure joinery and structural building, done properly by a local team who care about the detail. From a fitted wardrobe to a staircase to taking a wall out, the work is built to last and finished to a standard you will notice."
+    trust={['Made to measure, not off the shelf', 'Local', 'Signed off by building control', 'Rated 4.6 on Google']}
+    image="/images/building-hero-bespoke-joinery.webp"
+    imageAlt="Abbey Group joiner fitting a window above Whitby harbour"
+  >
+    <Button href={booking.quote} external size="lg">Discuss Your Project</Button>
+    <Button href="#our-work" variant="inverse-outline" size="lg">See Our Work</Button>
+  </PageHero>
+
+  <!-- WHAT BESPOKE JOINERY MEANS -->
+  <Section bg="white">
+    <div class="def reveal">
+      <div class="def__copy">
+        <Eyebrow>What bespoke joinery means</Eyebrow>
+        <h2 class="bh2">Built for your space, not pulled off a shelf</h2>
+        <!-- Kept as a clean, self-contained definition: it is the AEO answer
+             block the SEO brief asks for, so it leads with "X is…". -->
+        <p class="def__answer">
+          Bespoke joinery is woodwork designed and made to measure for one specific space,
+          rather than bought as a standard unit and forced to fit.
+        </p>
+        <p class="def__body">
+          It costs more than flat-pack, and it earns it: the piece fits the room properly,
+          uses better timber, and lasts for years rather than sagging in a few. When the
+          detail matters, made-to-measure is the difference you feel every day.
+        </p>
+      </div>
+      <aside class="def__media">
+        <Photo
+          src="/images/building-fitting-floating-shelves.webp"
+          alt="Abbey Group joiner fitting floating shelves to a feature wall"
+          ratio="4 / 3"
+          radius="lg"
+          width={1000}
+          height={750}
+        />
+      </aside>
+    </div>
+  </Section>
+
+  <!-- WHAT WE MAKE -->
+  <Section bg="sunken">
+    <div class="mk__head reveal">
+      <Eyebrow>What we make</Eyebrow>
+      <h2 class="bh2">Craftsmanship for the home</h2>
+    </div>
+    <ul class="mk__grid reveal">
+      {makes.map((m) => (
+        <li class="mk__item">
+          <span class="mk__chip"><Icon name="check" size={16} /></span>
+          <div><strong>{m.t}.</strong> {m.d}</div>
+        </li>
+      ))}
+    </ul>
+    <div class="mk__cta reveal">
+      <Button href={booking.quote} external size="lg">Discuss Your Project</Button>
+    </div>
+  </Section>
+
+  <!-- OUR WORK -->
+  <Section bg="white" id="our-work">
+    <div class="gal__head reveal">
+      <Eyebrow>Our work</Eyebrow>
+      <h2 class="bh2">See the craft</h2>
+      <p class="blead">
+        This is a page that lives on the work itself, so here it is up close. More
+        projects go up as the photography comes in, and we can always show you recent
+        work in person.
+      </p>
+    </div>
+    <ul class="gal__grid reveal">
+      {gallery.map((g) => (
+        <li class="gal__item">
+          <Photo src={g.src} alt={g.alt} ratio="4 / 3" radius="lg" bordered={false} width={1000} height={750} />
+          <p class="gal__cap">
+            <span class="gal__label">{g.label}</span>
+            <span class="gal__project">{g.project}</span>
+          </p>
+        </li>
+      ))}
+    </ul>
+    <div class="gal__cta reveal">
+      <Button href={booking.quote} external size="lg">Discuss Your Project</Button>
+    </div>
+  </Section>
+
+  <!-- MATERIALS -->
+  <Section bg="dark" bleed>
+    <div class="mat">
+      <img class="mat__mark" src={divisions.joinery.mark} alt="" aria-hidden="true" width="380" height="399" />
+      <div class="container mat__inner reveal">
+        <div class="mat__copy">
+          <Eyebrow tone="inverse">Materials</Eyebrow>
+          <h2 class="mat__h2">Quality timber and materials, much of it local</h2>
+          <p class="mat__body">
+            Good joinery starts with good materials. We use quality timber and source a
+            lot of it locally, from Whitby suppliers like MKM, with flooring from
+            Fletcher &amp; Woodhouse. Buying locally means we know where the materials come
+            from and can pick the right timber for each job, rather than working with
+            whatever is cheapest.
+          </p>
+          <p class="mat__link">
+            It is the same sourcing approach behind our <a href={routes.renovations}>Renovations</a> work.
+          </p>
+        </div>
+        <div class="mat__media">
+          <Photo
+            src="/images/building-timber-clad-wall.webp"
+            alt="Timber-clad feature wall with floating shelves fitted by Abbey Group"
+            ratio="4 / 3"
+            radius="lg"
+            width={1100}
+            height={825}
+          />
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <!-- STRUCTURAL WORK -->
+  <Section bg="sunken">
+    <div class="std reveal">
+      <div class="std__copy">
+        <Eyebrow>Structural work</Eyebrow>
+        <h2 class="bh2">Structural work, done to standard</h2>
+        <p class="blead">
+          Structural work, such as removing a wall or forming a new opening, has to meet
+          current building regulations. We carry the work out to those standards, so your
+          project is safe, sound and properly certified.
+        </p>
+      </div>
+      <ul class="std__list">
+        {standards.map((s) => (
+          <li>
+            <span class="std__disc"><Icon name="badge-check" size={16} /></span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Section>
+
+  <!-- REVIEWS -->
+  <Reviews heading="What our clients say" reviews={joineryReviews} bg="white" />
+
+  <!-- AREAS -->
+  <Areas heading="Joinery and building work across Whitby" bg="sunken" division="joinery">
+    These are the places we work most often:
+  </Areas>
+
+  <!-- FAQ -->
+  <FAQ heading="Joinery questions, answered" items={faqs} bg="white" />
+
+  <!-- ENQUIRY -->
+  <EnquiryForm
+    heading="Discuss your project"
+    lead="Tell us what you have in mind and we will talk it through, look at what is involved, and give you an honest quote. Whether it is one bespoke piece or a full structural job, you deal with the same local team throughout."
+    source="Building & Joinery"
+    tags="building-joinery,quote"
+    submitLabel="Discuss Your Project"
+    bg="sunken"
+    fields={[
+      { name: 'name', label: 'Name', required: true, autocomplete: 'name' },
+      { name: 'phone', label: 'Phone', type: 'tel', required: true, autocomplete: 'tel' },
+      { name: 'email', label: 'Email', type: 'email', autocomplete: 'email' },
+      { name: 'postcode', label: 'Postcode', autocomplete: 'postal-code' },
+      { name: 'message', label: 'About your project', type: 'textarea', full: true },
+    ]}
+  >
+    <div class="bj-formside">
+      <Button href={`tel:${nap.phone.tel}`} variant="outline" size="lg">Call the Whitby office</Button>
+      <p class="bj-formside__links">
+        Planning a whole room or a full renovation? See <a href={routes.renovations}>Renovations</a>.
+      </p>
+    </div>
+  </EnquiryForm>
+</BaseLayout>
+
+<style>
+  .bh2 { font-size: clamp(32px, 3.2vw, 46px); color: var(--text-heading); margin-top: 10px; }
+  .blead {
+    margin-top: 16px;
+    max-width: 62ch;
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+  }
+
+  /* DEFINITION ---------------------------------------------------------- */
+  .def { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+  .def__answer {
+    margin-top: 22px;
+    padding-left: 22px;
+    border-left: 3px solid var(--page-accent);
+    font-family: var(--font-display);
+    font-size: clamp(21px, 1.9vw, 26px);
+    line-height: var(--leading-snug);
+    color: var(--text-heading);
+  }
+  .def__body {
+    margin-top: 20px;
+    max-width: 58ch;
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+  }
+
+  /* WHAT WE MAKE -------------------------------------------------------- */
+  .mk__head { max-width: 620px; margin-bottom: 36px; }
+  .mk__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px 32px; }
+  .mk__item {
+    display: flex; gap: 14px; align-items: flex-start;
+    font-size: 15px; line-height: var(--leading-relaxed); color: var(--text-body);
+  }
+  .mk__item strong { color: var(--text-heading); }
+  .mk__chip {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; flex: none;
+    border-radius: var(--radius-signature);
+    background: var(--page-accent-soft);
+    color: var(--page-accent-ink);
+    margin-top: 2px;
+  }
+  .mk__cta { margin-top: 40px; }
+
+  /* GALLERY ------------------------------------------------------------- */
+  .gal__head { max-width: 680px; margin-bottom: 40px; }
+  /* Six photos in three columns: an even grid, so the last row is full. */
+  .gal__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .gal__cap { display: flex; flex-direction: column; gap: 2px; margin-top: 12px; }
+  .gal__label { font-size: 15px; font-weight: var(--weight-semibold); color: var(--text-heading); }
+  .gal__project {
+    font-size: 12.5px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--page-accent-ink);
+  }
+  .gal__cta { margin-top: 44px; }
+
+  /* MATERIALS ----------------------------------------------------------- */
+  .mat {
+    position: relative;
+    overflow: hidden;
+    padding-block: 84px;
+    background:
+      radial-gradient(900px 580px at 84% 20%, color-mix(in oklch, var(--page-accent-glow) 58%, transparent) 0%, transparent 65%),
+      var(--surface-page-dark);
+  }
+  .mat__mark {
+    position: absolute; left: -110px; top: 50%; transform: translateY(-50%);
+    width: 380px; opacity: 0.12; pointer-events: none;
+  }
+  .mat__inner {
+    position: relative;
+    display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center;
+  }
+  .mat__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+  .mat__h2 {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 3vw, 44px);
+    color: var(--white);
+    text-wrap: balance;
+  }
+  .mat__body {
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body-inverse);
+    max-width: 54ch;
+  }
+  .mat__link { font-size: var(--text-base); color: var(--text-body-inverse); }
+  .mat__link a {
+    color: var(--plum-300);
+    font-weight: var(--weight-semibold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* STRUCTURAL ---------------------------------------------------------- */
+  .std { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: start; }
+  .std__list { display: flex; flex-direction: column; gap: 14px; }
+  .std__list li {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: var(--white);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 18px 22px;
+    font-size: 15.5px; line-height: var(--leading-snug); color: var(--text-body);
+  }
+  /* Navy glyph on the accent disc: the one colour legible on all four
+     division accents (standing rule 5). */
+  .std__disc {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; flex: none;
+    border-radius: 999px;
+    background: var(--page-accent);
+    color: var(--ink-500);
+  }
+
+  /* FORM SIDE SLOT ------------------------------------------------------ */
+  .bj-formside { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; margin-top: 8px; }
+  .bj-formside__links { font-size: var(--text-sm); color: var(--text-muted); }
+  .bj-formside__links a { color: var(--text-link); font-weight: var(--weight-semibold); }
+
+  @media (max-width: 1100px) {
+    .mk__grid { grid-template-columns: repeat(2, 1fr); }
+    .gal__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 1024px) {
+    .def { grid-template-columns: 1fr; gap: 32px; }
+    .def__media { max-width: 560px; }
+    .mat__inner { grid-template-columns: 1fr; gap: 36px; }
+    .mat__body { max-width: none; }
+    .std { grid-template-columns: 1fr; gap: 32px; }
+  }
+  @media (max-width: 700px) {
+    .mat { padding-block: 64px; }
+    .mk__grid { grid-template-columns: 1fr; gap: 18px; }
+    .gal__grid { grid-template-columns: 1fr; gap: 26px; }
+  }
+</style>

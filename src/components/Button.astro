@@ -2,14 +2,19 @@
 import Icon from './Icon.astro';
 
 /* Button — the only interactive control style on the site.
-   ONE CTA colour site-wide: `primary` is solid orange (var(--cta)).
+   `primary` is solid orange (var(--cta)) and is the action colour everywhere
+   except one case: Electrical's green grounds, where orange and green are both
+   near-saturated complements and vibrate against each other (Josh, 29 July
+   2026). There, `navy` takes over. Navy on a dark ground has almost no shape
+   separation of its own (1.85:1 against Electrical's #364627), so the variant
+   carries a division-accent ring to define its edge.
    Secondaries are outlines: `outline` on light backgrounds,
    `inverse-outline` on dark ones. Signature corner radius on all.
    Renders as <a> when `href` is set, else <button>. */
 
 interface Props {
   href?: string;
-  variant?: 'primary' | 'outline' | 'inverse-outline';
+  variant?: 'primary' | 'navy' | 'outline' | 'inverse-outline';
   size?: 'sm' | 'md' | 'lg';
   icon?: string;         // trailing lucide icon name
   external?: boolean;    // adds target + rel for off-site links (e.g. ServiceM8)
@@ -87,6 +92,23 @@ const extraAttrs = href
       var(--shadow-md);
   }
   .btn--primary:hover { filter: brightness(1.06); }
+
+  /* navy — the action colour on grounds where orange fights the division
+     colour (Electrical green). White on navy is 17:1, so the label is never the
+     problem; the ring is what stops the button dissolving into a dark ground,
+     and it takes the page accent so it still reads as part of that page. */
+  .btn--navy {
+    background: var(--ink-500);
+    color: var(--white);
+    border-color: color-mix(in oklch, var(--page-accent, var(--white)) 60%, transparent);
+    box-shadow:
+      0 0 0 1.5px color-mix(in oklch, var(--page-accent, var(--white)) 22%, transparent),
+      var(--shadow-md);
+  }
+  .btn--navy:hover {
+    background: var(--ink-400);
+    border-color: var(--page-accent, var(--white));
+  }
 
   /* outline — light backgrounds */
   .btn--outline {

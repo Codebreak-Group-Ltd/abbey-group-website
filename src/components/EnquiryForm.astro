@@ -139,20 +139,39 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 </style>
 
 <script>
-  /* Attribution capture (§6): store ad-click + utm params on first landing. */
-  (() => {
+  /* Attribution (§6), without touching the visitor's device.
+
+     This used to write the ad-click and utm parameters to localStorage the moment
+     anyone landed. Storing that is not "strictly necessary" under PECR, so it
+     needed consent, and the consent layer does not exist yet — it was the only
+     pre-consent storage in the build. Now nothing is stored: the parameters are
+     read from the current URL at the moment the form is submitted, and travel with
+     the enquiry the visitor has chosen to send.
+
+     Trade-off, deliberate: if someone lands from an ad on one page and submits on
+     a different one, the click id does not follow them. With no ad platforms live
+     yet that costs nothing today. When the consent banner lands, restore
+     cross-page persistence under the advertising category and have it populate
+     `window.__agAttribution`, which is read below. */
+  const ATTRIBUTION_KEYS = [
+    'gclid', 'gbraid', 'wbraid',
+    'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+  ];
+
+  const readAttribution = (): Record<string, string> => {
+    const found: Record<string, string> = {};
     try {
-      const KEY = 'ag_attribution';
       const params = new URLSearchParams(window.location.search);
-      const keys = ['gclid', 'gbraid', 'wbraid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
-      const found: Record<string, string> = {};
-      for (const k of keys) { const v = params.get(k); if (v) found[k] = v; }
-      if (Object.keys(found).length) {
-        const existing = JSON.parse(localStorage.getItem(KEY) || '{}');
-        localStorage.setItem(KEY, JSON.stringify({ ...existing, ...found }));
+      for (const k of ATTRIBUTION_KEYS) {
+        const v = params.get(k);
+        if (v) found[k] = v;
       }
+      /* Populated only by a future consent-gated store; absent today. */
+      const consented = (window as unknown as { __agAttribution?: Record<string, string> }).__agAttribution;
+      if (consented) Object.assign(found, consented);
     } catch { /* ignore */ }
-  })();
+    return found;
+  };
 
   const WEBHOOK = import.meta.env.PUBLIC_GHL_WEBHOOK as string | undefined;
 
@@ -173,8 +192,7 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
       const data: Record<string, unknown> = {};
       new FormData(form).forEach((v, k) => (data[k] = v));
-      let attribution = {};
-      try { attribution = JSON.parse(localStorage.getItem('ag_attribution') || '{}'); } catch {}
+      const attribution = readAttribution();
 
       const payload = {
         ...data,

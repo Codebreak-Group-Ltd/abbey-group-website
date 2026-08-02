@@ -9,7 +9,9 @@
    - VALUES (brand hex + fonts) are the CLIENT-CONFIRMED ones from
      `_Specs/03 DESIGN TOKENS.md`: navy #121037, blue #1895cc, plum #7f5d9c,
      orange #eb6740 (Home Care accent AND the site-wide primary CTA),
-     green #c0ff71 (Electrical). Fonts: DM Serif Display + Inter, self-hosted.
+     green #78ab0a / #96d707 / #adea6a (Electrical, taken from the real logo and
+     confirmed by Josh 29 July 2026, superseding the spec's #c0ff71).
+     Fonts: DM Serif Display + Inter, self-hosted.
 
    Rule: if a colour/font/space/radius isn't in this file, it must not be in
    the CSS. Pure `:root` variables, zero selectors — safely importable into
@@ -69,18 +71,42 @@
   --orange-900: #9c4228;
   --orange-950: #7d341f;
 
-  /* ---- Signal green — Electrical accent (bright; accents only, never text/fills) ---- */
-  --green-50:  #fcfff9;
-  --green-100: #f7fff1;
-  --green-200: #eeffe1;
-  --green-300: #e2ffc9;
-  --green-400: #d3ffa6;
-  --green-500: #c0ff71; /* confirmed */
-  --green-600: #b4ef69;
-  --green-700: #a4db60;
-  --green-800: #92c355;
-  --green-900: #7da848;
-  --green-950: #628437;
+  /* ---- Abbey Electrical green ----
+     CORRECTED 29 July 2026 (Josh): the earlier value (#c0ff71, from
+     `_Specs/03 DESIGN TOKENS.md`) was a long way off the actual logo. The real
+     Abbey Electrical lockup uses three greens, and sampling the supplied art
+     (`_Global/Brand Assets/abbey-electrical-logo.png`) confirms them:
+       #78ab0a  the darkest, and the main one          -> --green-500
+       #96d707  the bright outer crescent              -> --green-400
+       #adea6a  the pale inner crescent                -> --green-300
+     The scale is built around those, which is why the darker steps now look
+     nothing like the old ones. Consequence worth knowing: a real green now
+     passes AA as text (see --green-ink below), which the old pale green never
+     could. */
+  --green-50:  #f7fbef;
+  --green-100: #eef7dd;
+  --green-200: #ddedb9;
+  --green-300: #adea6a; /* logo: pale inner crescent */
+  --green-400: #96d707; /* logo: bright outer crescent */
+  --green-500: #78ab0a; /* logo: main green — confirmed by Josh 29 Jul 2026 */
+  --green-600: #6d9c09;
+  --green-700: #5f8808;
+  --green-800: #517407;
+  --green-900: #445f06;
+  --green-950: #364c05;
+
+  /* ---- Warm stone (Renovations editorial neutrals) ----
+     Renovations is plum-anchored like Building & Joinery but sits visibly
+     above it: warm timber and stone tones instead of the cool ink greys, more
+     whitespace, larger photography (agreed with Josh, 29 July 2026). These are
+     the only warm neutrals on the site and are used as SURFACES and hairlines;
+     stone-700 is the one that is AA-safe as text (6.62:1 on white,
+     5.87:1 on stone-100) and is used for editorial captions on this page. */
+  --stone-50:  #faf8f4;
+  --stone-100: #f6f4ee; /* the page's sunken ground (see divisions.ts) */
+  --stone-200: #e8e2d7;
+  --stone-300: #d8cfbf;
+  --stone-700: #6b5a45;
 
   --white: #ffffff;
 
@@ -99,8 +125,12 @@
   --text-body: var(--ink-400);
   --text-body-inverse: color-mix(in oklch, var(--white) 82%, var(--ink-500));
   /* Muted text is a darkened ink so it passes AA (4.5:1) on white — the
-     lighter --ink-300 is reserved for borders/decorative icons only. */
-  --text-muted: #6f6e82;
+     lighter --ink-300 is reserved for borders/decorative icons only.
+     Deepened from #6f6e82 (29 July 2026): the old value passed on white
+     (4.97:1) but only reached 4.40:1 on --surface-sunken, and muted labels
+     (review sources, FAQ notes, form microcopy) sit on sunken grounds all over
+     the site. Now 5.27:1 on white and 4.67:1 on sunken, so both pass. */
+  --text-muted: #6b6a7d;
   --text-muted-inverse: color-mix(in oklch, var(--white) 62%, var(--ink-500));
   --text-link: var(--blue-800);
 
@@ -145,10 +175,13 @@
   /* Warm review-gold — the one intentional non-brand colour (star fills) */
   --review-star: #e8a33d;
 
-  /* Electrical green is a highlight colour, not a text colour: even --green-950
-     only reaches 4.31:1 on white, so it is BANNED for text. This deeper leaf
-     shade is the AA-safe ink for Electrical accents (6.5:1 on white). */
-  --green-ink: #4a6529;
+  /* The Electrical BRAND greens are still not text colours: the main #78ab0a is
+     2.75:1 on white and the bright #96d707 only 1.75:1. But now the scale is
+     built from the real logo, its dark end is a genuine green rather than the
+     olive stand-in this token used to hold (#4a6529): --green-800 reaches
+     5.45:1 on white and 4.83:1 on sunken, so Electrical text and small icons
+     finally use a colour from the logo's own family. */
+  --green-ink: var(--green-800);
 
   /* ---- Typography ---- */
   /* Confirmed brand faces, self-hosted via @fontsource (no Google Fonts link,

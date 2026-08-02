@@ -1,0 +1,47 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { routes } from '../data/site.ts';
+
+/* Website credits. The footer's "Website by Codebreak" links straight to
+   codebreak.co.uk/websites/ (round 1), so this page is the fuller version:
+   who built it, whose photography it is, and what the site is built on. */
+
+const title = 'Website Credits | Abbey Group Whitby';
+const description =
+  'Who designed and built the Abbey Group website, and the photography and software behind it.';
+---
+<LegalLayout
+  title={title}
+  description={description}
+  heading="Website Credits"
+  path={routes.credits}
+>
+  <h2>Design and build</h2>
+  <p>
+    This website was designed and built by
+    <a href="https://www.codebreak.co.uk/websites/" target="_blank" rel="noopener noreferrer">Codebreak</a>,
+    a performance marketing agency.
+  </p>
+  <span class="legal-gap">
+    <strong>To confirm before publication:</strong> Codebreak's standard credit line and
+    link, in case it differs from the wording above.
+  </span>
+
+  <h2>Photography</h2>
+  <p>
+    All photography on this site is Abbey Group's own, taken at their projects across
+    Whitby and North Yorkshire, unless stated otherwise. No stock photography is used.
+  </p>
+
+  <h2>How the site is built</h2>
+  <p>
+    The site is built with Astro and delivered as static pages, which is why it loads
+    quickly and runs almost no code in your browser. Type is set in DM Serif Display and
+    Inter, both self-hosted on our own server rather than loaded from a third party.
+    Icons are from Lucide, used under its licence.
+  </p>
+  <p>
+    See our <a href={routes.cookies}>Cookie Policy</a> for what the site does and does not
+    store on your device.
+  </p>
+</LegalLayout>

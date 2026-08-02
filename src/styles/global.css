@@ -105,6 +105,13 @@ button {
   top: 12px;
 }
 
+/* ---- In-page anchors clear the fixed header ----
+   Without this, jumping to #our-work lands the section heading underneath the
+   header bar. Applies to any anchor target, so every page gets it. */
+:target {
+  scroll-margin-top: 104px;
+}
+
 /* ---- Screen-reader only ---- */
 .sr-only {
   position: absolute;
