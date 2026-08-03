@@ -1,0 +1,96 @@
+---
+import Icon from './Icon.astro';
+import Lockup from './Lockup.astro';
+import { nap, site } from '../data/site.ts';
+import type { DivisionKey } from '../data/divisions.ts';
+
+/* Top bar for the paid-traffic landing pages (`chromeless` on BaseLayout).
+
+   A landing page has one job, so this carries the two things that serve it and
+   nothing else: who you are dealing with, and the phone number. No nav, no
+   "Get a Quote" (it would compete with the page's own single CTA), no menu.
+
+   THE LOCKUP READS ABBEY GROUP, not Abbey Home Care. The LP spec asks for "the
+   Abbey Home Care logo", and that art does not exist: what the client supplied
+   for the four sub-brands is a set of ~320px screenshots with no vector, so the
+   old sub-brand lockups were BUILT from site type and were removed from the
+   whole site on 30 July 2026 (standing rule 21 — never render brand art the
+   client has not supplied). The crescent takes the homecare orange, which is
+   how every other page signposts its division.
+
+   Not a <section>, so it stays out of the audit's adjacent-background check,
+   and not fixed: on a landing page the scroll belongs to the argument.
+   The phone number is `nowrap` at every width (standing rule 13). */
+interface Props {
+  division?: DivisionKey;
+}
+const { division = 'group' } = Astro.props;
+---
+<header class="lpbar">
+  <div class="container lpbar__inner">
+    <span class="lpbar__brand" aria-label={site.name}>
+      <Lockup division={division} descriptor="Group" size={18} />
+    </span>
+
+    <a class="lpbar__phone" href={`tel:${nap.phone.tel}`}>
+      <Icon name="phone" size={16} />
+      <span class="lpbar__num tnum">{nap.phone.label}</span>
+      <span class="lpbar__hint">A real person answers</span>
+    </a>
+  </div>
+</header>
+
+<style>
+  .lpbar {
+    background: var(--surface-page-dark, var(--ink-500));
+    border-bottom: 1px solid color-mix(in oklch, var(--white) 12%, transparent);
+    padding-block: 16px;
+  }
+  .lpbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .lpbar__brand { display: inline-flex; align-items: center; }
+
+  .lpbar__phone {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-areas: 'icon num' 'icon hint';
+    align-items: center;
+    column-gap: 10px;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .lpbar__phone :global(svg) {
+    grid-area: icon;
+    color: var(--page-accent-on-dark, var(--orange-400));
+    flex: none;
+  }
+  .lpbar__num {
+    grid-area: num;
+    font-size: 19px;
+    font-weight: var(--weight-bold);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .lpbar__hint {
+    grid-area: hint;
+    font-size: 11.5px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted-inverse);
+    white-space: nowrap;
+  }
+  .lpbar__phone:hover .lpbar__num { color: var(--page-accent-on-dark, var(--orange-400)); }
+
+  @media (max-width: 520px) {
+    /* The hint is the first thing to go: the number itself has to stay one line
+       and legible at 390px, and the hero repeats the same promise anyway. */
+    .lpbar__hint { display: none; }
+    .lpbar__phone { grid-template-columns: auto auto; grid-template-areas: 'icon num'; }
+    .lpbar__num { font-size: 17px; }
+  }
+</style>

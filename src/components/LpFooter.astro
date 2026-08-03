@@ -1,0 +1,79 @@
+---
+import { site, nap, routes } from '../data/site.ts';
+
+/* Footer for the paid-traffic landing pages (`chromeless` on BaseLayout).
+
+   Legal and identity only. No service links, no social icons, no "Company"
+   column: every one of them is a way off a page that has a single goal, and the
+   full footer's five service links are the biggest exit ramp on the site.
+
+   What stays, and why it has to:
+   - the four legal pages (privacy is a legal requirement wherever a form
+     collects data; the Home Care Plan terms are the contract the page is
+     selling, so linking them is a trust asset as much as an obligation),
+   - the trading address and the Companies Act disclosure line, identical to the
+     site footer so the NAP never differs by page (build standard §4),
+   - the Codebreak credit, which the site footer carries on every page.
+
+   Not a <section>, so the audit's adjacent-background check does not see it. */
+const year = new Date().getFullYear(); // build-time, not client
+---
+<footer class="lpftr">
+  <div class="container lpftr__inner">
+    <ul class="lpftr__legal">
+      <li><a href={routes.privacy}>Privacy</a></li>
+      <li><a href={routes.terms}>Website Terms</a></li>
+      <li><a href={routes.homecareTerms}>Home Care Plan Terms</a></li>
+      <li><a href={routes.cookies}>Cookies</a></li>
+      <li>
+        <span class="lpftr__credit">
+          Website by
+          <a href="https://www.codebreak.co.uk/websites/" target="_blank" rel="noopener noreferrer">Codebreak</a>
+        </span>
+      </li>
+    </ul>
+
+    <address class="lpftr__addr">
+      {site.name}, {nap.addressLine}, {nap.locality}, {nap.region} {nap.postcode}
+    </address>
+
+    <p class="lpftr__copy">
+      &copy; {site.name} {year}. {site.legalName}, company no. {site.companyNo}, registered in {site.registeredIn}.
+      Home Care Plans are service plans, not insurance.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .lpftr {
+    background: var(--surface-footer, var(--ink-600));
+    border-top: 3px solid var(--page-accent, transparent);
+    color: var(--text-body-inverse);
+    padding-block: 40px 36px;
+  }
+  .lpftr__inner { display: flex; flex-direction: column; gap: 16px; }
+
+  .lpftr__legal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 22px;
+    font-size: 13.5px;
+  }
+  .lpftr__legal a { color: var(--white); text-decoration: none; }
+  .lpftr__legal a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .lpftr__credit { color: var(--text-muted-inverse); }
+  .lpftr__credit a { color: var(--text-muted-inverse); text-decoration: underline; text-underline-offset: 3px; }
+
+  .lpftr__addr {
+    font-style: normal;
+    font-size: 13.5px;
+    color: var(--text-body-inverse);
+  }
+  .lpftr__copy {
+    font-size: 12.5px;
+    line-height: var(--leading-relaxed);
+    color: var(--text-muted-inverse);
+    max-width: 720px;
+  }
+</style>

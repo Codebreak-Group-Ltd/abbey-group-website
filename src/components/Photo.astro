@@ -13,10 +13,24 @@ interface Props {
   class?: string;
   width?: number;
   height?: number;
+  /* Optional responsive sources. Both must be given together, or the browser has
+     no basis to choose and falls back to `src` (which is the safe outcome, and
+     what every page that omits them gets).
+
+     Worth it only on an LCP image where the slot is much narrower than the file:
+     the standard already requires <=2x the display slot, so most photographs on
+     the site do not need this. `/lp/homecare/`'s hero does, because at a 390px
+     viewport its 350px slot makes the 900w file 2.57x oversized at DPR 1 and
+     1.29x at DPR 2. (Note Lighthouse's own mobile emulation runs DPR 2.625,
+     where 900w is fine, so this will not show up in a Lighthouse score — it is
+     a saving for real devices, not for the audit.) */
+  srcset?: string;
+  sizes?: string;
 }
 const {
   src, alt, ratio = '16 / 9', radius = 'lg', eager = false,
   bordered = true, objectPosition = 'center', class: className, width, height,
+  srcset, sizes,
 } = Astro.props;
 const radiusVar = radius === 'none' ? '0' : `var(--radius-${radius})`;
 ---
@@ -26,6 +40,8 @@ const radiusVar = radius === 'none' ? '0' : `var(--radius-${radius})`;
 >
   <img
     src={src}
+    srcset={srcset && sizes ? srcset : undefined}
+    sizes={srcset && sizes ? sizes : undefined}
     alt={alt}
     width={width}
     height={height}

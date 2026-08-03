@@ -37,6 +37,49 @@ import { nap, routes } from '../data/site.ts';
    January 2026 one. See `_Specs/01 OUTSTANDING FROM CLIENT.md`: if Amy confirms
    it applies to every plan, it is one line per result here. */
 
+/* The old-boiler replacement route needs a different destination on a landing
+   page. On `/homecare-plans/` it links to Plumbing & Heating, which is right: the
+   visitor is inside the site and that page sells the installation. On a paid
+   landing page it is the only link off a page built for one goal, and it drops the
+   visitor into the full site with its menu and its ten other services, where the
+   click cannot be counted as a conversion. So the LP keeps the MESSAGE — a
+   replacement is worth considering, and it is worth far more to Abbey than a £9.99
+   plan — and routes it to its own enquiry form instead. */
+/* CTA wording. The LP Quality Checklist requires a page's CTA text to be
+   consistent across every placement, and on `/lp/homecare/` the plan CARDS say
+   "Start My Service Care" while these result buttons said "Start Service Care" —
+   the same action in two voices, on the same page.
+
+   `ctaFirstPerson` aligns them. It is OFF by default so `/homecare-plans/` is
+   untouched: that page's cards say "Choose This Plan" and its copy is signed off,
+   so changing these buttons there would swap one inconsistency for another
+   without a decision behind it. Note "Ultimate Cover", not "Ultimate Home Care",
+   because that is what the LP card says. */
+interface Props {
+  altHref?: string;
+  altLabel?: string;
+  ctaFirstPerson?: boolean;
+}
+const {
+  altHref = routes.plumbing,
+  altLabel = 'See Plumbing & Heating',
+  ctaFirstPerson = false,
+} = Astro.props;
+
+const cta = ctaFirstPerson
+  ? {
+      service: 'Start My Service Care',
+      plus: 'Start My Service Care+',
+      all: 'Start My Ultimate Cover',
+      landlord: 'Start My Landlord Care',
+    }
+  : {
+      service: 'Start Service Care',
+      plus: 'Start Service Care+',
+      all: 'Start Ultimate Home Care',
+      landlord: 'Start Landlord Care',
+    };
+
 const who = [
   { id: 'home', label: 'My own home' },
   { id: 'landlord', label: 'A property I let out' },
@@ -133,7 +176,7 @@ const state = [
           <strong class="tnum">£9.99</strong> a month.
         </p>
         <p class="pp__rsave">You save <strong class="tnum">£48</strong> on day one.</p>
-        <Button href="#enquiry" size="lg">Start Service Care</Button>
+        <Button href="#enquiry" size="lg">{cta.service}</Button>
 
         <!-- Shown for a 10+ or unknown-age boiler only (Josh's suggestion, 31 July
              2026). Someone who has just been told parts cover is not available on
@@ -150,7 +193,7 @@ const state = [
           <strong>Boiler getting on a bit?</strong> Once a boiler is older it tends to cost
           more to run than a new one, so a replacement is sometimes the better spend. We fit
           those too, and we will tell you honestly which is worth doing.
-          <a href={routes.plumbing}>See Plumbing &amp; Heating</a>
+          <a href={altHref}>{altLabel}</a>
         </p>
       </article>
 
@@ -167,7 +210,7 @@ const state = [
           Service Care+ is <strong class="tnum">£19.99</strong> a month with unlimited
           call-outs, boiler parts and labour included, and 10% off other work.
         </p>
-        <Button href="#enquiry" size="lg">Start Service Care+</Button>
+        <Button href="#enquiry" size="lg">{cta.plus}</Button>
       </article>
 
       <article class="pp__r pp__r--all">
@@ -183,7 +226,7 @@ const state = [
           Ultimate Home Care is <strong class="tnum">£34.99</strong> a month with heating and
           plumbing parts and labour included, and 20% off other work.
         </p>
-        <Button href="#enquiry" size="lg">Start Ultimate Home Care</Button>
+        <Button href="#enquiry" size="lg">{cta.all}</Button>
       </article>
 
       <article class="pp__r pp__r--landlord">
@@ -200,7 +243,7 @@ const state = [
           <strong class="tnum">£13.99</strong> a month.
         </p>
         <p class="pp__rsave">You save <strong class="tnum">£81</strong> on day one.</p>
-        <Button href="#enquiry" size="lg">Start Landlord Care</Button>
+        <Button href="#enquiry" size="lg">{cta.landlord}</Button>
       </article>
 
       <article class="pp__r pp__r--commercial">

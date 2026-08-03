@@ -1,0 +1,139 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Icon from '../components/Icon.astro';
+import Button from '../components/Button.astro';
+import { nap, routes } from '../data/site.ts';
+
+/* /thank-you/ — the post-enquiry page.
+
+   WHY IT EXISTS AT ALL, beyond good manners: a conversion needs a URL. Every ad
+   platform counts a Lead on a page view, and firing one on a button click counts
+   intent rather than a completed enquiry (LP spec §1.5). The sitemap filter and a
+   robots.txt comment have anticipated this page since the foundation build; it is
+   now real.
+
+   NO TRACKING CODE HERE, AND THAT IS DELIBERATE. This is where GA4, the Meta
+   Pixel and the Google Ads conversion tag will fire, but no measurement IDs exist
+   yet (Outstanding B2), and a pixel cannot ship without the consent banner,
+   Consent Mode v2 and its entry in `src/data/consent-registry.ts` in the SAME
+   change — the registry generates the cookie policy table, so a pixel added
+   without it publishes a policy that lies. It stays a launch blocker.
+
+   Chromeless: someone who has just converted should not be handed a menu.
+   `group` colourway rather than homecare, because every form on the site can
+   point here, not just the Homecare landing page.
+
+   The copy states only what the site already states everywhere else: office hours
+   Monday to Friday 9am to 5pm, and that the line takes messages out of hours.
+   Nothing about a response time, which has never been confirmed. */
+const title = 'Thank you | Abbey Group, Whitby';
+const description =
+  'Thanks, your enquiry is with the Abbey Group office in Whitby. Here is what happens next, and the number to call if you would rather talk it through now.';
+
+const steps = [
+  {
+    t: 'We read it, and it goes to a person',
+    d: 'Your enquiry lands with the office on Skinner Street. Nobody in a call centre a hundred miles away sees it first.',
+  },
+  {
+    t: 'We ring you back',
+    d: 'In working hours, Monday to Friday, 9am to 5pm. If you sent it in the evening or at the weekend, it is picked up the next working morning.',
+  },
+  {
+    t: 'We confirm the plan and book the visit',
+    d: 'We check which cover actually fits your boiler and your property, then book your first service. That visit is also the check that everything is in working order.',
+  },
+];
+---
+<BaseLayout
+  title={title}
+  description={description}
+  noindex={true}
+  chromeless={true}
+>
+  <Section bg="white">
+    <div class="ty">
+      <span class="ty__tick" aria-hidden="true"><Icon name="check" size={26} /></span>
+      <Eyebrow>That is with us</Eyebrow>
+      <h1 class="ty__h1">Thanks, we have got your details</h1>
+      <p class="ty__lead">
+        Your enquiry has gone straight to the Abbey Group office in Whitby. There is nothing
+        else for you to do, but if you would rather talk it through now, the number below
+        reaches a real person in working hours.
+      </p>
+      <div class="ty__cta">
+        <Button href={`tel:${nap.phone.tel}`} size="lg" icon="phone">Call {nap.phone.label}</Button>
+      </div>
+      <p class="ty__hours">{nap.hours}. Out of hours the line takes a message.</p>
+    </div>
+  </Section>
+
+  <Section bg="sunken">
+    <div class="next">
+      <h2 class="next__h2">What happens next</h2>
+      <ol class="next__list">
+        {steps.map((s, i) => (
+          <li class="next__item">
+            <span class="next__num tnum" aria-hidden="true">{i + 1}</span>
+            <div>
+              <h3 class="next__t">{s.t}</h3>
+              <p class="next__d">{s.d}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p class="next__terms">
+        Signing up to a plan? The full <a href={routes.homecareTerms}>Home Care Plan terms</a>
+        are worth a read before your first visit. There is no minimum term and no cancellation
+        fee, and you have 14 days from joining to change your mind and get a full refund.
+      </p>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .ty { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; max-width: 660px; }
+  .ty__tick {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 54px; height: 54px;
+    border-radius: var(--radius-signature);
+    background: var(--page-accent, var(--orange-500));
+    /* Navy glyph: the one colour legible on all four division accents (rule 5). */
+    color: var(--ink-500);
+    margin-bottom: 6px;
+  }
+  .ty__h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(32px, 3.6vw, 50px);
+    line-height: var(--leading-tight);
+    color: var(--text-heading);
+    text-wrap: balance;
+  }
+  .ty__lead { font-size: var(--text-md); line-height: var(--leading-relaxed); color: var(--text-body); }
+  .ty__cta { margin-top: 6px; }
+  .ty__hours { font-size: var(--text-sm); color: var(--text-muted); }
+
+  .next__h2 { font-size: clamp(26px, 2.4vw, 34px); color: var(--text-heading); }
+  .next__list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 32px; }
+  .next__item { display: flex; gap: 16px; align-items: flex-start; }
+  .next__num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; flex: none;
+    border-radius: var(--radius-signature);
+    background: var(--white);
+    border: 1px solid var(--border-subtle);
+    font-size: 15px; font-weight: var(--weight-bold);
+    color: var(--page-accent-ink, var(--orange-800));
+  }
+  .next__t { font-size: 17px; font-weight: var(--weight-semibold); color: var(--text-heading); line-height: var(--leading-snug); }
+  .next__d { margin-top: 8px; font-size: 14.5px; line-height: var(--leading-relaxed); color: var(--text-body); }
+  .next__terms { margin-top: 36px; font-size: var(--text-sm); line-height: var(--leading-relaxed); color: var(--text-muted); max-width: 720px; }
+  .next__terms a { color: var(--text-link); font-weight: var(--weight-semibold); }
+
+  @media (max-width: 860px) {
+    .next__list { grid-template-columns: 1fr; gap: 22px; }
+  }
+</style>

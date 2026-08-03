@@ -12,6 +12,13 @@ interface Props {
   reviews: Review[];
   readAllHref?: string;
   readAllLabel?: string;
+  /* Open the "read all" link in a new tab. OFF by default, because on a site page
+     it points at `/reviews/` and staying in the same tab is correct there.
+
+     The landing pages turn it on: their link goes to the Google profile, and a
+     competing link that navigates a paid visitor off the page is the one thing an
+     LP cannot afford. A new tab keeps the proof available without losing them. */
+  readAllExternal?: boolean;
   /* Set explicitly on every page: adjacent sections must never share a
      background (see tools/audit.mjs, which fails the build if they do). */
   bg?: 'white' | 'sunken';
@@ -22,6 +29,7 @@ const {
   reviews,
   readAllHref = routes.reviews,
   readAllLabel = 'Read all our reviews',
+  readAllExternal = false,
   bg = 'white',
 } = Astro.props;
 
@@ -39,7 +47,12 @@ const cardBg = bg === 'white' ? 'var(--surface-sunken)' : 'var(--white)';
       <Eyebrow>{eyebrow}</Eyebrow>
       <h2 class="rv__title">{heading}</h2>
     </div>
-    <a class="rv__all" href={readAllHref}>
+    <a
+      class="rv__all"
+      href={readAllHref}
+      target={readAllExternal ? '_blank' : undefined}
+      rel={readAllExternal ? 'noopener noreferrer' : undefined}
+    >
       {readAllLabel} <Icon name="arrow-right" size={15} />
     </a>
   </div>

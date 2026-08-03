@@ -112,6 +112,26 @@ button {
   scroll-margin-top: 104px;
 }
 
+/* ---- Landing-page chrome (BaseLayout `chromeless`) ----
+   The site header is FIXED and transparent over the hero, which is why every
+   hero carries 150px of top padding and every anchor target clears 104px. The
+   LP bar is static and in the flow instead, so both allowances become dead
+   space: the hero would open 150px below a bar it is not sitting under, and an
+   anchor jump would leave a 104px gap beneath a bar that covers nothing.
+   Corrected here rather than in PageHero, so the hero component stays the one
+   owner of hero geometry (standing rule 20) and no page has to fight it. */
+body[data-chromeless] :is(.phero, .hero) {
+  padding-top: 84px;
+}
+body[data-chromeless] :target {
+  scroll-margin-top: 24px;
+}
+@media (max-width: 700px) {
+  body[data-chromeless] :is(.phero, .hero) {
+    padding-top: 56px;
+  }
+}
+
 /* ---- Screen-reader only ---- */
 .sr-only {
   position: absolute;

@@ -26,10 +26,27 @@ interface Props {
   fields: Field[];
   bg?: 'white' | 'sunken';
   eyebrow?: string;
+  /* Where to send the visitor once the enquiry is away. Omit (the default, and
+     what every site page does) and the form swaps itself for the inline success
+     message in place.
+
+     The landing pages pass `/thank-you/` because a conversion needs a URL: it is
+     the event trigger for every ad platform, and firing a Lead on a button click
+     counts intent rather than a completed enquiry (LP spec §1.5). */
+  redirect?: string;
+  /* Merge the plan picker's answers into this enquiry, when a `PlanPicker` is on
+     the same page. Off by default.
+
+     Reads the picker's state from the DOM AT SUBMIT and stores nothing — the same
+     pattern the attribution code uses, and for the same reason: writing the
+     visitor's answers to their device is not "strictly necessary" under PECR and
+     there is no consent layer yet (LAUNCH.md, 30 July 2026). */
+  planPickerTags?: boolean;
 }
 const {
   heading, lead, source, tags, submitLabel, fields,
   bg = 'sunken', eyebrow = 'Get in touch',
+  redirect, planPickerTags = false,
 } = Astro.props;
 const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 ---
@@ -42,7 +59,15 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
       <slot />
     </div>
 
-    <form class="ef__form" id={formId} data-source={source} data-tags={tags} novalidate>
+    <form
+      class="ef__form"
+      id={formId}
+      data-source={source}
+      data-tags={tags}
+      data-redirect={redirect}
+      data-picker-tags={planPickerTags ? '' : undefined}
+      novalidate
+    >
       <div class="ef__grid">
         {fields.map((f) => (
           <p class:list={['ef__field', { 'ef__field--full': f.full || f.type === 'textarea' }]}>
@@ -175,6 +200,44 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
   const WEBHOOK = import.meta.env.PUBLIC_GHL_WEBHOOK as string | undefined;
 
+  /* The plan picker's answers, read from the DOM at submit and stored nowhere.
+
+     The picker is deliberately zero-JavaScript: which result shows is decided by
+     CSS `:has()` rules built off the client's own eligibility terms (a boiler ten
+     years or older cannot have Service Care+). So rather than reimplement that
+     logic here — where it would drift the first time the terms change — this
+     reads the outcome the CSS has already produced: the answers from the checked
+     radios, and the recommendation from whichever result card is actually
+     visible. One source of truth, and it stays in the component that owns it.
+
+     Returns nothing at all if the picker was skipped, so an untouched quiz never
+     adds noise to the lead. */
+  const readPicker = () => {
+    const picker = document.querySelector('[data-plan-picker]');
+    if (!picker) return { answers: [] as string[], plan: '' };
+
+    const labelFor = (name: string) => {
+      const input = picker.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`);
+      if (!input) return '';
+      return picker.querySelector(`label[for="${input.id}"]`)?.textContent?.trim() ?? '';
+    };
+
+    const answers = [
+      labelFor('pp-who') && `property: ${labelFor('pp-who')}`,
+      labelFor('pp-age') && `boiler age: ${labelFor('pp-age')}`,
+      labelFor('pp-state') && `boiler condition: ${labelFor('pp-state')}`,
+    ].filter(Boolean) as string[];
+
+    /* `offsetParent` is null for anything a `display: none` ancestor is hiding,
+       so this finds the one result card the picker's CSS has revealed — and finds
+       none at all while the answer panel is still closed. */
+    const shown = [...picker.querySelectorAll<HTMLElement>('.pp__r')]
+      .find((el) => el.offsetParent !== null);
+    const plan = shown?.querySelector('.pp__rname')?.textContent?.trim() ?? '';
+
+    return { answers, plan };
+  };
+
   document.querySelectorAll<HTMLFormElement>('form[data-source]').forEach((form) => {
     const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
     const success = form.querySelector<HTMLElement>('.ef__success');
@@ -194,11 +257,19 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
       new FormData(form).forEach((v, k) => (data[k] = v));
       const attribution = readAttribution();
 
+      /* Quiz answers travel as extra tags (a field GHL already maps, per
+         Outstanding B1), and the recommendation also gets its own field so sales
+         can open the call with the right plan without parsing a tag string.
+         `recommendedPlan` is NEW in the payload and needs mapping in GHL. */
+      const picker = form.dataset.pickerTags !== undefined ? readPicker() : null;
+      const allTags = [form.dataset.tags, ...(picker?.answers ?? [])].filter(Boolean).join(',');
+
       const payload = {
         ...data,
         source: form.dataset.source,
         page: window.location.pathname,
-        tags: form.dataset.tags,
+        tags: allTags,
+        ...(picker?.plan ? { recommendedPlan: picker.plan } : {}),
         timestamp: new Date().toISOString(),
         ...attribution,
       };
@@ -213,6 +284,12 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
           });
         }
       } catch { /* always resolve to the success state regardless */ }
+
+      /* A landing page sends the visitor to a real URL, because that is what an
+         ad platform can count as a conversion. Same "always resolves" rule as
+         the inline path: the visitor has done their part either way. */
+      const redirect = form.dataset.redirect;
+      if (redirect) { window.location.assign(redirect); return; }
 
       form.querySelectorAll('.ef__grid, .ef__submit, .ef__micro').forEach((el) => ((el as HTMLElement).hidden = true));
       if (success) success.hidden = false;

@@ -10,8 +10,29 @@ import '@fontsource/inter/latin-500.css';
 import '@fontsource/inter/latin-600.css';
 import '@fontsource/inter/latin-700.css';
 
+/* PRELOAD the two faces that render above the fold on every page: the display
+   serif that sets the H1, and Inter 400 for the lead paragraph. Without these the
+   browser cannot discover a font until it has downloaded and parsed the CSS that
+   references it, which puts two round trips in front of the largest text on the
+   page — fonts are a common LCP and CLS cause, and there were no preloads at all
+   before 3 August 2026.
+
+   The `?url` import is what makes this correct rather than fragile: it returns the
+   HASHED URL Vite actually emits (`/_astro/inter-latin-400-normal.<hash>.woff2`),
+   so the hint can never point at a stale filename after a rebuild. Hand-writing
+   the path would break on the next content hash.
+
+   Only these two. Inter 500/600/700 also appear above the fold (buttons, the trust
+   row) but in small UI text where a swap is barely visible, and preloading five
+   fonts competes with the LCP image for bandwidth, which costs more than it
+   saves. */
+import dmSerif400 from '@fontsource/dm-serif-display/files/dm-serif-display-latin-400-normal.woff2?url';
+import inter400 from '@fontsource/inter/files/inter-latin-400-normal.woff2?url';
+
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import LpBar from '../components/LpBar.astro';
+import LpFooter from '../components/LpFooter.astro';
 import ScrollTop from '../components/ScrollTop.astro';
 import PlanPrompt from '../components/PlanPrompt.astro';
 import { site } from '../data/site.ts';
@@ -29,6 +50,19 @@ interface Props {
   schemas?: object[];
   /** Sub-brand whose colourway themes this page's accents. */
   division?: DivisionKey;
+  /* Landing-page chrome: swap the site header, footer and plan prompt for a
+     minimal bar and a legal-only footer. Used by `/lp/*` and `/thank-you/`.
+
+     A paid-traffic page has ONE goal, and the site chrome works against it: the
+     menu offers ten ways off the page, the header CTA ("Get a Quote") competes
+     with the page's own, and the footer's five service links are the largest
+     exit ramp on the site. The plan prompt goes too, because the LP already
+     makes the half-price offer in a full band of its own.
+
+     Everything in <head> is deliberately kept: canonical, noindex, OG and the
+     Organization/WebSite schema all still belong on these pages, and <head> is
+     where any future tracking has to live. */
+  chromeless?: boolean;
 }
 
 const {
@@ -39,6 +73,7 @@ const {
   noindex = false,
   schemas = [],
   division = 'group',
+  chromeless = false,
 } = Astro.props;
 
 const canonicalURL = new URL(canonical ?? Astro.url.pathname, Astro.site).href;
@@ -59,7 +94,7 @@ const allSchemas = [organization(), website(), ...schemas];
    The one exclusion is the Homecare page itself, where the same offer already
    has a full band and its CTA already says "Book My Service and Start Covered".
    Derived from the URL rather than a prop, so it cannot be forgotten. */
-const showPlanPrompt = !Astro.url.pathname.startsWith('/homecare-plans');
+const showPlanPrompt = !chromeless && !Astro.url.pathname.startsWith('/homecare-plans');
 ---
 <!doctype html>
 <html lang="en-GB">
@@ -67,6 +102,9 @@ const showPlanPrompt = !Astro.url.pathname.startsWith('/homecare-plans');
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <link rel="preload" href={dmSerif400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={inter400} as="font" type="font/woff2" crossorigin />
 
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -95,13 +133,13 @@ const showPlanPrompt = !Astro.url.pathname.startsWith('/homecare-plans');
     ))}
   </head>
 
-  <body style={divisionVars(division)} data-division={division}>
+  <body style={divisionVars(division)} data-division={division} data-chromeless={chromeless ? '' : undefined}>
     <a class="skip-link" href="#main">Skip to content</a>
-    <Header division={division} />
+    {chromeless ? <LpBar division={division} /> : <Header division={division} />}
     <main id="main">
       <slot />
     </main>
-    <Footer division={division} />
+    {chromeless ? <LpFooter /> : <Footer division={division} />}
     <ScrollTop />
     {showPlanPrompt && <PlanPrompt />}
 

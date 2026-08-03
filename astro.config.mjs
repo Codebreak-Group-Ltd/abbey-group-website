@@ -21,10 +21,19 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      // Hidden/ad landing + thank-you pages get excluded here later (§4).
-      // `/preview/` holds unshipped experiments (e.g. the house-journey demo);
-      // they are noindex and must never enter the sitemap.
-      filter: (page) => !page.includes('/thank-you/') && !page.includes('/preview/'),
+      // `/lp/` holds paid-traffic landing pages, deliberately NOT indexable:
+      // `/lp/homecare/` and `/homecare-plans/` target the same terms, and the
+      // site page is the one carrying Service + FAQPage + Breadcrumb schema and
+      // built to rank. Two near-identical pages would cannibalise each other, so
+      // the LP is excluded here AND carries BaseLayout's `noindex`.
+      // `/thank-you/` is post-conversion, with nothing to rank for.
+      // `/preview/` holds unshipped experiments (e.g. the house-journey demo).
+      // Note: robots.txt deliberately Disallows none of these — a crawler has to
+      // fetch the page to see the noindex.
+      filter: (page) =>
+        !page.includes('/lp/') &&
+        !page.includes('/thank-you/') &&
+        !page.includes('/preview/'),
     }),
   ],
 });

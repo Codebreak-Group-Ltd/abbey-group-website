@@ -155,6 +155,61 @@ export const contactFaqs: Faq[] = [
   },
 ];
 
+/* ---------------------------------------------------------------------
+   OBJECTIONS — the paid-traffic landing page, `/lp/homecare/`.
+
+   Four questions the site page does not answer anywhere, and each is a real
+   reason someone does not sign up. Every one is drawn from Abbey's own terms
+   (the January 2026 brochure, Section 2), so nothing here is invented:
+
+   - the ten-year rule is T&C 2.1(a)(vi) and 2.5(e), the same gate the plan
+     picker runs on. It is already baked into that tool's logic but appears in no
+     copy on the site, so a visitor can be routed to Service Care without ever
+     being told why;
+   - the exclusions are T&C 2.3(a);
+   - the 14-day claims wait and the separate 14-day cooling-off period are two
+     different fortnights that get confused constantly, so they are stated
+     together on purpose.
+
+   The framing rule throughout: lead with the yes, state the limit plainly, end
+   on what the customer still gets. Competitors bury this; saying it out loud is
+   a trust asset on a page asking a stranger for a monthly direct debit.
+
+   DELIBERATELY NOT IN `allFaqs` BELOW. `/lp/` is noindex and excluded from the
+   sitemap, so publishing a `/lp/` path in `/llms.txt` would point assistants at
+   a page built for ad traffic instead of the page built to rank.
+
+   WORTH DOING LATER (Josh, 3 August 2026 — "LP only for now, however it is maybe
+   worth making a note here"): the first three belong on `/homecare-plans/` too,
+   where they would also flow into that page's FAQPage schema and llms.txt, which
+   is where the AEO value actually sits. That edits approved copy, so it needs
+   James and Amy to re-proof first.
+   --------------------------------------------------------------------- */
+export const homecareLpObjections: Faq[] = [
+  {
+    q: 'My boiler is fifteen years old. Will you cover it?',
+    a: 'Yes, on Service Care. The annual service, the gas safety certificate and priority response all apply whatever the age of your boiler. Parts cover on Service Care+ is for boilers under ten years old, so if yours is older, Service Care still gets it serviced, certified and looked after. We are simply not able to underwrite parts on a boiler that age.',
+  },
+  {
+    q: 'Is there anything you will not cover?',
+    a: 'Two things are worth knowing up front: faults that arise in the first 14 days of the plan are not covered, and neither is anything already broken when you join, unless it is a product we installed and have maintained since. Everything else is set out in the plan terms in plain English, and we would rather you read them than be surprised later.',
+  },
+  {
+    q: 'How quickly can I claim after joining?',
+    a: 'Cover starts working 14 days after you join. That is standard across the industry and it is there to stop people signing up on the morning the boiler fails. Separately, you have 14 days from joining to change your mind and get a full refund. Two different fortnights, and it is worth keeping them straight.',
+  },
+  {
+    q: 'What actually happens after I get in touch?',
+    a: 'We ring you back, confirm which plan fits and book your first service. That first visit is also the check that everything is in working order. If something is wrong we will tell you straight and talk through the options before anything is committed.',
+  },
+];
+
+/* What the LP renders: the objections first, then the client-approved set from
+   the site page. Objections lead because this is cold traffic — someone who was
+   not thinking about their boiler ten minutes ago needs the catch answered
+   before the detail is any use to them. */
+export const homecareLpFaqs: Faq[] = [...homecareLpObjections, ...homecareFaqs];
+
 /* Every set, so `/llms.txt` can walk them all without importing eight names. */
 export const allFaqs: { page: string; path: string; faqs: Faq[] }[] = [
   { page: 'Home', path: '/', faqs: homeFaqs },

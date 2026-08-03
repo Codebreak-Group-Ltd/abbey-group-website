@@ -28,6 +28,13 @@ import badgeCheck from 'lucide-static/icons/badge-check.svg?raw';
 import camera from 'lucide-static/icons/camera.svg?raw';
 import arrowUp from 'lucide-static/icons/arrow-up.svg?raw';
 import mail from 'lucide-static/icons/mail.svg?raw';
+/* Added 3 August 2026 for the "what every plan includes" grid: six identical
+   ticks told the reader nothing about what each item was, so each check now
+   carries its own glyph. */
+import gauge from 'lucide-static/icons/gauge.svg?raw';
+import filter from 'lucide-static/icons/filter.svg?raw';
+import thermometer from 'lucide-static/icons/thermometer.svg?raw';
+import activity from 'lucide-static/icons/activity.svg?raw';
 
 const ICONS: Record<string, string> = {
   phone, menu, x, star,
@@ -45,6 +52,7 @@ const ICONS: Record<string, string> = {
   camera,
   'arrow-up': arrowUp,
   mail,
+  gauge, filter, thermometer, activity,
 };
 
 interface Props {
