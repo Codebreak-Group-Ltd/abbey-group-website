@@ -29,6 +29,11 @@ interface Props {
   badge?: boolean;
   image?: string;
   imageAlt?: string;
+  /* Responsive sources for the hero photograph, passed straight to `Photo`. Both
+     or neither. Only worth setting where the slot is much narrower than the file
+     (see the note in Photo.astro); every other page omits them and gets `image`. */
+  imageSrcset?: string;
+  imageSizes?: string;
   /** How the hero photo is sized. `panel` is the standard trade-page slot;
       `feature` gives it a wider column and a taller crop for pages whose
       photography is the selling point (Renovations). */
@@ -52,6 +57,8 @@ const {
   badge = true,
   image,
   imageAlt = '',
+  imageSrcset,
+  imageSizes,
   media = 'panel',
   mediaRadius = 'xl',
   trustStyle = 'ticks',
@@ -98,6 +105,8 @@ const split = Boolean(image) || hasAside;
       <div class="phero__media">
         <Photo
           src={image}
+          srcset={imageSrcset}
+          sizes={imageSizes}
           alt={imageAlt}
           ratio="4 / 5"
           radius={mediaRadius}

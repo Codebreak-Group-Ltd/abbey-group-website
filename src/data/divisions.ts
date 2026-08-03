@@ -84,6 +84,10 @@ export const divisions: Record<DivisionKey, Division> = {
     accentOnDark: 'var(--blue-400)',
     glow: 'var(--blue-800)',
     mark: '/brand/crescent/mark-plumbing.svg',
+    // Three tones, from the real logo art. The outer keeps the confirmed
+    // --blue-500; the logo's own outer is #00a2de, which is logged as a
+    // question rather than changed unilaterally (see tokens.css).
+    markLayers: ['var(--blue-500)', 'var(--crescent-plumb-mid)', 'var(--crescent-plumb-inner)'],
     surfaceDark: '#133d60',
     surfaceFooter: '#0f314f',
     hasLockup: true,
@@ -96,6 +100,9 @@ export const divisions: Record<DivisionKey, Division> = {
     accentOnDark: 'var(--orange-400)',
     glow: 'var(--orange-900)',
     mark: '/brand/crescent/mark-homecare.svg',
+    // Three tones from the real logo art; its outer (#ea6630) and our
+    // --orange-500 (#eb6740) agree to within a point.
+    markLayers: ['var(--orange-500)', 'var(--crescent-care-mid)', 'var(--crescent-care-inner)'],
     surfaceDark: '#4c2238',
     surfaceFooter: '#3e1b2e',
     hasLockup: true,
@@ -108,6 +115,9 @@ export const divisions: Record<DivisionKey, Division> = {
     accentOnDark: 'var(--plum-400)',
     glow: 'var(--plum-900)',
     mark: '/brand/crescent/mark-joinery.svg',
+    // Three tones from the real Abbey Building logo; its outer (#7e4e9c) and
+    // our --plum-500 (#7f5d9c) agree to within a point.
+    markLayers: ['var(--plum-500)', 'var(--crescent-plum-mid)', 'var(--crescent-plum-inner)'],
     surfaceDark: '#342650',
     surfaceFooter: '#2a1e42',
     hasLockup: true,
@@ -126,6 +136,7 @@ export const divisions: Record<DivisionKey, Division> = {
     accentOnDark: 'var(--plum-400)',
     glow: 'var(--plum-900)',
     mark: '/brand/crescent/mark-joinery.svg',
+    markLayers: ['var(--plum-500)', 'var(--crescent-plum-mid)', 'var(--crescent-plum-inner)'],
     surfaceDark: '#3d2c42',
     surfaceFooter: '#31233a',
     surfaceSunken: 'var(--stone-100)',

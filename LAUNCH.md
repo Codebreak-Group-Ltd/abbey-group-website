@@ -5,6 +5,460 @@
 
 Living tick-list of what is done and what is still open. Update as items land.
 
+## LP review round 1 (Josh, 3 August 2026) — done, for review
+
+Five notes on `/lp/homecare/`. All actioned. `npm run verify` clean, no console
+errors, and every site page re-checked as unaffected.
+
+- [x] **The hero sentence did not make sense, and he was right.** It read "The
+      national providers will give you a date. We are on Skinner Street in Whitby,
+      and you deal with the same local team every year." The intended contrast was
+      *national = a slot weeks out and a stranger; us = local, fast, same faces*, but
+      "we are on Skinner Street" is not an answer to "will give you a date", so the
+      two halves did not connect. That phrasing was my own hedge to avoid the spec's
+      "twenty minutes down the road", which implies an unconfirmed response time.
+      Now: **"With a national provider you get a call centre and a date in the diary.
+      With us you get a Whitby team, priority response, and the same engineers
+      looking after your boiler year after year. Cover from £9.99 a month."**
+      The contrast is explicit, and every Abbey-side claim is confirmed — "priority
+      response" is the plan's own term from `02 PLAN DATA`, and there is still no
+      response-time promise.
+- [x] **"What every plan includes" rebuilt as a card grid.** Josh: "visually very
+      boring and not catching the eye... this section is important to read and be
+      easy to understand at a glance as it is essentially selling it." It was a flat
+      two-column list where all six items carried **the same tick icon**, so six
+      different things read as one grey list.
+      Now a 3x2 card grid, and **each item has its own glyph**: wrench, shield,
+      gauge, filter, thermometer and a heartbeat line for the health check. Four new
+      icons added to `Icon.astro` for it. The disc is now the accent at full strength
+      with a navy glyph (standing rule 5) instead of a 4% tint, the item name is
+      17.5px semibold, and each card carries a quiet 01-06 index so the six read as a
+      countable set. Heading changed to **"Six checks, one visit, every single
+      year"**, which states the quantity up front.
+      Grid steps 3 -> 2 -> 1, all of which divide six evenly, so no step leaves a
+      ragged final row (rule 12).
+- [x] **The plan finder now says what it is, and looks like a tool.** Two problems.
+      The eyebrow read "Not sure which one" directly above an H2 reading "Not sure
+      which one is yours?" — **the same phrase twice in one screen, which is standing
+      rule 15, and I introduced it.** And between them they never said what the thing
+      below actually did.
+      Now: eyebrow **"Plan finder"**, H2 **"Answer three questions, see your plan"**
+      (an instruction, not a question), and a lead that says what happens. The picker
+      sits in a **white panel with a 4px accent rule along the top**, so it reads as
+      something to use.
+- [x] **AND THAT PANEL FIXED A REAL BUG I HAD SHIPPED.** `PlanPicker`'s result card
+      has a **sunken** background, which is correct on `/homecare-plans/` where the
+      tool sits on a white section. On the LP I had put it on a **sunken** section, so
+      the result card was the same colour as the band it sat on and had no edge at
+      all. Verified now: panel `rgb(255,255,255)`, result card `rgb(241,241,243)`.
+      Re-checked `/homecare-plans/` is unchanged (sunken card on a white section).
+- [x] **The proof band rebuilt, and the Facebook figure dropped.** Josh: "honestly
+      just looks a bit shit... needs logos or visual hooks, 7 recommendations from
+      Facebook isn't really something to shout about."
+      Both fair. It is now a **dark band with the division crescent behind it**, so
+      the score carries the same weight as the £48 offer instead of sitting in a thin
+      white gap, with the rating set at 46px against a star mark and a
+      calendar mark. **Facebook is gone entirely** — seven recommendations invited a
+      comparison with nineteen Google reviews and lost it.
+      **No logo bar, and this is a hard limit rather than a choice:** neither the Gas
+      Safe nor the OFTEC badge file exists in the repo, and composing convincing
+      badge art is standing rule 21. If Amy sends the badge files, this band is where
+      they go, and it is already the right shape for them.
+      One detail worth stating: it shows **one** star glyph, not five. `Stars.astro`
+      renders whole stars only, and five filled stars beside "4.6" would be an
+      embellishment (rule 6a).
+- [x] **The urgency section is gone.** Josh: "I have no idea what this is meant to
+      be... think we just get rid." He is right, and the reason is worth recording:
+      **that section existed to satisfy a checklist item, not because the page needed
+      it.** Its two facts were the 14-day claims wait and "diaries fill from October",
+      and the first is already answered properly in the FAQ, where it also keeps the
+      two separate fortnights straight. Nothing factual was lost.
+      To his aside: it *was* dynamic by then — the date was computed in the browser
+      so it could not go stale. It still did not earn its section, and the computed
+      date went with it.
+- [x] **FAQ moved from sunken to white** so the tail still alternates with the
+      urgency section removed and the proof band now dark. Final sequence:
+      sunken, white, sunken, white, dark, white, sunken, dark, white, sunken.
+
+### Consequence of the removal, stated plainly
+
+- [ ] **The checklist's "urgency uses specific numbers and dates" item drops back to
+      partly met.** The 14-day fact survives in the FAQ; the seasonal-diary line and
+      the computed date are gone. **Do not close it by inventing a deadline on the
+      £48 offer** — Abbey have agreed none (Outstanding C3/D3). If they ever agree
+      one, that is the honest way to close it, and it belongs in the offer band
+      rather than in a section of its own.
+- [ ] **The 7 Facebook recommendations are now unused on this page.** They remain on
+      `/reviews/` and in `site.ts`. No change needed unless Abbey want them back.
+
+### Verified after this round
+
+- [x] Build + audit clean at 17 pages. Zero em/en dashes and zero exclamation marks
+      in visible copy. No console errors.
+- [x] Zero horizontal overflow at 390, 700, 900, 1024, 1280 and 1440. One H1.
+      Primary CTA bottom **626px** at 390px against the 844 fold (up from 565: the
+      rewritten hero lead is a sentence longer, and there is still 218px spare).
+- [x] Six cards with six distinct icons at every breakpoint; grid 3/2/1 with no
+      ragged row; proof band 2 columns above 860px, 1 below.
+- [x] `/homecare-plans/`, `/` and `/contact/` re-checked: header and footer intact,
+      picker buttons still read "Start Service Care+", the picker's alt route still
+      goes to `/plumbing-heating/`, the reviews link still has no `target`, overflow
+      0, one H1 each.
+
+## LP Quality Checklist closure round (3 August 2026) — done, for review
+
+Working the checklist closure plan against `/lp/homecare/`. `npm run verify` clean,
+no console errors on the LP or on a site page. Six build items closed, three
+partly, and three that only close once the ad creative exists.
+
+### Closed in the build
+
+- [x] **A1. CTA text consistent across placements.** The plan cards said "Start My
+      Service Care" while the picker's result buttons said "Start Service Care" —
+      the same action in two voices on one page. New `PlanPicker ctaFirstPerson`
+      prop, **off by default**, so `/homecare-plans/` is untouched: that page's
+      cards say "Choose This Plan", and changing its buttons would have swapped one
+      inconsistency for another with no decision behind it. Verified: the LP picker
+      now returns "Start My Service Care+" against a card reading "Start My Service
+      Care+"; the site page still reads "Start Service Care+" with "Choose This
+      Plan" cards.
+- [x] **A2. Five-second clarity, without weakening the H1.** One correction to the
+      plan's premise: the LP had **no eyebrow**. "ABBEY HOME CARE" was the *division
+      marker*, the typographic block every interior page carries because the header
+      lockup always reads ABBEY GROUP. Adding an eyebrow beneath it would have
+      stacked two lines of ~12px caps in one slot, which is clutter and a repeat
+      within a screen region (standing rule 14).
+      So the marker is **off** on this page (`badge={false}`) and the eyebrow carries
+      **"Boiler cover in Whitby · from £9.99 a month"** instead. Category, location
+      and price land before the visitor reaches the H1, and the H1 is left free to
+      agitate. Measured at 390px: **one line, 310px wide, right edge at 350**, so it
+      fits with room. The sub-brand is not lost (the bar reads ABBEY GROUP, and the
+      contrast table names Abbey Home Care). This is the one deliberate structural
+      departure from the site's division-marker convention, scoped to LPs.
+- [x] **A3. Guarantee now states duration, conditions AND process** — in both places
+      it appears in full, the offer band and the form.
+      **Not with the plan's wording.** It suggested "a phone call or an email";
+      Abbey's own approved plan FAQ says cancellation is "by emailing or writing to
+      us", and the plan terms do not offer a phone route, so promising one would be
+      a claim the contract does not support. It reads **"Cancelling is one email to
+      the office, with no minimum term to see out."** "No retention script" also
+      went: it is a claim about internal behaviour that cannot be verified.
+- [x] **A4. Urgency carries a real date, computed in the browser.** Renders as
+      "Join today and that date is **17 August 2026**", with `<time datetime>` set
+      too. **Computed at view time, never at build**: this is a static site, so a
+      date baked in at build would be wrong the day after the deploy, on the one
+      section whose whole job is to be specific. The no-JavaScript fallback is "a
+      fortnight from today", which is still true, just less precise. It says "join
+      today", not "enquire today", because joining happens on the call back and the
+      page does not claim otherwise. Verified: 17 August 2026 / `2026-08-17`.
+- [x] **A5. The one competing link no longer leads away.** Route 1 (screenshots) is
+      blocked with no assets, so route 2: new `Reviews readAllExternal` prop, off by
+      default, giving the Google link `target="_blank" rel="noopener noreferrer"`.
+      Verified. `/reviews/` links on site pages stay in-tab, which is right there.
+- [x] **A6, two of three.** Font preloads and the hero srcset. Detail below.
+
+### A6 in detail, with the honest numbers
+
+- [x] **Font preloads added, site-wide.** There were **none**, so the browser could
+      not discover a font until it had downloaded and parsed the CSS referencing it:
+      two round trips in front of the largest text on the page. Now DM Serif 400 and
+      Inter 400 are preloaded from `BaseLayout`.
+      **The `?url` import is what makes this safe** — it returns the hashed URL Vite
+      actually emits, so the hint cannot rot on the next content hash. Verified both
+      resolve to files that exist in `dist/_astro/`, on the LP and on site pages, and
+      **no "preloaded but not used" console warning** on either.
+      Only those two: Inter 500/600/700 are also above the fold, but in small UI text
+      where a swap is barely visible, and preloading five fonts competes with the LCP
+      image for bandwidth.
+- [x] **Hero srcset, and a correction worth recording.** Generated
+      `boiler-service-portrait-700.webp` (700x875, 30KB against the 900w file's
+      39KB) and added optional `srcset`/`sizes` passthrough to `Photo` and
+      `PageHero`, off everywhere else.
+      **My first `sizes` was wrong in a way that looked right.** I estimated 92vw;
+      the slot is actually a consistent **~80vw** up to 700px (measured 303px at a
+      360 viewport, 308 at 390, 342 at 430, 558 at 700), then capped at 360px, then
+      440px. At 92vw a 390px viewport asked for 718w, just over the 700w candidate,
+      so **every DPR-2 phone still downloaded the 900w file and the srcset did
+      nothing.** Corrected to 80vw and verified the 700w file is now chosen at 360,
+      390 and 430, with 900w still served to desktop.
+- [ ] **Third row was already done.** `about-team-group.webp` (141KB, below the
+      fold) has carried `loading="lazy"` since it was placed — `Photo` defaults to
+      it unless `eager` is passed. Confirmed in the built HTML.
+- [ ] **"Under 3 seconds" cannot be ticked here, and the dev numbers are
+      meaningless** (the large JS is Astro's dev toolbar and does not ship). Needs a
+      staging deploy and PageSpeed Insights on mobile.
+      **One expectation to set:** the hero image will not be flagged by Lighthouse
+      either way. Its mobile emulation runs DPR 2.625, where a 350px slot needs
+      919w against a 900w file — very slightly *under*-sized. At a 390px viewport the
+      file is 2.57x oversized at DPR 1 and 1.29x at DPR 2, both already inside the
+      build standard's "<=2x display slot" rule. The srcset is a real saving for real
+      devices, not a score fix.
+
+### Partly closed, the rest needs Abbey
+
+- [~] **B1. Testimonials with name, photo and company.** The structurally awkward
+      one, and it stays open. All three routes are blocked on assets or client
+      action, and **none of them can be faked**:
+      screenshots need the actual Google review images; photographed testimonials
+      need the shoot; and **"Angela, Sleights" cannot be written today** because no
+      reviewer location exists in any project file, so adding one would be a
+      fabricated detail on the page whose job is proof (golden rule 1). Locations
+      also need the reviewer's consent, not just Amy's recall.
+      The plan's read on "company" is right: the checklist is written for B2B, and a
+      domestic homeowner has none. Logged as B2C-inapplicable with location as the
+      intended substitute once confirmed.
+- [x] **B2. Generic testimonials cut** — done in the original build. Karen Hartas's
+      "Very efficient and reliable service. Would certainly use again." was dropped
+      as making no argument, and Angela's "came within hours when I had no heating"
+      was promoted to a pull quote beside the priority-response claim.
+      The solicitation prompt ("What was the problem, and how quickly did we get to
+      you?") is a process change for Abbey, now logged in Outstanding.
+- [ ] **B3. Tracking** unchanged and unavoidable. Still blockers.
+
+### Only closable once the ad creative exists
+
+- [ ] **C1 to C3, message match.** The acceptance test is now written into the top of
+      the page file so it cannot be forgotten at launch: the hero must be the winning
+      ad's image or an obvious sibling, the H1 must echo the ad's hook, and the price
+      must be above the fold. The current hero was chosen for `/homecare-plans/` and a
+      search-intent audience, and **will very likely need replacing**.
+
+### Documented as reasoned exceptions
+
+- [x] **D2.** The H1 stays problem-agitation, because the traffic is Problem Aware.
+      A2's eyebrow closes the practical five-second concern. Reasoning is in the page.
+- [x] **D3, and this one is a real guardrail, not a note.** A warning block is now at
+      the top of the page file: **do not point Google Search ads at this page.** The
+      H1 carries no keyword, so against a search ad group it fails message match
+      outright and would drag Quality Score and raise CPC. Search needs its own
+      variant with a keyword-led H1; `_Specs/07` already lists the candidate ad
+      groups. The eyebrow puts "Boiler cover in Whitby" in the hero, but an eyebrow
+      is not a headline and does not close that gap.
+
+### Re-verified after all of it
+
+- [x] Build + audit clean at 17 pages. Zero em/en dashes and zero exclamation marks
+      in visible copy on both new pages. No console errors on the LP or a site page.
+- [x] At a true 390px: overflow 0, 1 H1, primary CTA bottom **565px** against the
+      844 fold (up from 546 — the eyebrow costs ~19px and there is plenty spare).
+      Section alternation unchanged, and unchanged on `/homecare-plans/` too.
+
+### New for the client, from this round
+
+- [ ] **Photographed customer testimonials.** Abbey are inside customers' homes every
+      year for the annual service. An engineer with a phone can capture a photo and
+      two lines with consent at the visit. Three would properly close B1, and making
+      it part of the service routine compounds every year.
+- [ ] **Reviewer locations, with consent** ("Angela, Sleights"). For a Whitby
+      audience that carries the credibility a company name carries in B2B.
+- [ ] **Change the review request wording** to "What was the problem, and how quickly
+      did we get to you?" That one question reliably produces specific reviews
+      instead of "would use again".
+- [ ] **Google review screenshots**, if Amy can grab them — unpolished proof shows
+      the reviewer's own Google avatar and name, which is more convincing than a
+      styled card and self-evidently unfaked.
+- [ ] **Font weight audit (site-wide, needs a design decision, not just a build
+      one).** Five Inter weights ship. 500, 600 and 700 are all genuinely used across
+      the components, so dropping to three means restyling, not deleting. Worth a
+      pass, but not something to slip into an LP change.
+- [ ] **PageSpeed Insights on mobile, twice, once staging is up.** The only way the
+      3-second item closes.
+
+## Homecare paid-traffic landing page (3 August 2026) — built, for review
+
+`/lp/homecare/` and `/thank-you/`, built to `Landing pages/abbey-homecare-lp-spec.md`.
+`npm run verify` clean at 17 pages. **It is not a trimmed `/homecare-plans/`**: that
+page serves Most Aware traffic and correctly opens with the category and the price;
+Meta traffic is Problem Aware at best, so the top third agitates the problem first
+and the seven-tier comparison table is gone entirely.
+
+### The two new pages
+
+- [x] **`/lp/homecare/`** — eleven sections: hero, cost of inaction (new, does not
+      exist on the site page), what the annual visit gets you, the plan picker, the
+      three plans, the £48 offer (dark band), trust, reviews, a score strip, the
+      objection FAQ, urgency, and the form. Backgrounds alternate the whole way
+      down. **No page-level schema at all** — only the site-wide Organization +
+      WebSite from BaseLayout. Deliberate: page-level `Service`/`FAQPage` here would
+      compete with the page built to rank.
+- [x] **`/thank-you/`** — it did not exist, and the sitemap filter and a robots.txt
+      comment had anticipated it since the foundation build. Chromeless, noindex,
+      what-happens-next in three steps, the direct number, and the plan terms.
+      **It is the conversion URL**: an ad platform counts a Lead on a page view, and
+      firing one on a button click counts intent rather than a completed enquiry.
+
+### Cannibalisation control, proved rather than assumed
+
+- [x] `noindex,follow` on both pages (the `noindex` prop existed on BaseLayout and
+      had never been used by any page).
+- [x] Sitemap filter extended to `/lp/`. **Proved**: removing that one clause puts
+      `/lp/homecare/` straight into `sitemap-0.xml`; restored, the sitemap holds the
+      same 15 indexable URLs as before.
+- [x] `robots.txt` deliberately **not** changed. A `Disallow` would stop a crawler
+      fetching the page, and it has to fetch it to see the noindex.
+- [x] Neither page reaches `/llms.txt` or `/llms-full.txt`, and nor do the four new
+      FAQ answers: the new set is deliberately kept out of `allFaqs`. Verified zero
+      occurrences in all three generated files.
+- [x] **Adjacent-background rule proved on this page**: setting the urgency band to
+      sunken made `npm run verify` exit non-zero and name both offending pairs
+      (#10/#11 and #11/#12). Reverted, exits 0.
+
+### Three additive component changes, every existing page untouched
+
+- [x] **`BaseLayout chromeless`** — swaps Header/Footer/PlanPrompt for
+      `LpBar.astro` (lockup + tappable number, nothing else) and `LpFooter.astro`
+      (legal links, address, Companies Act line). Everything in `<head>` is kept,
+      because canonical, noindex and any future tracking all belong there.
+      One CSS consequence, fixed at cause in `global.css` rather than in the page:
+      the site header is *fixed*, which is why every hero carries 150px of top
+      padding and `:target` clears 104px. The LP bar is static and in the flow, so
+      `body[data-chromeless]` drops both. **Standing rule 20 still holds**: the LP
+      hero measures exactly 820px at 1280 / 1440 / 1600.
+- [x] **`EnquiryForm redirect`** (default off) — sends a completed enquiry to
+      `/thank-you/`. Same "always resolves" rule as the inline path.
+- [x] **`EnquiryForm planPickerTags`** (default off) — merges the quiz into the
+      lead. It reads the picker's state **from the DOM at submit and stores
+      nothing**, which is the same PECR-safe pattern the attribution code uses and
+      for the same reason. It does not reimplement the eligibility logic either: it
+      reads the answers off the checked radios and the recommendation off whichever
+      result card the CSS has actually revealed, so the two can never drift.
+      **Proved end to end** with a test webhook. Own home + boiler 10 years or older
+      + "it is fine" returns **Service Care only** (the gate overriding the wish),
+      and the payload carried:
+      `tags: homecare,boiler-cover,lp,meta,property: My own home,boiler age: 10 years or older,boiler condition: Fine…`,
+      `recommendedPlan: Service Care`, plus name, phone, email, postcode, house,
+      source, page, timestamp, `gclid: TEST_CLICK_456`, `utm_source`,
+      `utm_campaign`. Then landed on `/thank-you/`.
+      **`recommendedPlan` is a NEW payload field and needs mapping in GHL** (add it
+      to the list in Outstanding B1).
+      Control case also proved: an untouched picker adds no tags and no
+      `recommendedPlan` at all.
+      **localStorage 0, sessionStorage 0, cookies empty** before and after, so the
+      30 July PECR fix survives intact and `consent-registry.ts` stays correctly
+      empty. `/cookies/` still generates a zero-row table.
+- [x] **`PlanPicker altHref` / `altLabel`** (defaults unchanged) — the old-boiler
+      replacement route was the only link off the landing page, and it dropped a
+      paid click into the full site where it cannot be counted. The LP points it at
+      its own form ("Ask us about a new boiler"); `/homecare-plans/` still reads
+      "See Plumbing & Heating" to `/plumbing-heating/`, verified.
+
+### Copy decisions
+
+- [x] **"One free call-out" stays.** The spec made "1 hour free call-out" launch
+      blocker 5. Josh has now ruled on it three times, 3 August 2026 being the
+      clearest: in Abbey's business the two phrasings describe the same
+      entitlement and the shorter one reads better. Recorded so it stops coming
+      back. Angela's verified review, now a pull quote in section 3, happens to use
+      the customer's own version of it ("one callout per year").
+- [x] **The hero sub-headline does not say "twenty minutes down the road."** The
+      spec's wording implies a response time, and
+      `_Specs/07 AD LANDING PAGE ALIGNMENT.md` explicitly says not to promise one
+      while it is unconfirmed. Replaced with the confirmed address, which is
+      concrete and says "local" plainly rather than over-explaining it.
+- [x] **"Find My Plan in 3 Questions"**, not the spec's "Find My Plan — 3
+      Questions": no em dashes in visible copy.
+- [x] **Every figure in the new cost-of-inaction section is sourced.** £120 to £230
+      for an emergency call-out and "most home insurance will not cover a
+      breakdown" are both already client-approved copy in `faqs.ts`; £119.88 is
+      twelve months of a confirmed £9.99. The spec's "a new boiler runs to several
+      thousand pounds" is **not** stated, because no such figure is confirmed.
+- [x] **The ten-year eligibility rule is now visible copy**, on the Service Care+
+      card. It has been the gate the picker runs on since 31 July but appeared in no
+      copy anywhere, so the site could route someone away from parts cover without
+      ever explaining why.
+- [x] **Four new objection FAQs**, all drawn from Abbey's own terms, in
+      `src/data/faqs.ts` as `homecareLpObjections`. LP only for now (Josh).
+- [x] **Reviews curated, not just reused.** Angela's moved out of the grid and next
+      to the priority-response claim it actually evidences, which also fixed the
+      duplicate-Angela problem the spec flagged ("Angela" and "Angela Weldon" sat in
+      the same block and read as one person twice). Karen Hartas's is cut: verified
+      and true, but it makes no argument. Four remain, an even single row.
+- [x] **The £48 CTA points at the form, not at ServiceM8.** An off-site booking page
+      is an exit from a one-goal page and cannot be counted as a conversion, which on
+      paid traffic makes it invisible. The date is confirmed on the call back.
+      **Worth Josh's view**: a completed booking is a stronger action than a lead.
+
+### Deliberately not built, and why
+
+- [ ] **No tracking of any kind.** GA4, Meta Pixel + CAPI and the Ads tag all fire
+      from these two pages, but no measurement IDs exist (Outstanding B2) and a
+      pixel cannot ship without the consent banner, Consent Mode v2 and its entry in
+      `consent-registry.ts` **in the same change** — that registry generates the
+      cookie policy table, so a pixel added without it publishes a policy that is
+      untrue. Still launch blockers 3 and 4, and Meta domain verification plus
+      Aggregated Event Measurement have a lead time that has not started.
+- [ ] **No OFTEC badge and no OFTEC claim.** The spec asks for both. OFTEC
+      registration is unconfirmed (Outstanding C3 — it comes from a sticker visible
+      on a van in the About photograph), and no badge art exists. Golden rule 1 and
+      standing rule 21.
+- [ ] **No Gas Safe badge image**, because the file is not in the repo. The number
+      (303376) is confirmed and checkable, so section 7 states it as text.
+- [ ] **No "Abbey Home Care" logo in the top bar.** The spec asks for it; that art
+      does not exist. The four sub-brand lockups were built from site type and were
+      removed from the whole site on 30 July, so the bar reads ABBEY GROUP with the
+      homecare crescent, exactly as every other page does.
+- [ ] **No deadline on the £48 offer.** The spec asks for one; Abbey have agreed
+      none, and an invented expiry would wreck the tone the page runs on. Urgency is
+      carried by the two facts that are genuinely true instead: the 14-day claims
+      wait and the October-onwards diary.
+- [ ] **£48 scoped to Service Care only**, per the spec, until Amy confirms whether
+      it extends further (Outstanding C3).
+- [ ] **Message match is not yet scorable.** The LP Quality Checklist requires the
+      hero visual and headline to mirror the winning ad creative, and no ad creative
+      exists. `boiler-service-portrait.webp` is the only boiler photograph in the
+      set and stands in; swap it, and the H1 if needed, once the ad is built.
+
+### Verified
+
+- [x] Build + audit clean, 17 pages. LP: 1 H1, title 52, description 150, canonical
+      slashed and absolute, valid JSON-LD, alt on every image, backgrounds
+      alternating. Thank you: 1 H1, title 31, description 153.
+- [x] At a true 390px (iframe method): **horizontal overflow 0** on both pages;
+      LP primary CTA bottom at 546px and the thank-you call button at 578px, both
+      above the 844 fold; every phone number single-line and unwrapped. The only
+      grid still multi-column on a phone is the without/with contrast block, kept
+      paired on purpose — collapsing it to one column loses the comparison that is
+      the whole point of the section. Cells run 3 to 4 lines in a 175px column.
+- [x] No console errors or warnings.
+- [x] Regression-checked `/`, `/homecare-plans/`, `/contact/`, `/electrical/` and
+      `/cookies/`: site header and footer intact, no LP chrome anywhere, plan prompt
+      still mounted on all of them except `/homecare-plans/`, both new form props
+      absent, the picker's alt route unchanged, and the cookie table still empty.
+
+### Found while measuring, NOT fixed (pre-existing, approved pages)
+
+- [ ] **Standing rule 20 drifts at 1280px wide.** Every hero is 820px at 1440 and
+      1600, as recorded. At **1280** `/homecare-plans/` measures **829** and
+      `/renovations/` **846**: the copy column narrows, the content grows past the
+      820 min-height and pushes the hero taller. The LP is 820 at all three widths.
+      It is 9px and 26px on two client-approved pages, so it is logged rather than
+      changed. Fix would be in `PageHero`, not per page.
+
+### Landing page — needs Josh / the client
+
+- [ ] **`PUBLIC_GHL_WEBHOOK` (launch blocker 1).** Unset, so a submission
+      validates, redirects to `/thank-you/` and looks entirely successful while the
+      lead is discarded. Paying for traffic into this is the worst possible failure
+      mode precisely because nothing about it looks broken. **No spend until a live
+      lead has been through end to end.**
+- [ ] Map **`recommendedPlan`** in the GHL workflow alongside the existing fields.
+- [ ] Tracking, consent and Meta domain verification (blockers 3 and 4).
+- [ ] Abbey's real average repair and call-out figures, to replace the general
+      £120 to £230 range in the cost-of-inaction section with their own numbers.
+- [ ] **Is there an excess per claim?** Nothing in the brochure or the specs says
+      either way, and it is not safe to assume there is none. If there is one and
+      the page does not state it, that is a complaint.
+- [ ] **How many homes are currently on cover?** "Looking after X homes across
+      Whitby and the coast" would be the single strongest proof point on the page.
+      No such figure exists in the project files and none has been estimated.
+- [ ] Public liability insurance — worth stating if held. Not claimed.
+- [ ] Gas Safe and OFTEC badge image files; the remaining four engineer headshots.
+- [ ] Whether the £48 CTA should book through ServiceM8 instead of the form.
+- [ ] **Resolved while checking**, so the spec's §1.6 query can be closed:
+      `about-james-eddon.webp` is **James Eddon**, the MD and founder, and its alt
+      text has said so since the About build. James Fawcett is a different person in
+      the team list, with no photograph yet. No mix-up.
+
 ## Conversion round (Josh, 31 July 2026) — done, for review
 
 ### The plan picker — "Is Homecare right for you?" (v2)

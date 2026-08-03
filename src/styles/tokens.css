@@ -110,6 +110,45 @@
 
   --white: #ffffff;
 
+  /* ---- Crescent tones (sampled from the client's REAL logo art) ----
+     Added 2 August 2026, when Rebus Design's full logo pack finally arrived
+     (`Images/Logos/`). The brand mark is not one flat colour: it is three arcs
+     in three tones of the division's colour, outer / middle / inner. Every
+     division's artwork is the same geometry recoloured, which the pixel counts
+     confirm exactly (27485 / 15616 / 8492 in all four files).
+
+     Sampled values, for the record:
+       Home Care  #ea6630  #b44e24  #f08a66
+       Plumbing   #00a2de  #1878a8  #36baea
+       Building   #7e4e9c  #603c72  #9c7eb4
+       Group      #606666  #000000  #969696   (reference only, see below)
+
+     TWO DELIBERATE DEPARTURES FROM THE SAMPLES:
+
+     1. The OUTER arc uses the division's own confirmed accent token, not the
+        sampled outer. For Home Care and Building the two agree to within a
+        point or two (#eb6740 vs #ea6630, #7f5d9c vs #7e4e9c) so it makes no
+        visible difference. For Plumbing they do NOT: the logo's blue is
+        #00a2de against our client-confirmed #1895cc. Changing a confirmed brand
+        colour site-wide is not a call to make from a sampled PNG, so the
+        crescent follows the page accent and the discrepancy is logged for Josh
+        in `_Specs/01 OUTSTANDING FROM CLIENT.md`.
+     2. GROUP KEEPS ITS TRI-COLOUR MARK (blue / orange / plum). The supplied
+        Group logo is greyscale, but Josh confirmed 2 August 2026 that the
+        greyscale file is reference only and the tri-colour is correct: it is
+        the device that ties the five divisions together. Do not desaturate it.
+
+     Mid and inner ARE the sampled values, because that three-tone structure is
+     the thing the site was getting wrong. Kept in sync with the static
+     `public/brand/crescent/mark-*.svg` files, which are generated from the same
+     numbers by `tools/crescents.mjs`. */
+  --crescent-care-mid:   #b44e24;
+  --crescent-care-inner: #f08a66;
+  --crescent-plumb-mid:  #1878a8;
+  --crescent-plumb-inner:#36baea;
+  --crescent-plum-mid:   #603c72;
+  --crescent-plum-inner: #9c7eb4;
+
   /* ---- Semantic surfaces ---- */
   --surface-page: var(--white);
   --surface-page-dark: var(--ink-500);
