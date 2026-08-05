@@ -5,6 +5,35 @@
 
 Living tick-list of what is done and what is still open. Update as items land.
 
+## Repo now on GitHub, deploy still needs Netlify connected (5 August 2026)
+
+The repo was local-only with nothing pushed until today (see `08 BUILD
+HANDOVER.md`). Now:
+
+- [x] **GitHub.** Pushed to `Codebreak-Group-Ltd/abbey-group-website` (private),
+      per the build standard §1 ("repo lives in the company GitHub org, not a
+      personal account"). `main` has no branch protection yet — add a ruleset
+      requiring PRs before go-live, per the same section.
+- [x] **`netlify.toml` added**, so build command (`npm run build`) and Node
+      version (20, matching `.nvmrc`) are explicit rather than autodetected.
+- [ ] **Netlify site not created yet.** This needs a human: Netlify's GitHub
+      connection is an OAuth step in their dashboard that can't be done from
+      here. To connect it: app.netlify.com → Add new site → Import an existing
+      project → GitHub → `Codebreak-Group-Ltd/abbey-group-website`. It should
+      read `netlify.toml` automatically; if it prompts anyway, build command is
+      `npm run build`, publish directory is `dist`.
+- [ ] **Password-gate the preview**, per the build standard §1
+      ("unfinished work can't leak or get indexed"). Two ways: Netlify's own
+      Visitor Access password (Site settings → Sharing → Visitor access, needs
+      a paid tier) is zero-code; an env-var-gated edge function is the
+      free-tier alternative but isn't built yet. Decide which, before the
+      preview URL gets shared outside Codebreak/Abbey.
+- [ ] **Branch protection on `main`** once the Netlify Deploy Preview flow is
+      confirmed working (branch → PR → preview → merge → live, build standard
+      §1). No direct pushes to main after that, including copy tweaks.
+- [ ] DNS for abbeygroup.uk, and pointing it at the Netlify site, is a separate
+      later step — not needed for a first working preview URL.
+
 ## LP review round 1 (Josh, 3 August 2026) — done, for review
 
 Five notes on `/lp/homecare/`. All actioned. `npm run verify` clean, no console
