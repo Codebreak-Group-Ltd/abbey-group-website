@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Directory-style URLs (trailing slash canon, see astro.config.mjs and
+# _Specs/05 ASTRO BUILD STANDARD.md §1). Astro's own build already emits
+# `/page/index.html`, which Netlify serves at `/page/` by default — this file
+# exists so the build command and Node version are explicit and versioned,
+# not left to Netlify's autodetection.
