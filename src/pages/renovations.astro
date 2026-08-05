@@ -142,6 +142,33 @@ const projects = [
       },
     ],
   },
+  /* Esplanade landed 3 August 2026 (see image-manifest.md). Named from the
+     photography folder itself, per Josh's confirmation that the newly
+     landed sets are nameable; place is left off until Amy confirms the
+     exact address, same treatment as "Recent project" above. */
+  {
+    name: 'Esplanade',
+    place: 'North Yorkshire',
+    summary:
+      'A full flat renovation: a feature fireplace wall in the living room, a bedroom fitted with sliding wardrobes, and a fully retiled bathroom.',
+    scope: ['Living room and feature fireplace wall', 'Bedroom with fitted sliding wardrobes', 'Bathroom renovation', 'Decorating throughout'],
+    lead: {
+      src: '/images/renovations-esplanade-bedroom-wardrobes.webp',
+      alt: 'Bedroom with fitted sliding oak wardrobes and a navy feature wall, renovated by Abbey Group',
+    },
+    more: [
+      {
+        src: '/images/renovations-esplanade-fireplace-wall.webp',
+        alt: 'Living room feature wall with an inset electric fire, renovated by Abbey Group',
+        label: 'Feature fireplace wall',
+      },
+      {
+        src: '/images/renovations-esplanade-bathroom-tiled.webp',
+        alt: 'Fully tiled bathroom with a glass shower screen, renovated by Abbey Group',
+        label: 'Retiled bathroom',
+      },
+    ],
+  },
 ];
 
 /* The client-approved FAQ set for this page. It lives in `src/data/faqs.ts`
@@ -291,6 +318,7 @@ const schemas = [
             radius="lg"
             width={1100}
             height={619}
+            class="hww__photo"
           />
         </div>
       </div>
@@ -358,10 +386,10 @@ const schemas = [
       <Eyebrow>Our work</Eyebrow>
       <h2 class="rh2">Recent projects</h2>
       <p class="rlead">
-        Recent projects across Whitby and North Yorkshire include Riviera, Linfitt,
-        Customs House, Argyle Road, our Morrisons project with a loft conversion, and
-        Danby Castle. Two are shown here, with more to follow as the photography
-        comes in.
+        Recent projects across Whitby and North Yorkshire include Riviera, Esplanade,
+        Linfitt, Customs House, Argyle Road, our Morrisons project with a loft
+        conversion, and Danby Castle. Three are shown here, with more to follow as
+        the photography comes in.
       </p>
     </div>
 
@@ -560,7 +588,12 @@ const schemas = [
     display: grid;
     grid-template-columns: 1.02fr 0.98fr;
     gap: 64px;
-    align-items: start;
+    /* Stretch, not start (Josh, 4 August 2026): the copy column's quote runs
+       ~140px past the card + fixed-ratio photo, so with `start` the side
+       column finished early and left a bare gap of dark ground under the
+       photo before the section ended. Stretching the row lets the photo grow
+       to fill it — see `.hww__photo` below. */
+    align-items: stretch;
   }
   .hww__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
   .hww__h2 {
@@ -606,8 +639,8 @@ const schemas = [
     color: var(--white);
     text-wrap: balance;
   }
-  .hww__quote blockquote::before { content: '\\201C'; }
-  .hww__quote blockquote::after { content: '\\201D'; }
+  .hww__quote blockquote::before { content: '“'; }
+  .hww__quote blockquote::after { content: '”'; }
   .hww__quote figcaption {
     margin-top: 14px;
     font-size: 12.5px;
@@ -619,6 +652,11 @@ const schemas = [
   .hww__quotesrc { color: var(--text-muted-inverse); }
 
   .hww__side { display: flex; flex-direction: column; gap: 24px; }
+  /* Grows to fill whatever height `align-items: stretch` gives the column,
+     rather than sitting at its own fixed 16:9 (the aspect-ratio would
+     otherwise win over flex sizing). `min-height` keeps it from collapsing
+     if the copy column is ever shorter than the card alone. */
+  .hww__side :global(.hww__photo) { flex: 1; aspect-ratio: auto !important; min-height: 260px; }
   .hww__card {
     background: color-mix(in oklch, var(--white) 8%, transparent);
     border: 1px solid color-mix(in oklch, var(--plum-400) 55%, transparent);

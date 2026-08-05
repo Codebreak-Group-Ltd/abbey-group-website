@@ -35,9 +35,10 @@ const makes = [
   { t: 'Structural alterations', d: 'Changing how a space works, from the structure up.' },
 ];
 
-/* Real work, from the photography in hand. Riviera is confirmed nameable; the
-   other two projects are not named because Amy has not confirmed which they
-   are (see the page's image-manifest). */
+/* Real work, from the photography in hand. Riviera, Esplanade and Danby
+   Castle are named per the page's image-manifest (Danby Castle identified by
+   matching the bar fit-out's fixtures against the raw shoot; worth Josh or
+   Amy's nod, but the visual match is unambiguous). */
 const gallery = [
   {
     src: '/images/building-staircase-oak-glass.webp',
@@ -58,16 +59,16 @@ const gallery = [
     project: 'Riviera, Whitby',
   },
   {
-    src: '/images/building-fitting-floating-shelves.webp',
-    alt: 'Abbey Group joiner fitting floating shelves to a feature wall',
-    label: 'Fitting floating shelves',
-    project: 'On site',
+    src: '/images/building-esplanade-fitted-wardrobe.webp',
+    alt: 'Fitted sliding oak wardrobes built by Abbey Group',
+    label: 'Fitted sliding wardrobe',
+    project: 'Esplanade',
   },
   {
     src: '/images/building-bar-fit-out.webp',
     alt: 'Bar front and oak worktop in a function room fitted out by Abbey Group',
     label: 'Bar and function room fit-out',
-    project: 'Recent project',
+    project: 'Danby Castle',
   },
   {
     // The wide shot above and this detail are the same fit-out, shown as a pair:
@@ -75,7 +76,7 @@ const gallery = [
     src: '/images/building-oak-bar-worktop.webp',
     alt: 'Close-up of the oak worktop and timber bar front fitted by Abbey Group',
     label: 'Oak worktop, close up',
-    project: 'Recent project',
+    project: 'Danby Castle',
   },
 ];
 
@@ -239,14 +240,29 @@ const schemas = [
           project is safe, sound and properly certified.
         </p>
       </div>
-      <ul class="std__list">
-        {standards.map((s) => (
-          <li>
-            <span class="std__disc"><Icon name="badge-check" size={16} /></span>
-            <span>{s}</span>
-          </li>
-        ))}
-      </ul>
+      <!-- The client's real Abbey Building & Joinery lockup, landed 3 August
+           2026. Sits above the existing standards list rather than duplicating
+           it, same credentials-card treatment as Electrical and Plumbing &
+           Heating. White ground because the section itself is sunken. -->
+      <div class="std__card">
+        <img
+          class="std__cardlogo"
+          src="/brand/logos/abbey-building-lockup.webp"
+          alt="Abbey Building & Joinery"
+          width="180"
+          height="144"
+          loading="lazy"
+          decoding="async"
+        />
+        <ul class="std__list">
+          {standards.map((s) => (
+            <li>
+              <span class="std__disc"><Icon name="badge-check" size={16} /></span>
+              <span>{s}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   </Section>
 
@@ -388,13 +404,17 @@ const schemas = [
 
   /* STRUCTURAL ---------------------------------------------------------- */
   .std { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: start; }
+  .std__card {
+    background: var(--white);
+    border: 1px solid var(--border-subtle);
+    border-top: 3px solid var(--page-accent);
+    border-radius: var(--radius-lg);
+    padding: 24px 24px 26px;
+  }
+  .std__cardlogo { width: 140px; height: auto; margin-bottom: 18px; }
   .std__list { display: flex; flex-direction: column; gap: 14px; }
   .std__list li {
     display: flex; gap: 14px; align-items: flex-start;
-    background: var(--white);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
-    padding: 18px 22px;
     font-size: 15.5px; line-height: var(--leading-snug); color: var(--text-body);
   }
   /* Navy glyph on the accent disc: the one colour legible on all four

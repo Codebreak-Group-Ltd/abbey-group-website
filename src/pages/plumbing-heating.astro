@@ -78,10 +78,24 @@ const schemas = [
           width={900}
           height={675}
         />
-        <p class="svc__asidenote">
-          <Icon name="badge-check" size={16} />
-          <span>Gas work is carried out by a Gas Safe registered engineer, No. {site.gasSafeNo}.</span>
-        </p>
+        <!-- The client's real Abbey Plumbing & Heating lockup, landed 3 August
+             2026. Same treatment as Electrical's credentials card: light ground,
+             because the wordmark is navy. -->
+        <div class="svc__credcard">
+          <img
+            class="svc__credlogo"
+            src="/brand/logos/abbey-plumbing-lockup.webp"
+            alt="Abbey Plumbing & Heating"
+            width="200"
+            height="160"
+            loading="lazy"
+            decoding="async"
+          />
+          <p class="svc__asidenote">
+            <Icon name="badge-check" size={16} />
+            <span>Gas work is carried out by a Gas Safe registered engineer, No. {site.gasSafeNo}.</span>
+          </p>
+        </div>
       </aside>
     </div>
     <!-- "Boiler service" is in the list above, but until 31 July 2026 there was
@@ -261,13 +275,21 @@ const schemas = [
     margin-top: 2px;
   }
   .svc__aside { display: flex; flex-direction: column; gap: 14px; }
+  .svc__credcard {
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-subtle);
+    border-top: 3px solid var(--page-accent);
+    border-radius: var(--radius-lg);
+    padding: 20px 20px 22px;
+  }
+  .svc__credlogo { width: 150px; height: auto; margin-bottom: 16px; }
   .svc__asidenote {
     display: flex; gap: 10px; align-items: flex-start;
     font-size: var(--text-sm); line-height: var(--leading-snug);
     color: var(--text-body);
-    padding: 14px 16px;
-    border-left: 2px solid var(--page-accent, var(--blue-500));
-    background: var(--surface-sunken);
+    padding: 0;
+    border-left: 0;
+    background: none;
   }
   .svc__asidenote :global(svg) { color: var(--page-accent-ink, var(--blue-800)); flex: none; margin-top: 1px; }
   .svc__cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 36px; }

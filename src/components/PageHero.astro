@@ -79,13 +79,19 @@ const split = Boolean(image) || hasAside;
   <HeroMark division={division} width={420} class="phero__mark" />
   <div class:list={['container', 'phero__inner', { 'phero__inner--split': split, 'phero__inner--feature': image && media === 'feature' }]}>
     <div class="phero__copy">
-      {showBadge && (
-        <p class="phero__division">
-          <span class="phero__division-bar" aria-hidden="true"></span>
-          {d.hasLockup && <span class="phero__division-pre">Abbey</span>}
-          <span class="phero__division-name">{d.label}</span>
-        </p>
-      )}
+      <!-- Always rendered, even when empty, so the H1 starts at the same
+           offset on every page (Josh, 3 August 2026): a page with no division
+           marker used to have its H1 sit higher than one with a marker,
+           which is what made the hero copy "move up and down" between pages. -->
+      <p class="phero__division" aria-hidden={!showBadge}>
+        {showBadge && (
+          <>
+            <span class="phero__division-bar" aria-hidden="true"></span>
+            {d.hasLockup && <span class="phero__division-pre">Abbey</span>}
+            <span class="phero__division-name">{d.label}</span>
+          </>
+        )}
+      </p>
       {eyebrow && <p class="phero__eyebrow">{eyebrow}</p>}
       <h1 class="phero__h1">{title}</h1>
       <p class="phero__lead">{lead}</p>
@@ -133,10 +139,22 @@ const split = Boolean(image) || hasAside;
     /* Every hero on the site is the same height, the homepage's rule verbatim.
        Before this, the hero grew with whatever its photo happened to be, so
        Renovations ran 881px against Electrical's 746px and the pages felt
-       mismatched moving between them (Josh, 29 July 2026). */
+       mismatched moving between them (Josh, 29 July 2026). Keeping this a
+       true floor (rather than raising it to paper over a taller page) only
+       works if every page's natural content fits inside it, so the fix for a
+       page that runs taller belongs in its content width, not here — see the
+       `.phero__inner--split` comment below. */
     min-height: min(92vh, 820px);
     display: flex;
-    align-items: center;
+    /* Top-anchored, not centred (Josh, 3 August 2026): centring meant the H1
+       sat at a different height on every page depending on how much trust
+       copy or how many CTA rows followed it, which is what actually made the
+       eyebrow/H1 "move up and down" switching between pages — the box height
+       was already equal, but the content inside it was floating to different
+       vertical positions. Anchoring to the top puts the H1 at the same fixed
+       offset everywhere; any slack from shorter content just falls below,
+       against the dark ground, where it is not visible as a gap. */
+    align-items: flex-start;
     background:
       radial-gradient(1000px 640px at 80% 15%, color-mix(in oklch, var(--glow) 62%, transparent) 0%, transparent 62%),
       radial-gradient(760px 540px at 6% 96%, color-mix(in oklch, var(--page-accent, var(--blue-500)) 15%, transparent) 0%, transparent 60%),
@@ -173,11 +191,26 @@ const split = Boolean(image) || hasAside;
 
   .phero__inner--split {
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 56px;
+    /* Widened from 1.1fr/0.9fr on 3 August 2026: the photo slot below is
+       capped at max-width 440px regardless of its grid column, so giving the
+       copy column more of the ratio costs the photo nothing. Homecare's
+       confirmed CTA wording ("Get Covered from £9.99/Month" + "Call the
+       Whitby office") needs the extra room to stay on one row at common
+       desktop widths — before this it wrapped to two, which was the one
+       remaining source of this hero running taller than every other page. */
+    grid-template-columns: 1.35fr 0.65fr;
+    gap: 48px;
     align-items: center;
   }
-  .phero__inner--split .phero__copy { max-width: 620px; }
+  .phero__inner--split .phero__copy { max-width: 660px; }
+  /* Top-anchor the copy column specifically within its grid row, regardless
+     of the row's own align-items. On a page whose aside or photo is taller
+     than the copy content (Contact's address card, Book Online's steps),
+     `align-items: center` on the row was centring the SHORT copy column
+     inside the TALL row, so its H1 sat well below the fixed offset every
+     other page uses (Josh, 3 August 2026). Pages where copy is the tallest
+     item in the row (nothing to centre against) are unaffected. */
+  .phero__copy { align-self: start; }
   /* The photo slot is sized by HEIGHT, not by its ratio, so the hero height is
      the same on every page and the variants differ in width instead. The inner
      `.photo` has an inline aspect-ratio, which an explicit height simply
@@ -195,8 +228,12 @@ const split = Boolean(image) || hasAside;
 
   /* Feature variant: the photograph carries more of the page, so it gets a
      wider column at the same height, and sits flush right rather than centred.
-     Used on Renovations, where the finished work is the argument. */
-  .phero__inner--feature { grid-template-columns: 1fr 0.86fr; gap: 64px; }
+     Used on Renovations, where the finished work is the argument. Same column
+     ratio as the default split: a narrower one here made the copy column
+     ~16px tighter than every trade page's, which was enough to wrap the H1 an
+     extra line and run the hero taller (Josh, 3 August 2026) — the wider
+     `max-width` still gives the copy more room when the viewport allows it. */
+  .phero__inner--feature { grid-template-columns: 1.3fr 0.7fr; gap: 56px; }
   .phero__inner--feature .phero__copy { max-width: 700px; }
   .phero__inner--feature .phero__media { max-width: 560px; margin-inline: auto 0; }
 
@@ -207,14 +244,19 @@ const split = Boolean(image) || hasAside;
   .phero__division {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
+    height: 20px;
     margin-bottom: -4px;
   }
+  /* A small solid dot rather than a floating bar: the bar read as a stray
+     line sitting next to "Abbey" rather than as part of the label (Josh,
+     3 August 2026). A dot is the standard category-tag mark and holds its
+     size regardless of how long the name next to it runs. */
   .phero__division-bar {
-    width: 44px;
-    height: 4px;
+    width: 8px;
+    height: 8px;
     flex: none;
-    border-radius: 2px;
+    border-radius: 50%;
     background: var(--page-accent, var(--blue-500));
   }
   .phero__division-pre {
@@ -225,9 +267,9 @@ const split = Boolean(image) || hasAside;
     color: var(--text-muted-inverse);
   }
   .phero__division-name {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: var(--weight-bold);
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--page-accent-on-dark, var(--blue-400));
     white-space: nowrap;
@@ -260,6 +302,10 @@ const split = Boolean(image) || hasAside;
     justify-content: start;
     gap: 12px 28px;
     margin-top: 6px;
+    /* Same rendered height as the "rule" variant below, so switching trust
+       style never changes the hero's total content height (Josh, 3 August
+       2026) — this was the other source of the cross-page height mismatch. */
+    min-height: 70px;
   }
   .phero__trust li { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: var(--weight-semibold); color: var(--text-body-inverse); }
   .phero__trust :global(svg) { color: var(--page-accent, var(--blue-300)); flex: none; }
@@ -277,6 +323,10 @@ const split = Boolean(image) || hasAside;
     margin-top: 14px;
     padding-top: 20px;
     border-top: 1px solid color-mix(in oklch, var(--white) 20%, transparent);
+    /* Matches "ticks" above, so the two trust styles cost the hero the same
+       vertical space regardless of which page uses which. */
+    min-height: 70px;
+    box-sizing: border-box;
   }
   .phero__trust--rule li {
     font-size: 11.5px;
@@ -314,8 +364,7 @@ const split = Boolean(image) || hasAside;
     /* "Abbey PLUMBING & HEATING" at desktop size is 384px wide, which overflows
        a 390px viewport. The name keeps `nowrap` so it can never break mid-phrase
        (rule 13); the row wraps instead, so it drops to a line of its own. */
-    .phero__division { flex-wrap: wrap; gap: 10px 12px; }
-    .phero__division-bar { width: 32px; }
+    .phero__division { flex-wrap: wrap; gap: 10px 12px; height: auto; }
     .phero__division-name { font-size: 15px; letter-spacing: 0.1em; }
     .phero__media { max-width: 100%; }
     .phero__inner--feature .phero__media { max-width: 100%; }

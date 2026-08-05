@@ -248,7 +248,23 @@ const schemas = [
   <!-- LANDLORD / BUSINESS -->
   <Section bg="sunken">
     <div class="lb__head reveal">
-      <Eyebrow>A different type of customer</Eyebrow>
+      <!-- The client's real Abbey Home Care lockup, landed 3 August 2026.
+           A small badge above the heading rather than a third card: the
+           existing two cards (Landlords / Guest houses) are an even grid
+           (rule 12), and a card-sized third item would either break that or
+           duplicate the cover copy for no reason. The eyebrow that used to
+           sit here ("A different type of customer") came out on Josh's call,
+           4 August 2026: the logo now does that job, so the two together
+           just repeated the same signal twice. -->
+      <img
+        class="lb__logo"
+        src="/brand/logos/abbey-homecare-lockup.webp"
+        alt="Abbey Home Care"
+        width="130"
+        height="104"
+        loading="lazy"
+        decoding="async"
+      />
       <h2 class="h2">Landlord or running a business?</h2>
     </div>
     <div class="lb__grid reveal">
@@ -441,6 +457,7 @@ const schemas = [
 
   /* LANDLORD/BUSINESS */
   .lb__head { margin-bottom: 32px; }
+  .lb__logo { width: 110px; height: auto; margin-bottom: 18px; }
   .lb__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   .lb__card { background: var(--white); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 28px 26px; }
   .lb__title { font-family: var(--font-display); font-size: 22px; color: var(--text-heading); margin-bottom: 10px; }

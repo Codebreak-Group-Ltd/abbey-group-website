@@ -329,7 +329,10 @@ const schemas = [
     padding: 150px var(--container-padding) 84px;
     min-height: min(92vh, 820px);
     display: flex;
-    align-items: center;
+    /* Top-anchored to match PageHero (3 August 2026): see the comment on
+       `.phero` for why — centring put the H1 at a different height on every
+       page depending on how much copy followed it. */
+    align-items: flex-start;
     background:
       radial-gradient(1100px 700px at 82% 20%, color-mix(in oklch, var(--blue-800) 55%, transparent) 0%, transparent 60%),
       radial-gradient(800px 600px at 8% 90%, color-mix(in oklch, var(--orange-900) 50%, transparent) 0%, transparent 60%),
@@ -357,8 +360,14 @@ const schemas = [
     z-index: 2;
     max-width: calc(var(--container-max) + 2 * var(--container-padding));
   }
-  .hero__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 26px; max-width: 620px; }
+  /* gap matches PageHero's `.phero__copy` (22px) so the H1 lands at the same
+     offset under the eyebrow row on every page (Josh, 3 August 2026). */
+  .hero__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; max-width: 620px; }
   .hero__eyebrow {
+    display: flex;
+    align-items: center;
+    /* Same reserved height as `.phero__division`, for the same reason. */
+    height: 20px;
     margin: 0;
     font-size: 13px;
     font-weight: var(--weight-bold);
