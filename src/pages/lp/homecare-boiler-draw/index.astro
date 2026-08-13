@@ -122,9 +122,13 @@ const drawFaqs = [
       <div class="hero__lead">
         <p class="hero__eyebrow">Abbey Group homecare · Whitby</p>
         <h1 class="hero__h1">Win a New Boiler for Your Home</h1>
+        <!-- ⚠️ Add the real, verifiable prize value when confirmed
+             (for example "a boiler supplied and fitted, worth £X"). Do NOT ship
+             a placeholder figure — an unverifiable prize value is a compliance
+             risk on a prize draw. -->
         <p class="hero__sub">
-          Join a homecare plan before entries close and you are in the draw for a brand new boiler.
-          Cover from £9.99 a month.
+          Join an Abbey Group homecare plan before 19 September and you are entered into the draw
+          for a brand new boiler, supplied and fitted. Cover starts at £9.99 a month.
         </p>
 
         <!-- Deadline, prominent. The label is the no-JS fallback; the countdown
@@ -177,12 +181,14 @@ const drawFaqs = [
               <input id="e-postcode" name="postcode" autocomplete="postal-code" />
             </p>
           </div>
-          <Button type="submit" size="lg" block>Get Me Started</Button>
-          <!-- Compliance: make it explicit the form is a callback request, not a
-               draw entry. -->
+          <Button type="submit" size="lg" block>Get Me Covered</Button>
+          <!-- Compliance stays load-bearing: the form is a callback request, and
+               entry happens on sign-up, not on submit. Friction/free-entry cue
+               added per the change ticket (hero microcopy = risk removal). -->
           <p class="hero__formmicro">
-            This asks us to call you back to set it up. You enter the draw when you join a plan,
-            not by sending this. Prefer to talk? <a href={`tel:${nap.phone.tel}`}>Call the office</a>.
+            Takes under a minute, and it is free to enter by post too. We call you back to set it
+            up: you enter the draw by joining a plan, not by sending this. Prefer to talk?
+            <a href={`tel:${nap.phone.tel}`}>Call the office</a>.
           </p>
         </form>
       </div>
@@ -235,7 +241,7 @@ const drawFaqs = [
     </div>
 
     <div class="ctarow reveal">
-      <Button href="#enquiry" size="lg">Get Me Started</Button>
+      <Button href="#enquiry" size="lg">Get Me Covered</Button>
       <span class="ctarow__note">Entries close {DRAW_CLOSE_SHORT}</span>
     </div>
   </Section>
@@ -267,7 +273,7 @@ const drawFaqs = [
     </div>
 
     <div class="ctarow reveal">
-      <Button href="#enquiry" size="lg">Get Me Started</Button>
+      <Button href="#enquiry" size="lg">Get Me Covered</Button>
       <span class="ctarow__note">Entries close {DRAW_CLOSE_SHORT}</span>
     </div>
   </Section>
@@ -312,7 +318,7 @@ const drawFaqs = [
       </div>
 
       <div class="container ctarow ctarow--dark reveal">
-        <Button href="#enquiry" variant="primary" size="lg">Get Me Started</Button>
+        <Button href="#enquiry" variant="primary" size="lg">Get Me Covered</Button>
         <span class="ctarow__note">Entries close {DRAW_CLOSE_SHORT}</span>
       </div>
     </div>
@@ -335,7 +341,7 @@ const drawFaqs = [
     lead={`Leave your details and we will ring you back to set your plan up or talk it through. Your entry counts from when your plan is active. Entries close ${DRAW_CLOSE_SHORT}.`}
     source={FORM_SOURCE}
     tags={FORM_TAGS}
-    submitLabel="Get Me Started"
+    submitLabel="Get Me Covered"
     bg="sunken"
     redirect="/thank-you/"
     fields={[
@@ -409,7 +415,10 @@ const drawFaqs = [
     align-items: start;
   }
   .hero__lead { grid-area: lead; }
-  .hero__panel { grid-area: panel; }
+  /* Flex column so the prize image and form can be re-ordered when the hero
+     stacks (mobile): form first, image below, so the form is reachable without
+     scrolling (change ticket 1.4). Desktop keeps source order: image over form. */
+  .hero__panel { grid-area: panel; display: flex; flex-direction: column; }
   .hero__foot { grid-area: foot; align-self: end; }
 
   .hero__eyebrow {
@@ -463,7 +472,9 @@ const drawFaqs = [
     padding: 24px 22px;
   }
   .hero__formhead { font-size: 17px; font-weight: var(--weight-bold); color: var(--text-heading); }
-  .hero__fields { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+  /* Single column at every breakpoint: single-column forms carry less friction
+     and convert better (change ticket 3.3). */
+  .hero__fields { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 16px; }
   .hf { display: flex; flex-direction: column; gap: 5px; margin: 0; }
   .hf label { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--text-heading); }
   .hf__req { color: var(--cta); }
@@ -580,6 +591,10 @@ const drawFaqs = [
   @media (max-width: 1024px) {
     .hero__grid { grid-template-columns: 1fr; grid-template-areas: "lead" "panel" "foot"; row-gap: 24px; }
     .hero__sub { max-width: none; }
+    /* Hero stacked: form first, prize image below it, so the form sits right
+       under the deadline and is reachable without scrolling (ticket 1.4). */
+    .hero__form { order: 1; }
+    .hero__panel :global(.hero__prize) { order: 2; margin-bottom: 0; margin-top: 16px; }
     .offer__inner { grid-template-columns: 1fr; gap: 32px; }
     .why { grid-template-columns: 1fr; gap: 32px; }
   }
@@ -593,9 +608,6 @@ const drawFaqs = [
     /* Compact prize image so the form and deadline stay above the fold.
        :global for the same reason as above (class passed into PhotoSlot). */
     .hero__panel :global(.hero__prize) { aspect-ratio: auto !important; height: 116px; }
-  }
-  @media (max-width: 460px) {
-    .hero__fields { grid-template-columns: 1fr; }
   }
 </style>
 
