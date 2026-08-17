@@ -103,7 +103,7 @@ const schemas = [
          whole site sat on /book-online/, which almost nobody finds, and on the
          Homecare page. So the page most likely to have someone wanting a service
          was sending them off to hunt for it. Now it is one click, and it is the
-         click that triggers the half-price sign-up offer. -->
+         click that triggers the sign-up offer (PlanPrompt). -->
     <div class="svc__cta reveal">
       <Button href={booking.boilerService} external size="lg">Book a Boiler Service</Button>
       <Button href={booking.quote} external variant="outline" size="lg">Request a Quote</Button>
@@ -183,12 +183,12 @@ const schemas = [
       <div class="container xsell__inner reveal">
         <div class="xsell__copy">
           <Eyebrow tone="inverse">Prefer ongoing cover?</Eyebrow>
-          <h2 class="xsell__h2">Or stop paying per visit altogether</h2>
+          <h2 class="xsell__h2">Already booking a service? Turn it into cover for good</h2>
           <p class="xsell__lead">
             A one-off boiler service is £96. Homecare Plans roll that annual service, your
             gas safety certificate and priority response into one monthly price from £9.99,
-            looked after by the same local team. Start on the visit you were booking anyway
-            and today's service is half price.
+            looked after by the same local team. Start on the visit you were booking anyway and
+            this service is included, today and every year after.
           </p>
           <ul class="xsell__stack">
             {['Your annual service and gas safety certificate, booked in for you',
@@ -203,16 +203,16 @@ const schemas = [
 
         <div class="xsell__card">
           <div class="xsell__row xsell__row--was">
-            <span class="xsell__label">Service on its own</span>
+            <span class="xsell__label">Boiler service, one-off</span>
             <span class="xsell__num tnum">£96</span>
           </div>
           <div class="xsell__row xsell__row--now">
-            <span class="xsell__label">Service today with Service Care</span>
-            <span class="xsell__num tnum">£48</span>
-            <span class="xsell__then">then £9.99 a month</span>
+            <span class="xsell__label">Service Care, from today</span>
+            <span class="xsell__num tnum">£9.99</span>
+            <span class="xsell__then">a month, this service included every year</span>
           </div>
           <p class="xsell__note">
-            Cancel at any time, with no cancellation fee.
+            No minimum term, cancel any time, with no cancellation fee.
           </p>
         </div>
       </div>

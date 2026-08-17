@@ -53,16 +53,19 @@ import { homecareLpFaqs } from '../../../data/faqs.ts';
      and standing rule 21.
    - NO GAS SAFE BADGE IMAGE, because the file does not exist. The registration
      number is confirmed and checkable, so it is stated as text in section 7.
-   - NO DEADLINE ON THE £48 OFFER, and NO URGENCY SECTION AT ALL. The spec asked
-     for both. Abbey have agreed no deadline, and inventing an expiry would wreck
-     the tone the page runs on. The urgency section that stood in for it was cut on
-     3 August 2026 (Josh: "I have no idea what this is meant to be... think we just
-     get rid") — it existed to satisfy a checklist item rather than because the page
-     needed it, and its one useful fact, the 14-day claims wait, is answered
-     properly in the FAQ. See the note where that section used to be.
-   - THE £48 OFFER IS SCOPED TO SERVICE CARE ONLY. Amy confirmed it for Service
-     Care and Landlord Care by email; it appears nowhere in the January 2026
-     brochure. Outstanding C3.
+   - NO DEADLINE ON THE SIGN-UP OFFER, and NO URGENCY SECTION AT ALL. The spec
+     asked for both. Abbey have agreed no deadline, and inventing an expiry would
+     wreck the tone the page runs on. The urgency section that stood in for it was
+     cut on 3 August 2026 (Josh: "I have no idea what this is meant to be... think
+     we just get rid") — it existed to satisfy a checklist item rather than because
+     the page needed it, and its one useful fact, the 14-day claims wait, is
+     answered properly in the FAQ. See the note where that section used to be.
+   - THE OFFER IS RETIRED AS A DISCOUNT (corrected 17 Aug 2026, see
+     `_Specs/11 HOMECARE OFFER STRATEGY.md`). There was never a real £48 or a
+     half-price service: Service Care is simply £9.99 a month and includes the
+     annual service, this one and every one after, no separate joining charge.
+     Section 6 below now presents that honestly, as a one-off-vs-plan choice, not
+     a discount.
 
    "ONE FREE CALL-OUT", NOT "1 hour free call-out". The spec makes this a launch
    blocker; Josh has now ruled on it three times, most recently 3 August 2026:
@@ -160,7 +163,7 @@ const plans = [
   },
 ];
 
-/* ---- Section 6: what the £48 buys every year after ---- */
+/* ---- Section 6: what Service Care buys every year, on £9.99 a month ---- */
 const offerStack = [
   'The full annual service, booked in so you never have to remember it',
   'Your gas safety certificate issued on the visit',
@@ -412,10 +415,11 @@ const priorityReview = homecareReviews.find((r) => r.name === 'Angela')!;
       <Eyebrow tone="default">Choose your cover</Eyebrow>
       <h2 class="h2">Boiler cover from £9.99 a month</h2>
       <p class="plans__intro">
-        Three plans, and all of them include the same proper annual service. Cover starts at
-        £9.99 a month, below what the big national brands charge for similar cover, and it does
-        not jump after the first year. Most people choose Service Care+, because it covers the
-        parts as well as the labour.
+        Three plans, and all of them include the same proper annual service. The household-name
+        national providers will happily cover your boiler too, for about double, from roughly
+        £19 to £30 a month, and it is worth keeping an eye on what their cheap first-year deals
+        become in year two. Ours is £9.99, this year, next year and the year after. Most people
+        choose Service Care+, because it covers the parts as well as the labour.
       </p>
     </div>
 
@@ -434,11 +438,11 @@ const priorityReview = homecareReviews.find((r) => r.name === 'Angela')!;
     </ul>
   </Section>
 
-  <!-- 6. THE £48 OFFER — "can I start cheaply?"
-       Service Care only. Amy confirmed the half-price sign-up for Service Care
-       (£96 → £48) and Landlord Care (£162 → £81) by email; it appears nowhere in
-       the January 2026 brochure, so nothing here implies it covers the other five
-       plans (Outstanding C3).
+  <!-- 6. THE SIGN-UP OFFER — "can I start cheaply?"
+       Retired as a discount (17 Aug 2026): there is no £48, no half price, and no
+       separate joining charge. Service Care is £9.99 a month and simply includes
+       the annual service, this one and every one after. Presented honestly here
+       as a one-off-vs-plan choice.
 
        THE CTA POINTS AT THE FORM, not at the ServiceM8 booking link the site page
        uses. Two reasons: an off-site booking page is an exit from a page with one
@@ -451,14 +455,14 @@ const priorityReview = homecareReviews.find((r) => r.name === 'Angela')!;
       <div class="container offer__inner reveal">
         <div class="offer__copy">
           <Eyebrow tone="inverse">If you are booking a service anyway</Eyebrow>
-          <h2 class="offer__h2">Already booking a service? Pay half.</h2>
+          <h2 class="offer__h2">Already booking a service? Turn it into cover for good.</h2>
           <p class="offer__lead">
-            A one-off boiler service is £96. Start Service Care on the same visit and that
-            service costs you £48, then £9.99 a month. Same engineer, same day, same work.
+            The engineer is coming anyway. Start Service Care instead of paying for a one-off
+            visit, and this service is included today, and every year after, for £9.99 a month.
           </p>
           <p class="offer__kicker">
-            The £48 you keep today covers your first four months of cover, and from then on the
-            service is booked in for you every year.
+            One breakdown call-out on its own can cost more than a whole year of cover. This way
+            you are never caught out, and never paying for a service twice.
           </p>
           <Button href="#enquiry" size="lg">Book My Service and Start Covered</Button>
           <!-- The guarantee states duration, conditions AND the process. The
@@ -467,24 +471,24 @@ const priorityReview = homecareReviews.find((r) => r.name === 'Angela')!;
                the plan terms do not offer as a cancellation route, so promising it
                would be a claim the contract does not support. -->
           <p class="offer__risk">
-            Leave your details and we will confirm the date when we ring you back. You can
-            cancel at any time, there is no cancellation fee, and if you change your mind within
-            14 days you get a full refund. Cancelling is one email to the office, with no
-            minimum term to see out.
+            Leave your details and we will confirm the date when we ring you back. Stay because
+            it is working, not because you are stuck: no minimum term, cancel any month you
+            like, and a full refund if you change your mind within 14 days. Cancelling is one
+            email to the office.
           </p>
         </div>
 
         <div class="offer__card">
           <div class="offer__row offer__row--was">
-            <span class="offer__label">Service on its own</span>
+            <span class="offer__label">Boiler service, one-off</span>
             <span class="offer__num tnum">£96</span>
           </div>
           <div class="offer__row offer__row--now">
-            <span class="offer__label">Service today with Service Care</span>
-            <span class="offer__num tnum">£48</span>
-            <span class="offer__then">then £9.99 a month</span>
+            <span class="offer__label">Service Care, from today</span>
+            <span class="offer__num tnum">£9.99</span>
+            <span class="offer__then">a month, this service included every year</span>
           </div>
-          <p class="offer__stackhead">And every year after that you get</p>
+          <p class="offer__stackhead">And every year you also get</p>
           <ul class="offer__stack">
             {offerStack.map((s) => (
               <li><Icon name="check" size={15} /><span>{s}</span></li>
@@ -559,7 +563,7 @@ const priorityReview = homecareReviews.find((r) => r.name === 'Angela')!;
        (Josh: "honestly just looks a bit shit"). Two changes:
 
        1. It is now a dark band with the division crescent behind it, so the score
-          gets the same weight as the £48 offer rather than sitting in a gap.
+          gets the same weight as the sign-up offer rather than sitting in a gap.
        2. THE FACEBOOK FIGURE IS GONE. Seven recommendations is not something to
           shout about (Josh), and putting it beside 19 Google reviews invited the
           comparison. The remaining two facts are the rating and the year, both of
@@ -627,9 +631,9 @@ const priorityReview = homecareReviews.find((r) => r.name === 'Angela')!;
 
        Consequence, stated plainly: the checklist's "urgency uses specific numbers
        and dates" item drops back to partly met. The computed live date went with
-       the section. Do NOT reinstate it by inventing a deadline on the £48 offer —
-       Abbey have agreed none (Outstanding C3/D3). If they ever do agree one, that
-       is the honest way to close this item. -->
+       the section. Do NOT reinstate it by inventing a deadline on the sign-up
+       offer — Abbey have agreed none (Outstanding C3/D3). If they ever do agree
+       one, that is the honest way to close this item. -->
 
   <!-- 11. FINAL CTA + FORM — "what do I do?"
        PHONE IS REQUIRED AND SECOND IN THE ORDER. The site forms capture name,

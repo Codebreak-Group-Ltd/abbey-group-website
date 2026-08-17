@@ -6,15 +6,21 @@ import { booking, routes } from '../data/site.ts';
 /* PlanPrompt — offer the plan at the exact moment someone books a job the plan
    already covers (Josh's own idea, 31 July 2026).
 
-   THE MECHANIC. Someone clicks "Book an annual boiler service". That service is
-   £96 on its own, or £48 on the day if they start Service Care at the same time.
-   Right then is the only moment that offer is genuinely useful, and until now it
+   THE MECHANIC (corrected 17 Aug 2026 — see `_Specs/11 HOMECARE OFFER
+   STRATEGY.md`). There is no discounted one-off price. Someone clicks "Book an
+   annual boiler service", which is £96 as a single visit and nothing else.
+   Service Care is £9.99 a month and simply includes that service every year,
+   this one included, plus the rest of the plan. The comparison is honest as a
+   one-off-vs-plan choice: pay £96 for this visit alone, or pay £9.99 a month and
+   this visit (and every one after) is covered, permanently. Right then, mid
+   booking, is the only moment that choice is genuinely useful, and until now it
    was only stated on the Homecare page, which a person booking from
-   /book-online/ or /plumbing-heating/ may never have seen. Same for the landlord
-   gas safety check: £162, or £81 with Landlord Care.
+   /book-online/ or /plumbing-heating/ may never have seen. Same logic for the
+   landlord gas safety check: £162 alone, or £13.99 a month with Landlord Care.
 
    This is the highest-value conversion mechanic on the site, because it is the
-   thing that turns a one-off job into a subscription.
+   thing that turns a one-off job into a subscription. It was never a discount
+   and must never be framed as one (no "half price", no invented joining fee).
 
    RULES IT OBEYS:
    - It never blocks the booking, but only the EXPLICIT "no thanks, just book my
@@ -33,9 +39,9 @@ import { booking, routes } from '../data/site.ts';
    - Native <dialog> + showModal(), so the focus trap, Escape and inertness are
      the browser's job, not ours.
 
-   NOT on the Homecare page: the £96/£48 offer already has its own band there and
-   its CTA already says "Book My Service and Start Covered". Prompting a second
-   time would be the same offer twice.
+   NOT on the Homecare page: the same one-off-vs-plan choice already has its own
+   band there and its CTA already says "Book My Service and Start Covered".
+   Prompting a second time would be the same offer twice.
 
    TO REMOVE: delete the <PlanPrompt /> line from the two pages that include it.
    Every booking link then behaves exactly as it did before. */
@@ -45,38 +51,38 @@ const offers = [
     key: 'service',
     href: booking.boilerService,
     job: 'boiler service',
-    heading: 'Pay half for the service you are already booking',
+    heading: 'Already booking a service? Turn it into cover for good',
     lead:
-      'You are booking the annual boiler service. If you start Service Care on the same visit, that service costs you half, and the boiler is looked after every year after that.',
-    wasLabel: 'Boiler service on its own',
+      'The engineer is coming anyway. Start Service Care instead of paying for a one-off visit, and this service is included today, and every year after.',
+    wasLabel: 'Boiler service, one-off',
     was: '£96',
-    nowLabel: 'Today, starting Service Care',
-    now: '£48',
-    then: 'then £9.99 a month',
+    nowLabel: 'Service Care, from today',
+    now: '£9.99',
+    then: 'a month, this service included every year',
     stack: [
       'The same visit, same engineer, same work',
       'Your gas safety certificate issued on the day',
       'One free call-out and priority response every year',
-      'Cancel any time, and a full refund inside 14 days',
+      'No minimum term, cancel any time, full refund inside 14 days',
     ],
   },
   {
     key: 'landlord',
     href: booking.landlordGasSafety,
     job: 'gas safety check',
-    heading: 'Pay half for the check you are already booking',
+    heading: 'Already booking the certificate? Turn it into cover for good',
     lead:
-      'You are booking the landlord gas safety check. Start Landlord Care on the same visit and it costs you half, and next year the certificate is booked in for you so it cannot lapse.',
-    wasLabel: 'Gas safety check on its own',
+      'The engineer is coming anyway. Start Landlord Care instead of paying for a one-off check, and next year the certificate is booked in for you so it cannot lapse.',
+    wasLabel: 'Gas safety check, one-off',
     was: '£162',
-    nowLabel: 'Today, starting Landlord Care',
-    now: '£81',
-    then: 'then £13.99 a month',
+    nowLabel: 'Landlord Care, from today',
+    now: '£13.99',
+    then: 'a month, the certificate included every year',
     stack: [
       'The annual certificate the law requires, booked in every year',
       'The full boiler service included',
       'One free call-out and priority response',
-      'Cancel any time, and a full refund inside 14 days',
+      'No minimum term, cancel any time, full refund inside 14 days',
     ],
   },
 ];

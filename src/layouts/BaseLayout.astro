@@ -57,7 +57,7 @@ interface Props {
      menu offers ten ways off the page, the header CTA ("Get a Quote") competes
      with the page's own, and the footer's five service links are the largest
      exit ramp on the site. The plan prompt goes too, because the LP already
-     makes the half-price offer in a full band of its own.
+     makes the sign-up offer in a full band of its own.
 
      Everything in <head> is deliberately kept: canonical, noindex, OG and the
      Organization/WebSite schema all still belong on these pages, and <head> is
@@ -85,7 +85,7 @@ const ogImageURL = new URL(ogImage, Astro.site).href;
    home and this layout stays a layout. */
 const allSchemas = [organization(), website(), ...schemas];
 
-/* The half-price sign-up offer follows the booking link, not the page, so the
+/* The sign-up offer follows the booking link, not the page, so the
    prompt is mounted SITE-WIDE rather than remembered page by page (Josh, 31 July
    2026: "we are doing people a disservice if we don't offer them this"). It only
    ever reacts to the two specific ServiceM8 links the offer applies to, so it is

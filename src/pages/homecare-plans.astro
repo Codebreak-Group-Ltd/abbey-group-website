@@ -88,10 +88,11 @@ const schemas = [
       <Eyebrow tone="default">Choose your cover</Eyebrow>
       <h2 class="h2">Boiler cover from £9.99 a month</h2>
       <p class="plans__intro">
-        Three plans, and all of them include the same proper annual service. Cover starts at
-        £9.99 a month, below what the big national brands charge for similar cover, and it
-        does not jump after the first year. Most people choose Service Care+, because it
-        covers the parts as well as the labour.
+        Three plans, and all of them include the same proper annual service. The household-name
+        national providers will happily cover your boiler too, for about double, from roughly
+        £19 to £30 a month, and it is worth keeping an eye on what their cheap first-year deals
+        become in year two. Ours is £9.99, this year, next year and the year after. Most people
+        choose Service Care+, because it covers the parts as well as the labour.
       </p>
     </div>
 
@@ -144,8 +145,8 @@ const schemas = [
        Sits here on purpose: white between the sunken band above and the dark
        sign-up offer below, so the alternation holds; and after "what every plan
        includes", so the visitor has the context to answer. Its Service Care
-       result deliberately does NOT restate the £96/£48 offer, because that band
-       is immediately below this one. -->
+       result deliberately does NOT restate the sign-up offer below, because that
+       band is immediately below this one. -->
   <Section bg="white" id="which-plan">
     <div class="which__head reveal">
       <Eyebrow>Not sure which one</Eyebrow>
@@ -167,33 +168,33 @@ const schemas = [
       <div class="container offer__inner reveal">
         <div class="offer__copy">
           <Eyebrow tone="inverse">If you are booking a service anyway</Eyebrow>
-          <h2 class="offer__h2">Pay half for the service you already need</h2>
+          <h2 class="offer__h2">Already booking a service? Turn it into cover for good.</h2>
           <p class="offer__lead">
-            A one-off boiler service is £96. Start Service Care on the same visit and that
-            service costs you £48, then £9.99 a month. Same engineer, same day, same work.
+            The engineer is coming anyway. Start Service Care instead of paying for a one-off
+            visit, and this service is included today, and every year after, for £9.99 a month.
           </p>
           <p class="offer__kicker">
-            The £48 you keep today covers your first four months of cover, and from then on
-            the service is booked in for you every year.
+            One breakdown call-out on its own can cost more than a whole year of cover. This way
+            you are never caught out, and never paying for a service twice.
           </p>
           <Button href={booking.boilerService} external size="lg">Book My Service and Start Covered</Button>
           <p class="offer__risk">
-            You can cancel at any time, there is no cancellation fee, and if you change your
-            mind within 14 days you get a full refund.
+            Stay because it is working, not because you are stuck. No minimum term, cancel any
+            month you like, and a full refund if you change your mind within 14 days.
           </p>
         </div>
 
         <div class="offer__card">
           <div class="offer__row offer__row--was">
-            <span class="offer__label">Service on its own</span>
+            <span class="offer__label">Boiler service, one-off</span>
             <span class="offer__num tnum">£96</span>
           </div>
           <div class="offer__row offer__row--now">
-            <span class="offer__label">Service today with Service Care</span>
-            <span class="offer__num tnum">£48</span>
-            <span class="offer__then">then £9.99 a month</span>
+            <span class="offer__label">Service Care, from today</span>
+            <span class="offer__num tnum">£9.99</span>
+            <span class="offer__then">a month, this service included every year</span>
           </div>
-          <p class="offer__stackhead">And every year after that you get</p>
+          <p class="offer__stackhead">And every year you also get</p>
           <ul class="offer__stack">
             {['The full annual service, booked in so you never have to remember it',
               'Your gas safety certificate issued on the visit',

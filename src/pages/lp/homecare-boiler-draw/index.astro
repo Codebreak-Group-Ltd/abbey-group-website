@@ -11,10 +11,12 @@ import { nap, site, ratings, homecareReviews } from '../../../data/site.ts';
 
 /* =====================================================================
    /lp/homecare-boiler-draw/ — Homecare BOILER-DRAW campaign landing page.
-   Rebuilt 12 August 2026 as a lean, form-first giveaway lead-gen page
-   (Josh): the first build read as a brochure. This one has ONE message and
-   ONE action — the prize leads, the four-field form is in the hero above the
-   fold, the deadline is prominent, and roughly half the old sections are gone.
+   Rebuilt 12 August 2026 as a lean giveaway lead-gen page (Josh): the first
+   build read as a brochure. ONE message and ONE action. The prize leads: the
+   hero is prize image + headline + countdown + one big CTA that jumps to the
+   single form directly below it (the form is NOT in the hero — on a giveaway
+   the prize is the hook, and a form up there fought it and would not fit above
+   the mobile fold). The deadline is prominent, and half the old sections are gone.
 
    WHAT WAS CUT, and why it is fine: the plan-picker quiz, the three-plan
    pricing grid with buy buttons, the six-point service grid and the
@@ -43,11 +45,10 @@ import { nap, site, ratings, homecareReviews } from '../../../data/site.ts';
    EnquiryForm's read-at-submit attribution (no hidden fields, no device
    storage — the deliberate PECR-safe pattern, see EnquiryForm.astro).
 
-   THE FORM SCRIPT IS SHARED. The hero form is hand-written for layout control,
-   but the submit/webhook/redirect handler is EnquiryForm's global script,
-   which wires every `form[data-source]` on the page. The final-CTA EnquiryForm
-   brings that script; the hero form rides on it. Keep both `data-source` /
-   `data-redirect` in sync if either changes.
+   ONE FORM, MANY CTAs. There is a single EnquiryForm, directly under the hero
+   (id="enquiry"). Every CTA on the page — the hero button, the between-section
+   rows, the final CTA — is a link to #enquiry that jumps to it. EnquiryForm's
+   own script handles submit/webhook/redirect.
 
    HELD, do not build yet: the self-serve sign-up/payment path and its "you are
    in" thank-you (pending Amy on site payment); the landlord variant (pending
@@ -113,10 +114,16 @@ const drawFaqs = [
   chromeless={true}
   division="homecare"
 >
-  <!-- 1. HERO — prize leads, form in the hero, deadline prominent.
-       Grid areas rather than source order so the MOBILE stack (lead, panel,
-       foot) puts the headline, deadline and form up top and above the fold,
-       while DESKTOP keeps the copy left and the prize-and-form panel right. -->
+  <!-- 1. HERO — prize leads. The form is NOT in the hero (Josh, 12 August
+       2026): on a giveaway the prize is the emotional driver, and a four-field
+       form up here fought it and would not fit above the mobile fold alongside
+       the headline and prize image. So the hero is prize image + headline +
+       countdown + one big CTA that jumps to the form directly below. That keeps
+       the CTA unmistakably above the fold on mobile, where most traffic lands.
+
+       Grid areas, not source order: the MOBILE stack is lead, panel, foot, so
+       the headline, countdown and CTA button come first (above the fold) and the
+       prize image sits just under them. Desktop keeps copy+CTA left, image right. -->
   <section class="hero" id="entry">
     <div class="container hero__grid">
       <div class="hero__lead">
@@ -124,7 +131,7 @@ const drawFaqs = [
         <h1 class="hero__h1">Win a New Boiler for Your Home</h1>
         <!-- ⚠️ Add the real, verifiable prize value when confirmed
              (for example "a boiler supplied and fitted, worth £X"). Do NOT ship
-             a placeholder figure — an unverifiable prize value is a compliance
+             a placeholder figure: an unverifiable prize value is a compliance
              risk on a prize draw. -->
         <p class="hero__sub">
           Join an Abbey Group homecare plan before 19 September and you are entered into the draw
@@ -141,56 +148,24 @@ const drawFaqs = [
             <span class="cd__box"><b class="cd__m">0</b><i>mins</i></span>
           </span>
         </div>
+
+        <div class="hero__cta">
+          <Button href="#enquiry" size="lg">Get Me Covered</Button>
+          <a class="hero__call" href={`tel:${nap.phone.tel}`}>or call the office on {nap.phone.label}</a>
+        </div>
       </div>
 
       <div class="hero__panel">
         <!-- ⚠️ PLACEHOLDER: swap for a clean product shot of the actual prize
-             boiler on a white background once the prize is confirmed. Not a
-             lifestyle kitchen photo. -->
+             boiler on a white background once the prize is confirmed. Portrait,
+             because a boiler is a tall unit and it balances the copy column.
+             Not a lifestyle kitchen photo. -->
         <PhotoSlot
           class="hero__prize"
-          ratio="4 / 3"
+          ratio="4 / 5"
           radius="lg"
           caption="Prize boiler image to follow: a clean product shot of the boiler on a white background"
         />
-
-        <form
-          class="hero__form"
-          id="entry-form"
-          data-source={FORM_SOURCE}
-          data-tags={FORM_TAGS}
-          data-redirect="/thank-you/"
-          novalidate
-        >
-          <p class="hero__formhead">Enter in under a minute</p>
-          <div class="hero__fields">
-            <p class="hf">
-              <label for="e-name">Full name <span class="hf__req" aria-hidden="true">*</span></label>
-              <input id="e-name" name="name" type="text" autocomplete="name" required />
-            </p>
-            <p class="hf">
-              <label for="e-phone">Phone <span class="hf__req" aria-hidden="true">*</span></label>
-              <input id="e-phone" name="phone" type="tel" autocomplete="tel" required />
-            </p>
-            <p class="hf">
-              <label for="e-email">Email <span class="hf__req" aria-hidden="true">*</span></label>
-              <input id="e-email" name="email" type="email" autocomplete="email" required />
-            </p>
-            <p class="hf">
-              <label for="e-postcode">Postcode</label>
-              <input id="e-postcode" name="postcode" autocomplete="postal-code" />
-            </p>
-          </div>
-          <Button type="submit" size="lg" block>Get Me Covered</Button>
-          <!-- Compliance stays load-bearing: the form is a callback request, and
-               entry happens on sign-up, not on submit. Friction/free-entry cue
-               added per the change ticket (hero microcopy = risk removal). -->
-          <p class="hero__formmicro">
-            Takes under a minute, and it is free to enter by post too. We call you back to set it
-            up: you enter the draw by joining a plan, not by sending this. Prefer to talk?
-            <a href={`tel:${nap.phone.tel}`}>Call the office</a>.
-          </p>
-        </form>
       </div>
 
       <div class="hero__foot">
@@ -202,6 +177,40 @@ const drawFaqs = [
       </div>
     </div>
   </section>
+
+  <!-- 1b. THE FORM — the single conversion point, directly under the hero so the
+       hero CTA jumps straight to it. Every other CTA on the page targets it too
+       (#enquiry). It carries the load-bearing compliance line the hero form used
+       to: this is a callback request, and entry happens on joining, not on
+       submit. EnquiryForm's script wires it and posts to the webhook then
+       /thank-you/. -->
+  <EnquiryForm
+    eyebrow="Enter in under a minute"
+    heading="Leave your details and we will call you back"
+    lead="We ring you back to set your plan up or talk it through, whichever you need. It takes under a minute, and you can also enter free by post. You enter the draw by joining a plan, not by sending this form."
+    source={FORM_SOURCE}
+    tags={FORM_TAGS}
+    submitLabel="Get Me Covered"
+    bg="sunken"
+    redirect="/thank-you/"
+    fields={[
+      { name: 'name', label: 'Full name', required: true, autocomplete: 'name' },
+      { name: 'phone', label: 'Phone', type: 'tel', required: true, autocomplete: 'tel' },
+      { name: 'email', label: 'Email', type: 'email', required: true, autocomplete: 'email' },
+      { name: 'postcode', label: 'Postcode', autocomplete: 'postal-code' },
+    ]}
+  >
+    <ul class="ef__risk">
+      <li><Icon name="check" size={15} /><span>No purchase necessary, enter free by post</span></li>
+      <li><Icon name="check" size={15} /><span>Cancel any time, no minimum term</span></li>
+      <li><Icon name="check" size={15} /><span>Full refund within 14 days</span></li>
+    </ul>
+    <p class="ef__talk">
+      Prefer to talk? Call the Whitby office on
+      <a class="tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>
+      and a real person will answer.
+    </p>
+  </EnquiryForm>
 
   <!-- 2. HOW IT WORKS — three short steps. -->
   <Section bg="white">
@@ -278,41 +287,37 @@ const drawFaqs = [
     </div>
   </Section>
 
-  <!-- 4. THE OFFER — the £48 hook, with total clarity that it is TWO things. -->
+  <!-- 4. THE OFFER — retired as a discount (17 Aug 2026): there is no £48 and no
+       separate joining charge. Service Care is £9.99 a month and simply includes
+       the annual service, this one and every one after. Presented as an honest
+       one-off-vs-plan choice. -->
   <Section bg="dark" bleed>
     <div class="offer">
       <img class="offer__mark" src="/brand/crescent/mark-homecare.svg" alt="" aria-hidden="true" width="360" height="378" />
       <div class="container offer__inner reveal">
         <div class="offer__copy">
           <Eyebrow tone="inverse">The joining offer</Eyebrow>
-          <h2 class="offer__h2">Two things, and worth being clear about</h2>
+          <h2 class="offer__h2">Already booking a service? Turn it into cover for good.</h2>
           <p class="offer__lead">
-            A one-off boiler service normally costs £96. Start a plan on the same visit and that
-            service is £48. Separately, the plan itself is £9.99 a month, which covers your service
-            every year after. The £48 is a one-off on the first visit. The £9.99 is the monthly
-            cover. Two separate things, not one.
+            The engineer is coming anyway. Start Service Care instead of paying for a one-off
+            visit, and this service is included today, and every year after, for £9.99 a month.
           </p>
           <p class="offer__guar">
-            Try it for two weeks. If it is not for you, a full refund, with no minimum term and no
-            fee to leave.
+            Stay because it is working, not because you are stuck. No minimum term, cancel any
+            month you like, and a full refund if you change your mind within 14 days.
           </p>
           <p class="offer__pricing">Plans from £9.99 a month, and we will talk you through them on the call.</p>
         </div>
 
         <div class="offer__card">
           <div class="offer__row offer__row--was">
-            <span class="offer__label">Boiler service on its own</span>
+            <span class="offer__label">Boiler service, one-off</span>
             <span class="offer__num tnum">£96</span>
           </div>
           <div class="offer__row offer__row--now">
-            <span class="offer__label">Service on your joining visit</span>
-            <span class="offer__num tnum">£48</span>
-            <span class="offer__then">a one-off, on the first visit</span>
-          </div>
-          <div class="offer__row offer__row--plan">
-            <span class="offer__label">Then the plan</span>
+            <span class="offer__label">Service Care, from today</span>
             <span class="offer__num tnum">£9.99<span class="offer__mo">/mo</span></span>
-            <span class="offer__then">covers your service every year after</span>
+            <span class="offer__then">this service included every year</span>
           </div>
         </div>
       </div>
@@ -332,36 +337,22 @@ const drawFaqs = [
     bg="white"
   />
 
-  <!-- 6. FINAL CTA — the repeat form. This EnquiryForm also loads the global
-       submit/webhook/redirect script the hero form rides on. Same source, tags
-       and redirect as the hero form. -->
-  <EnquiryForm
-    eyebrow="Last step"
-    heading="Get started, and get into the draw"
-    lead={`Leave your details and we will ring you back to set your plan up or talk it through. Your entry counts from when your plan is active. Entries close ${DRAW_CLOSE_SHORT}.`}
-    source={FORM_SOURCE}
-    tags={FORM_TAGS}
-    submitLabel="Get Me Covered"
-    bg="sunken"
-    redirect="/thank-you/"
-    fields={[
-      { name: 'name', label: 'Full name', required: true, autocomplete: 'name' },
-      { name: 'phone', label: 'Phone', type: 'tel', required: true, autocomplete: 'tel' },
-      { name: 'email', label: 'Email', type: 'email', required: true, autocomplete: 'email' },
-      { name: 'postcode', label: 'Postcode', autocomplete: 'postal-code' },
-    ]}
-  >
-    <ul class="ef__risk">
-      <li><Icon name="check" size={15} /><span>No purchase necessary, enter free by post</span></li>
-      <li><Icon name="check" size={15} /><span>Cancel any time, no minimum term</span></li>
-      <li><Icon name="check" size={15} /><span>Full refund within 14 days</span></li>
-    </ul>
-    <p class="ef__talk">
-      Prefer to talk? Call the Whitby office on
-      <a class="tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>
-      and a real person will answer.
-    </p>
-  </EnquiryForm>
+  <!-- 6. FINAL CTA — a button back to the single form, for readers who reach the
+       end. Not a second form: the page has one form (under the hero), and every
+       CTA jumps to it. -->
+  <Section bg="sunken">
+    <div class="final reveal">
+      <h2 class="final__h2">Ready for your chance at a new boiler?</h2>
+      <p class="final__lead">
+        Join before {DRAW_CLOSE}, from £9.99 a month, and you are entered into the draw. No
+        purchase necessary, and you can also enter free by post.
+      </p>
+      <div class="ctarow ctarow--center">
+        <Button href="#enquiry" size="lg">Get Me Covered</Button>
+        <span class="ctarow__note">Entries close {DRAW_CLOSE_SHORT}</span>
+      </div>
+    </div>
+  </Section>
 
   <!-- DRAW TERMS — the "Full terms" anchor target and the foot-of-page
        restatement of the significant conditions. Placeholder wording pending
@@ -461,36 +452,16 @@ const drawFaqs = [
   .cd__box b { font-size: 20px; font-weight: var(--weight-bold); line-height: 1; color: var(--white); font-family: var(--font-body); }
   .cd__box i { margin-top: 3px; font-style: normal; font-size: 10px; letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted-inverse); }
 
-  /* Panel: prize image over the form card. `:global` because the class is passed
-     INTO PhotoSlot, so the element carries PhotoSlot's scope id, not this page's
-     (Astro scoping gotcha). The class is unique to this page, so :global is safe. */
-  .hero__panel :global(.hero__prize) { margin-bottom: 16px; }
-  .hero__form {
-    background: var(--white);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-xl);
-    padding: 24px 22px;
-  }
-  .hero__formhead { font-size: 17px; font-weight: var(--weight-bold); color: var(--text-heading); }
-  /* Single column at every breakpoint: single-column forms carry less friction
-     and convert better (change ticket 3.3). */
-  .hero__fields { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 16px; }
-  .hf { display: flex; flex-direction: column; gap: 5px; margin: 0; }
-  .hf label { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--text-heading); }
-  .hf__req { color: var(--cta); }
-  .hf input {
-    font-family: var(--font-body); font-size: var(--text-base); color: var(--text-heading);
-    background: var(--white); border: 1px solid var(--border-default);
-    border-radius: var(--radius-md); padding: 11px 14px; width: 100%;
-    transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
-  }
-  .hf input:focus {
-    outline: none; border-color: var(--focus-ring);
-    box-shadow: 0 0 0 3px color-mix(in oklch, var(--focus-ring) 22%, transparent);
-  }
-  .hero__form :global(.btn) { margin-top: 18px; }
-  .hero__formmicro { margin-top: 12px; font-size: var(--text-xs); line-height: var(--leading-relaxed); color: var(--text-muted); }
-  .hero__formmicro a { color: var(--text-link); font-weight: var(--weight-semibold); text-decoration: underline; white-space: nowrap; }
+  /* Hero CTA: the big button that jumps to the form, plus a quiet call link. */
+  .hero__cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 28px; }
+  .hero__call { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--text-body-inverse); text-decoration: underline; text-underline-offset: 3px; }
+  .hero__call:hover { color: var(--white); }
+
+  /* Panel: just the portrait prize image, filling the right column. `:global`
+     because the class is passed INTO PhotoSlot, so the element carries
+     PhotoSlot's scope id, not this page's (Astro scoping gotcha). */
+  .hero__panel { justify-content: center; }
+  .hero__panel :global(.hero__prize) { width: 100%; max-width: 420px; margin-inline: auto; }
 
   .hero__foot { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
   .hero__trust { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: var(--weight-semibold); color: var(--text-body-inverse); }
@@ -503,6 +474,12 @@ const drawFaqs = [
   .ctarow__note { font-size: 13.5px; font-weight: var(--weight-bold); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--page-accent-ink, var(--orange-800)); }
   .ctarow--dark { margin-top: 36px; position: relative; }
   .ctarow--dark .ctarow__note { color: var(--page-accent-on-dark, var(--orange-400)); }
+  .ctarow--center { justify-content: center; margin-top: 28px; }
+
+  /* ---- 6. FINAL CTA ---------------------------------------------------- */
+  .final { max-width: 640px; margin-inline: auto; text-align: center; }
+  .final__h2 { font-size: clamp(28px, 3vw, 40px); color: var(--text-heading); }
+  .final__lead { margin-top: 14px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
 
   /* ---- 2. HOW IT WORKS ------------------------------------------------- */
   .how__head { max-width: 640px; margin-bottom: 36px; }
@@ -589,12 +566,11 @@ const drawFaqs = [
 
   /* ---- RESPONSIVE ------------------------------------------------------ */
   @media (max-width: 1024px) {
+    /* Stacked: headline, countdown and the CTA button (all in lead) come first
+       and above the fold; the prize image sits just under them. */
     .hero__grid { grid-template-columns: 1fr; grid-template-areas: "lead" "panel" "foot"; row-gap: 24px; }
     .hero__sub { max-width: none; }
-    /* Hero stacked: form first, prize image below it, so the form sits right
-       under the deadline and is reachable without scrolling (ticket 1.4). */
-    .hero__form { order: 1; }
-    .hero__panel :global(.hero__prize) { order: 2; margin-bottom: 0; margin-top: 16px; }
+    .hero__panel :global(.hero__prize) { max-width: 340px; }
     .offer__inner { grid-template-columns: 1fr; gap: 32px; }
     .why { grid-template-columns: 1fr; gap: 32px; }
   }
@@ -605,9 +581,9 @@ const drawFaqs = [
   }
   @media (max-width: 700px) {
     .hero { padding-top: 88px; }
-    /* Compact prize image so the form and deadline stay above the fold.
-       :global for the same reason as above (class passed into PhotoSlot). */
-    .hero__panel :global(.hero__prize) { aspect-ratio: auto !important; height: 116px; }
+    /* Cap the portrait prize image on mobile so the section is not over-tall. */
+    .hero__panel :global(.hero__prize) { aspect-ratio: 3 / 2 !important; max-width: 300px; }
+    .hero__cta :global(.btn) { flex: 1 1 auto; }
   }
 </style>
 

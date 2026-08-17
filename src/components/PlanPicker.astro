@@ -9,7 +9,7 @@ import { nap, routes } from '../data/site.ts';
    what Homecare was, and "if it broke tomorrow, what would you want" is not a
    real question because "obviously, I want everything covered". It asked the
    visitor to do the segmenting. It also made the plan look free by never
-   mentioning the half-price service.
+   mentioning what a one-off visit would have cost instead.
 
    WHAT FIXED IT: the client's own terms. `Abbey Care Brochure JAN2026`, Section
    2, 1(a)(vi) and 5(e): **a boiler ten years or older cannot have Service Care+
@@ -30,12 +30,13 @@ import { nap, routes } from '../data/site.ts';
    all `:has()`. Nothing is stored on the device. `@supports` hides the whole
    tool where `:has()` is unavailable, so nobody meets a dead end.
 
-   MONEY LINES. Service Care and Landlord Care carry the confirmed half-price
-   sign-up offer (Amy's email: £96 service → £48, £162 landlord check → £81).
-   Service Care+ and Ultimate Home Care do NOT, because that offer is confirmed
-   for those two plans only — it appears nowhere in the brochure, including the
-   January 2026 one. See `_Specs/01 OUTSTANDING FROM CLIENT.md`: if Amy confirms
-   it applies to every plan, it is one line per result here. */
+   MONEY LINES (corrected 17 Aug 2026, see `_Specs/11 HOMECARE OFFER
+   STRATEGY.md`). There was never a real half-price sign-up: no £48, no £81, no
+   separate joining charge on any plan. Service Care and Landlord Care carry a
+   one-off-vs-plan comparison instead (the one-off price they replace, £96 or
+   £162, against the honest monthly price), and Service Care+ and Ultimate Home
+   Care carry the cost-of-a-call-out comparison, which was always the right
+   framing for those two, since the discontinued offer never applied to them. */
 
 /* The old-boiler replacement route needs a different destination on a landing
    page. On `/homecare-plans/` it links to Plumbing & Heating, which is right: the
@@ -171,11 +172,10 @@ const state = [
         </p>
 
         <p class="pp__rmoney">
-          Your annual service is <strong class="tnum">£96</strong> on its own. Start Service
-          Care on the same visit and that service is <strong class="tnum">£48</strong>, then
-          <strong class="tnum">£9.99</strong> a month.
+          Your annual service is <strong class="tnum">£96</strong> on its own, and nothing else.
+          Start Service Care instead and it is <strong class="tnum">£9.99</strong> a month, this
+          service included, today and every year after.
         </p>
-        <p class="pp__rsave">You save <strong class="tnum">£48</strong> on day one.</p>
         <Button href="#enquiry" size="lg">{cta.service}</Button>
 
         <!-- Shown for a 10+ or unknown-age boiler only (Josh's suggestion, 31 July
@@ -238,11 +238,10 @@ const state = [
           it with the annual service so the paperwork cannot lapse.
         </p>
         <p class="pp__rmoney">
-          A landlord gas safety check is <strong class="tnum">£162</strong> on its own. Start
-          Landlord Care with one and it is <strong class="tnum">£81</strong> on the day, then
-          <strong class="tnum">£13.99</strong> a month.
+          A landlord gas safety check is <strong class="tnum">£162</strong> on its own, and
+          nothing else. Start Landlord Care instead and it is <strong class="tnum">£13.99</strong>
+          a month, with the certificate booked in every year so it cannot lapse.
         </p>
-        <p class="pp__rsave">You save <strong class="tnum">£81</strong> on day one.</p>
         <Button href="#enquiry" size="lg">{cta.landlord}</Button>
       </article>
 
@@ -377,11 +376,6 @@ const state = [
     font-size: 15.5px; line-height: var(--leading-relaxed); color: var(--text-body);
   }
   .pp__rmoney strong { color: var(--text-heading); white-space: nowrap; }
-  .pp__rsave {
-    margin-top: 12px;
-    font-size: var(--text-md); font-weight: var(--weight-bold);
-    color: var(--page-accent-ink, var(--orange-800));
-  }
   .pp__r :global(.btn) { margin-top: 20px; }
 
   /* ---- THE LOGIC ---- */
