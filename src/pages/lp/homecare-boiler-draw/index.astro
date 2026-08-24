@@ -7,6 +7,7 @@ import Icon from '../../../components/Icon.astro';
 import PhotoSlot from '../../../components/PhotoSlot.astro';
 import FAQ from '../../../components/FAQ.astro';
 import EnquiryForm from '../../../components/EnquiryForm.astro';
+import Photo from '../../../components/Photo.astro';
 import { nap, site, ratings, homecareReviews } from '../../../data/site.ts';
 
 /* =====================================================================
@@ -64,17 +65,20 @@ import { nap, site, ratings, homecareReviews } from '../../../data/site.ts';
 
 const title = 'Win a New Boiler | Homecare from £9.99 a Month | Abbey Group';
 const description =
-  'Join an Abbey Group homecare plan before 19 September to enter our free draw to win a new boiler. Gas Safe cover in Whitby from £9.99 a month.';
+  'Join an Abbey Group homecare plan before 26 September to enter our free draw to win a new boiler. Gas Safe cover in Whitby from £9.99 a month.';
 
 /* ---- Competition constants ----
    ⚠️ `conditionsLine` is PLACEHOLDER wording. Replace with the solicitor's
    exact short-form conditions before launch. The mechanic, the date and the
-   free route are correct; only the precise legal phrasing is pending. */
-const DRAW_CLOSE = '19 September 2026';
-const DRAW_CLOSE_SHORT = '19 September';
-const DEADLINE_ISO = '2026-09-19T23:59:59';
+   free route are correct; only the precise legal phrasing is pending.
+   Dates corrected 19 Aug 2026: 18 Aug decision moved the open day to
+   19 September and the draw itself to 26 September (see Launch Readiness
+   Checklist) — this page previously still had the old 19 Sep close date. */
+const DRAW_CLOSE = '26 September 2026';
+const DRAW_CLOSE_SHORT = '26 September';
+const DEADLINE_ISO = '2026-09-26T23:59:59';
 const conditionsLine =
-  'No purchase necessary. Free postal entry available. One entry per person. Draw closes 19 September 2026. Terms apply.';
+  'No purchase necessary. Free postal entry available. One entry per person. Draw closes 26 September 2026. Terms apply.';
 const TERMS_HREF = '#draw-terms';
 
 /* Shared form attributes, so the hero form and the final-CTA form stay in step. */
@@ -134,8 +138,9 @@ const drawFaqs = [
              a placeholder figure: an unverifiable prize value is a compliance
              risk on a prize draw. -->
         <p class="hero__sub">
-          Join an Abbey Group homecare plan before 19 September and you are entered into the draw
-          for a brand new boiler, supplied and fitted. Cover starts at £9.99 a month.
+          Join an Abbey Group homecare plan before 26 September and you are entered into the draw
+          for a new Ideal Logic Max boiler, worth £2,800, supplied and installed by Abbey Group.
+          Cover starts at £9.99 a month.
         </p>
 
         <!-- Deadline, prominent. The label is the no-JS fallback; the countdown
@@ -164,7 +169,7 @@ const drawFaqs = [
           class="hero__prize"
           ratio="4 / 5"
           radius="lg"
-          caption="Prize boiler image to follow: a clean product shot of the boiler on a white background"
+          caption="Prize boiler image to follow: a clean product shot of the Ideal Logic Max, worth £2,800, on a white background"
         />
       </div>
 
@@ -255,7 +260,10 @@ const drawFaqs = [
     </div>
   </Section>
 
-  <!-- 3. WHY ABBEY — short: the "not a call centre" line plus two real reviews. -->
+  <!-- 3. WHY ABBEY — short: the "not a call centre" line, a real team/James photo
+       (only James has a headshot; the rest of the team is shown as they actually
+       are, in the group-and-fleet photograph — same rule as `/lp/homecare/`, no
+       stock faces), plus two real reviews. -->
   <Section bg="sunken">
     <div class="why">
       <div class="why__copy reveal">
@@ -271,15 +279,30 @@ const drawFaqs = [
           <li><Icon name="badge-check" size={16} /><span>{ratings.google.value} from {ratings.google.count} Google reviews</span></li>
         </ul>
       </div>
-      <ul class="why__reviews reveal">
-        {trustReviews.map((r) => (
-          <li class="why__review">
-            <p class="why__quote">{r.quote}</p>
-            <p class="why__by"><span>{r.name}</span>, {r.source}</p>
-          </li>
-        ))}
-      </ul>
+      <div class="why__media reveal">
+        <Photo
+          src="/images/about-team-group.webp"
+          alt="The Abbey Group team with their vans in Whitby"
+          ratio="4 / 3"
+        />
+        <figure class="why__person">
+          <img src="/images/about-james-eddon-headshot.webp" alt="James Eddon, Managing Director of Abbey Group" width="60" height="60" loading="lazy" decoding="async" />
+          <figcaption>
+            <strong>James Eddon</strong>
+            <span>Managing Director. Set the business up as Abbey Gas in 2008.</span>
+          </figcaption>
+        </figure>
+      </div>
     </div>
+
+    <ul class="why__reviews reveal">
+      {trustReviews.map((r) => (
+        <li class="why__review">
+          <p class="why__quote">{r.quote}</p>
+          <p class="why__by"><span>{r.name}</span>, {r.source}</p>
+        </li>
+      ))}
+    </ul>
 
     <div class="ctarow reveal">
       <Button href="#enquiry" size="lg">Get Me Covered</Button>
@@ -365,7 +388,7 @@ const drawFaqs = [
       <ul class="drawterms__list">
         <li>Promoter: {site.legalName}, company no. {site.companyNo}, {nap.addressFull}.</li>
         <li>Enter by joining any Abbey Group homecare plan that is active before entries close on {DRAW_CLOSE}, or free by post to the address above.</li>
-        <li>One entry per person. The prize is one new boiler, supplied and fitted by Abbey Group. No cash alternative.</li>
+        <li>One entry per person. The prize is one new Ideal Logic Max boiler (combi, system or heat-only, whichever suits the winner's property), natural gas or LPG only, with a Wifi HALO thermostat, supplied and installed by Abbey Group, worth £2,800. A cash alternative of £2,500 may be offered if the property is unsuitable for a boiler or the winner prefers it.</li>
         <li>The winner is drawn after entries close and will be contacted using the details provided.</li>
         <li>Full terms and conditions are available from the office on request, and the complete written terms will be published here before the campaign goes live.</li>
       </ul>
@@ -517,7 +540,16 @@ const drawFaqs = [
   .why__facts { display: flex; flex-direction: column; gap: 12px; margin-top: 22px; }
   .why__facts li { display: flex; gap: 12px; align-items: flex-start; font-size: 14.5px; color: var(--text-body); }
   .why__facts :global(svg) { color: var(--page-accent-ink, var(--orange-800)); flex: none; margin-top: 2px; }
-  .why__reviews { display: flex; flex-direction: column; gap: 16px; }
+  .why__media { display: flex; flex-direction: column; gap: 18px; }
+  .why__person {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 18px;
+    background: var(--white); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
+  }
+  .why__person img { width: 60px; height: 60px; flex: none; border-radius: var(--radius-pill); object-fit: cover; }
+  .why__person figcaption { display: flex; flex-direction: column; gap: 3px; font-size: 13.5px; line-height: var(--leading-snug); color: var(--text-body); }
+  .why__person strong { font-size: 15px; color: var(--text-heading); }
+  .why__reviews { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
   .why__review { background: var(--white); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 22px 24px; box-shadow: var(--shadow-sm); }
   .why__quote { font-size: 15px; line-height: var(--leading-relaxed); color: var(--text-heading); }
   .why__by { margin-top: 12px; font-size: var(--text-sm); color: var(--text-muted); }
@@ -573,6 +605,7 @@ const drawFaqs = [
     .hero__panel :global(.hero__prize) { max-width: 340px; }
     .offer__inner { grid-template-columns: 1fr; gap: 32px; }
     .why { grid-template-columns: 1fr; gap: 32px; }
+    .why__reviews { grid-template-columns: 1fr; }
   }
   @media (max-width: 860px) {
     .how__steps { grid-template-columns: 1fr; }
