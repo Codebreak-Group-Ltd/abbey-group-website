@@ -1,0 +1,404 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Section from '../../../components/Section.astro';
+import Icon from '../../../components/Icon.astro';
+import { nap, site, routes } from '../../../data/site.ts';
+
+/* =====================================================================
+   /lp/thank-you/ — the shared post-conversion page for the three boiler-
+   draw campaign variants (`/lp/service-care-boiler-draw/`,
+   `/lp/landlord-care-boiler-draw/`, `/lp/win-a-new-boiler/`). Built 25 Aug
+   2026 to a brief from Josh. This is NOT the sitewide `/thank-you/`
+   (`src/pages/thank-you.astro`), which every other form on the site still
+   uses and which stays untouched — this page exists because the campaign
+   needs draw clarity, the plan's offer stack and the open day, none of
+   which belong on a generic enquiry thank-you.
+
+   FOUR JOBS, per the brief, not a receipt: confirm the decision, set the
+   callback expectation precisely, fire the conversion event, offer the
+   next step. Sections below map 1:1 to those.
+
+   PERSONALISATION AND PLAN-AWARENESS, BOTH CLIENT-SIDE, BECAUSE THIS IS A
+   STATIC SITE. There is no server round trip to inject a first name or
+   know which plan a visitor just joined, so `EnquiryForm.astro`'s redirect
+   now appends `?name=`, `?source=` and `?plan=` as query params (see that
+   component) and this page reads them at load. Two consequences, both
+   accepted rather than hidden:
+     1. A visitor with JavaScript disabled sees the page's no-JS fallback:
+        no name in the heading, and the Service Care offer stack (the
+        majority case) rather than Landlord Care's. Acceptable given the
+        alternative is no personalisation at all on a static build.
+     2. The name and plan are read from the URL, not from device storage —
+        this is navigation state for one page load, not "storage" under
+        PECR, so it needs no consent gate, unlike the tracking below.
+
+   ⚠️ CAUGHT WHILE BUILDING, FLAGGED RATHER THAN SILENTLY FIXED: the brief's
+   §4 ("WHILE YOU WAIT") was written around Service Care's figures (£9.99,
+   £276, £156) with no mention that this page is shared by the Landlord
+   Care variant too. Showing a Landlord Care lead (who just heard £13.99)
+   the Service Care stack here would repeat exactly the "a landlord who
+   sees £9.99 will assume the price changed" risk flagged when the
+   landlord page was built. Built §4 as TWO blocks, Service Care and
+   Landlord Care figures, toggled by the `?plan=` param above rather than
+   picking one.
+
+   ⚠️ TRACKING — NOT IMPLEMENTED HERE, DELIBERATELY, NOT AN OVERSIGHT. The
+   brief asks for a Meta Pixel Lead event and a GA4 conversion event on
+   load, and a PageView pixel on all three landing pages. This is the
+   same launch blocker documented repeatedly elsewhere in this project —
+   Outstanding D2, the LP spec §1.5, and the sitewide `/thank-you/`'s own
+   file header: NOTHING TRACKING-RELATED MAY FIRE BEFORE CONSENT, and a
+   pixel cannot ship without the consent banner, Consent Mode v2, and its
+   entry in `src/data/consent-registry.ts` IN THE SAME CHANGE — that
+   registry generates the cookie policy table, so a pixel added without it
+   publishes a policy that lies. Wiring the pixel/GA4 script tags now,
+   unconditionally, would recreate exactly that failure the moment a real
+   Meta Pixel ID is added later. Specified here instead, so it is a drop-in
+   job once the consent layer exists:
+     - Meta Pixel + CAPI: `PageView` on all three LP pages' load;
+       `Lead` on THIS page's load (not on button click).
+     - GA4: a conversion event on this page's load.
+     - Both events should carry `plan_interest` and `landing_page` as
+       parameters — both are already sitting in `?plan=` and `?source=` on
+       this very page's URL, read by the script below into
+       `planInterest`/`landingPage` constants, ready to hand to whichever
+       tag fires them.
+   ===================================================================== */
+
+const title = 'Thanks | Abbey Group, Whitby';
+const description = 'Thanks, you are on the list. Here is what happens next, and how the boiler prize draw works.';
+---
+<BaseLayout
+  title={title}
+  description={description}
+  noindex={true}
+  chromeless={true}
+  division="homecare"
+  footerLinks={['privacy', 'cookies']}
+>
+  <!-- 1. CONFIRMATION BLOCK — dark band, above the fold. The h1's name is
+       filled in by the script below when `?name=` is present; the no-JS
+       and no-name fallback is the plain sentence already in the markup. -->
+  <section class="conf">
+    <div class="container conf__inner">
+      <span class="conf__tick" aria-hidden="true"><Icon name="check" size={26} /></span>
+      <h1 class="conf__h1" id="conf-h1">You are on the list.</h1>
+      <p class="conf__lead">
+        One of the team will ring you from <a href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>,
+        usually the same day. It takes under five minutes to get your plan set up.
+      </p>
+      <p class="conf__box">
+        Save <a href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a> to your phone now, so you
+        know it is us when we ring.
+      </p>
+    </div>
+  </section>
+
+  <!-- 2. WHAT HAPPENS NEXT -->
+  <Section bg="white">
+    <div class="next reveal">
+      <h2 class="h2">What happens next</h2>
+      <ol class="next__steps">
+        <li class="next__step">
+          <span class="next__num tnum" aria-hidden="true">1</span>
+          <p class="next__d">We ring you, usually the same day, from <a href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>.</p>
+        </li>
+        <li class="next__step">
+          <span class="next__num tnum" aria-hidden="true">2</span>
+          <p class="next__d">We talk through which plan suits your boiler and set it up on the call.</p>
+        </li>
+        <li class="next__step">
+          <span class="next__num tnum" aria-hidden="true">3</span>
+          <p class="next__d">Once your plan is active, you are in the draw. Entries close 26 September 2026.</p>
+        </li>
+      </ol>
+      <p class="next__reassure">
+        Nothing to pay today, and nothing to fill in. If we miss you, we will try again, or
+        you can ring the office whenever suits.
+      </p>
+    </div>
+  </Section>
+
+  <!-- 3. DRAW CLARITY BLOCK — the mechanic in writing before the phone
+       rings. Postal instructions and address are the same wording as the
+       landing pages, not paraphrased. -->
+  <Section bg="sunken">
+    <div class="draw reveal">
+      <h2 class="h2">About the draw</h2>
+      <p class="draw__p">
+        You enter the draw by joining a plan, not by leaving your details. If you would
+        rather not join a plan, you can still enter free by post.
+      </p>
+      <div class="postal">
+        <div>
+          <h3 class="postal__t">Enter free by post</h3>
+          <p class="postal__d">
+            Send a postcard with your name, address, phone number and email, marked
+            <strong>Boiler Draw entry</strong>. One entry per person, and it must reach us before
+            entries close on 26 September 2026.
+          </p>
+        </div>
+        <address class="postal__addr">{site.legalName}<br />{nap.addressFull}</address>
+      </div>
+      <a class="draw__terms" href={routes.drawTerms}>Full prize draw terms</a>
+    </div>
+  </Section>
+
+  <!-- 4. WHILE YOU WAIT — plan-aware, see the ⚠️ note in the file header.
+       Both blocks render; the script below shows the one matching `?plan=`
+       and hides the other, defaulting to Service Care if the param is
+       missing or unrecognised. -->
+  <Section bg="white">
+    <div class="wait reveal">
+      <div class="stack" data-plan-block="service-care">
+        <h2 class="h2">What £9.99 a month actually covers</h2>
+        <ul class="stack__list">
+          <li><span>Full boiler service and gas safety certificate</span><b class="tnum">£96</b></li>
+          <li><span>Heating health check and filter clean</span><b class="tnum">£66</b></li>
+          <li><span>One free call-out, one hour of engineer time</span><b class="tnum">£114</b></li>
+          <li><span>Flue gas analysis, filter clean, radiators balanced</span><b class="tnum">Included</b></li>
+          <li><span>Priority response, weekdays</span><b class="tnum">Included</b></li>
+          <li><span>5% off any other work</span><b class="tnum">Included</b></li>
+          <li class="stack__total"><span>Total value</span><b class="tnum">£276</b></li>
+        </ul>
+        <div class="stack__anchor">
+          <div class="stack__arow stack__arow--was">
+            <span class="stack__alabel">Paid for separately</span>
+            <span class="stack__anum">£276</span>
+          </div>
+          <div class="stack__arow stack__arow--now">
+            <span class="stack__alabel">Service Care</span>
+            <span class="stack__anum stack__anum--now">£9.99<span class="stack__amo">/mo</span></span>
+            <span class="stack__athen">£119.88 a year</span>
+          </div>
+          <p class="stack__save">You save £156.</p>
+        </div>
+        <!-- ⚠️ [CONFIRM WITH ABBEY] wording, same open item as the landing pages. -->
+        <p class="stack__small">
+          Parts are quoted separately and we will always tell you the cost before we do the
+          work. Priority response covers weekday call-outs, 9am to 5pm Monday to Friday.
+        </p>
+      </div>
+
+      <div class="stack" data-plan-block="landlord-care" hidden>
+        <h2 class="h2">What £13.99 a month actually covers</h2>
+        <ul class="stack__list">
+          <li><span>Full boiler service and gas safety certificate</span><b class="tnum">£162</b></li>
+          <li><span>Heating health check and filter clean</span><b class="tnum">£66</b></li>
+          <li><span>One free call-out, one hour of engineer time</span><b class="tnum">£114</b></li>
+          <li><span>Flue gas analysis, filter clean, radiators balanced</span><b class="tnum">Included</b></li>
+          <li><span>Priority response, weekdays</span><b class="tnum">Included</b></li>
+          <li><span>5% off any other work</span><b class="tnum">Included</b></li>
+          <li class="stack__total"><span>Total value</span><b class="tnum">£342</b></li>
+        </ul>
+        <div class="stack__anchor">
+          <div class="stack__arow stack__arow--was">
+            <span class="stack__alabel">Paid for separately</span>
+            <span class="stack__anum">£342</span>
+          </div>
+          <div class="stack__arow stack__arow--now">
+            <span class="stack__alabel">Landlord Care</span>
+            <span class="stack__anum stack__anum--now">£13.99<span class="stack__amo">/mo</span></span>
+            <span class="stack__athen">£167.88 a year</span>
+          </div>
+          <p class="stack__save">You save £174.</p>
+        </div>
+        <!-- ⚠️ [CONFIRM WITH ABBEY] wording, same open item as the landing pages. -->
+        <p class="stack__small">
+          Parts are quoted separately and we will always tell you the cost before we do the
+          work. Priority response covers weekday call-outs, 9am to 5pm Monday to Friday.
+        </p>
+      </div>
+    </div>
+  </Section>
+
+  <!-- 5. TRANSITIONAL NEXT STEP — one only, no link, no second form. -->
+  <Section bg="sunken">
+    <div class="visit reveal">
+      <h2 class="h2">Have a look round the new office</h2>
+      <p class="visit__p">
+        Our open day is Saturday 19 September at Skinner Street, Whitby. Come and see the
+        office, meet the team that answers your calls, and ask us anything about the plans.
+      </p>
+    </div>
+  </Section>
+
+  <!-- 6. FOOTER — handled by BaseLayout's `footerLinks` prop above. -->
+</BaseLayout>
+
+<style>
+  .h2 { font-size: clamp(28px, 3vw, 40px); color: var(--text-heading); }
+
+  /* ---- 1. CONFIRMATION BLOCK -------------------------------------------- */
+  .conf {
+    position: relative;
+    overflow: hidden;
+    color: var(--white);
+    padding: 130px var(--container-padding) 64px;
+    background:
+      radial-gradient(1000px 640px at 82% 12%, color-mix(in oklch, var(--page-accent-glow, var(--orange-900)) 60%, transparent) 0%, transparent 62%),
+      var(--surface-page-dark, var(--ink-500));
+  }
+  .conf::after {
+    content: '';
+    position: absolute; inset: auto 0 0 0; height: 3px;
+    background: var(--page-accent, var(--orange-500)); opacity: 0.9;
+  }
+  .conf__inner { position: relative; max-width: 640px; }
+  .conf__tick {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 54px; height: 54px; margin-bottom: 18px;
+    border-radius: var(--radius-signature);
+    background: var(--page-accent, var(--orange-500));
+    color: var(--ink-500);
+  }
+  .conf__h1 {
+    font-family: var(--font-display); font-weight: 400;
+    font-size: clamp(34px, 4vw, 52px); line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight); text-wrap: balance; color: var(--white);
+  }
+  .conf__lead { margin-top: 16px; font-size: var(--text-md); line-height: var(--leading-relaxed); color: var(--text-body-inverse); }
+  .conf__lead a, .conf__box a { color: var(--page-accent-on-dark, var(--orange-400)); font-weight: var(--weight-bold); white-space: nowrap; }
+  .conf__box {
+    margin-top: 24px; padding: 16px 20px;
+    background: color-mix(in oklch, var(--white) 8%, transparent);
+    border: 1px solid color-mix(in oklch, var(--page-accent, var(--orange-500)) 45%, transparent);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm); font-weight: var(--weight-medium); line-height: var(--leading-relaxed);
+    color: var(--text-body-inverse);
+  }
+
+  /* ---- 2. WHAT HAPPENS NEXT ---------------------------------------------- */
+  .next__steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 28px; }
+  .next__step { display: flex; gap: 14px; align-items: flex-start; }
+  .next__num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; flex: none;
+    border-radius: var(--radius-signature);
+    background: var(--surface-sunken); border: 1px solid var(--border-subtle);
+    font-size: 15px; font-weight: var(--weight-bold);
+    color: var(--page-accent-ink, var(--orange-800));
+  }
+  .next__d { font-size: 14.5px; line-height: var(--leading-relaxed); color: var(--text-body); }
+  .next__d a { color: var(--text-link); font-weight: var(--weight-semibold); white-space: nowrap; }
+  .next__reassure { margin-top: 28px; font-size: var(--text-sm); color: var(--text-muted); max-width: 640px; }
+
+  /* ---- 3. DRAW CLARITY --------------------------------------------------- */
+  .draw { max-width: 760px; }
+  .draw__p { margin-top: 14px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
+  .postal {
+    display: grid; grid-template-columns: 1.4fr 0.6fr; gap: 32px; align-items: center;
+    margin-top: 24px; padding: 22px 24px;
+    background: var(--white); border: 1px dashed var(--border-default); border-radius: var(--radius-lg);
+  }
+  .postal__t { font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-heading); }
+  .postal__d { margin-top: 8px; font-size: 14px; line-height: var(--leading-relaxed); color: var(--text-body); }
+  .postal__d strong { color: var(--text-heading); }
+  .postal__addr {
+    font-style: normal; font-size: 14px; line-height: var(--leading-relaxed);
+    color: var(--text-heading); font-weight: var(--weight-medium);
+    padding-left: 22px; border-left: 3px solid var(--page-accent, var(--orange-500));
+  }
+  .draw__terms {
+    display: inline-block; margin-top: 20px;
+    font-size: var(--text-sm); font-weight: var(--weight-bold);
+    color: var(--page-accent-ink, var(--orange-800));
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+
+  /* ---- 4. WHILE YOU WAIT (offer stack, shared with the landing pages) --- */
+  .wait { max-width: 720px; margin-inline: auto; }
+  .stack__list { margin-top: 28px; display: flex; flex-direction: column; }
+  .stack__list li {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
+    padding: 13px 0; border-bottom: 1px solid var(--border-subtle);
+    font-size: 15px; color: var(--text-body);
+  }
+  .stack__list li span { flex: 1; }
+  .stack__list li b { flex: none; font-weight: var(--weight-semibold); color: var(--text-heading); }
+  .stack__total {
+    margin-top: 4px; border-bottom: 0 !important; padding-top: 16px !important;
+    border-top: 2px solid var(--text-heading) !important;
+  }
+  .stack__total span, .stack__total b { font-size: 17px; font-weight: var(--weight-bold); color: var(--text-heading); }
+
+  .stack__anchor {
+    margin-top: 32px; padding: 26px 28px;
+    background: var(--surface-sunken); border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+  }
+  .stack__arow { display: flex; flex-direction: column; gap: 2px; }
+  .stack__arow--now { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+  .stack__alabel { font-size: 12.5px; font-weight: var(--weight-semibold); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted); }
+  .stack__anum { font-size: 28px; font-weight: var(--weight-bold); color: var(--text-muted); text-decoration: line-through; }
+  .stack__anum--now { font-size: 44px; color: var(--page-accent-ink, var(--orange-800)); text-decoration: none; }
+  .stack__amo { font-size: 18px; font-weight: var(--weight-semibold); color: var(--text-muted); }
+  .stack__athen { font-size: var(--text-sm); color: var(--text-muted); margin-top: 2px; }
+  .stack__save {
+    margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border-default);
+    font-size: 19px; font-weight: var(--weight-bold); color: var(--text-heading);
+  }
+  .stack__small { margin-top: 20px; font-size: 13px; line-height: var(--leading-relaxed); color: var(--text-muted); }
+
+  /* ---- 5. TRANSITIONAL NEXT STEP ----------------------------------------- */
+  .visit { max-width: 640px; }
+  .visit__p { margin-top: 14px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
+
+  /* ---- RESPONSIVE --------------------------------------------------------- */
+  @media (max-width: 860px) {
+    .next__steps { grid-template-columns: 1fr; gap: 18px; }
+    .postal { grid-template-columns: 1fr; gap: 16px; }
+    .postal__addr { padding-left: 0; padding-top: 14px; border-left: 0; border-top: 1px solid var(--border-subtle); }
+  }
+  @media (max-width: 700px) {
+    .conf { padding-top: 96px; }
+  }
+</style>
+
+<script>
+  import { fireLead } from '../../../lib/tracking.ts';
+
+  /* Reads `?name=`, `?source=` and `?plan=` off this page's own URL — see
+     EnquiryForm.astro's redirect logic, which is what puts them there.
+     Nothing is stored; this runs once, at load, on this page only. */
+  (function () {
+    const params = new URLSearchParams(window.location.search);
+
+    const name = params.get('name');
+    if (name) {
+      const h1 = document.getElementById('conf-h1');
+      if (h1) h1.textContent = `You are on the list, ${name}.`;
+    }
+
+    const planInterest = params.get('plan') ?? undefined;
+    const landingPage = params.get('source') ?? undefined;
+
+    const isLandlord = planInterest === 'Landlord Care';
+    const serviceBlock = document.querySelector<HTMLElement>('[data-plan-block="service-care"]');
+    const landlordBlock = document.querySelector<HTMLElement>('[data-plan-block="landlord-care"]');
+    if (serviceBlock) serviceBlock.hidden = isLandlord;
+    if (landlordBlock) landlordBlock.hidden = !isLandlord;
+
+    /* The Lead/conversion fire, per build standard §7: only after consent,
+       so this polls briefly for CookieConsent.astro to finish its own
+       consent-read/apply on load (it runs a separate script tag, so ordering
+       isn't guaranteed) before giving up quietly. `fireLead` is itself a
+       no-op today regardless — see `src/lib/tracking.ts` — because there is
+       no real GA4/Meta ID yet, consent or not. No banner element at all
+       means the registry is still empty, so there is nothing to wait for. */
+    if (!document.querySelector('[data-cc]')) {
+      fireLead({ planInterest, landingPage });
+    } else {
+      let attempts = 0;
+      const tryFire = () => {
+        attempts += 1;
+        if (window.fbq || window.gtag || attempts > 20) {
+          fireLead({ planInterest, landingPage });
+          return;
+        }
+        setTimeout(tryFire, 100);
+      };
+      tryFire();
+    }
+  })();
+</script>

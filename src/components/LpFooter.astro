@@ -1,5 +1,6 @@
 ---
 import { site, nap, routes } from '../data/site.ts';
+import { consentRegistry } from '../data/consent-registry.ts';
 
 /* Footer for the paid-traffic landing pages (`chromeless` on BaseLayout).
 
@@ -8,29 +9,53 @@ import { site, nap, routes } from '../data/site.ts';
    full footer's five service links are the biggest exit ramp on the site.
 
    What stays, and why it has to:
-   - the four legal pages (privacy is a legal requirement wherever a form
-     collects data; the Home Care Plan terms are the contract the page is
-     selling, so linking them is a trust asset as much as an obligation),
+   - the legal pages (privacy is a legal requirement wherever a form
+     collects data; the Home Care Plan terms are the contract a plan-selling
+     page is offering, so linking them is a trust asset as much as an
+     obligation), each opening in a new tab so following one never navigates
+     the visitor away from the page they came to convert on,
    - the trading address and the Companies Act disclosure line, identical to the
-     site footer so the NAP never differs by page (build standard §4),
-   - the Codebreak credit, which the site footer carries on every page.
+     site footer so the NAP never differs by page (build standard §4).
+
+   The Codebreak credit is DELIBERATELY ABSENT here (removed 25 Aug 2026): the
+   1:1 attention ratio on a landing page permits only the privacy policy,
+   cookie notice and plan/prize terms as outbound links, and an agency credit
+   is not one of them. It stays on the full site footer.
+
+   `links`: which legal pages to show, in order. Defaults to all four (every
+   /lp/ page before 25 Aug 2026 got this). Added for Variant A
+   (`/lp/service-care-boiler-draw/`), whose brief calls for Privacy and
+   Cookies only — flagged to Josh: dropping the Home Care Plan Terms link
+   from a page that is selling that exact plan removes the one place its
+   cancellation and 14-day cooling-off terms are linked from, so confirm this
+   is deliberate before this variant takes real spend.
 
    Not a <section>, so the audit's adjacent-background check does not see it. */
+interface Props {
+  links?: Array<'privacy' | 'terms' | 'homecareTerms' | 'cookies'>;
+}
+const { links = ['privacy', 'terms', 'homecareTerms', 'cookies'] } = Astro.props;
 const year = new Date().getFullYear(); // build-time, not client
+/* Same gate as Footer.astro and cookies.astro: nothing to manage while the
+   registry is empty. */
+const showConsentLink = consentRegistry.length > 0 && links.includes('cookies');
+
+const legalLinks = {
+  privacy: { href: routes.privacy, label: 'Privacy' },
+  terms: { href: routes.terms, label: 'Website Terms' },
+  homecareTerms: { href: routes.homecareTerms, label: 'Home Care Plan Terms' },
+  cookies: { href: routes.cookies, label: 'Cookies' },
+} as const;
 ---
 <footer class="lpftr">
   <div class="container lpftr__inner">
     <ul class="lpftr__legal">
-      <li><a href={routes.privacy}>Privacy</a></li>
-      <li><a href={routes.terms}>Website Terms</a></li>
-      <li><a href={routes.homecareTerms}>Home Care Plan Terms</a></li>
-      <li><a href={routes.cookies}>Cookies</a></li>
-      <li>
-        <span class="lpftr__credit">
-          Website by
-          <a href="https://www.codebreak.co.uk/websites/" target="_blank" rel="noopener noreferrer">Codebreak</a>
-        </span>
-      </li>
+      {links.map((key) => (
+        <li><a href={legalLinks[key].href} target="_blank" rel="noopener noreferrer">{legalLinks[key].label}</a></li>
+      ))}
+      {showConsentLink && (
+        <li><button type="button" class="lpftr__consentlink" data-open-consent>Cookie preferences</button></li>
+      )}
     </ul>
 
     <address class="lpftr__addr">
@@ -41,6 +66,9 @@ const year = new Date().getFullYear(); // build-time, not client
       &copy; {site.name} {year}. {site.legalName}, company no. {site.companyNo}, registered in {site.registeredIn}.
       Home Care Plans are service plans, not insurance.
     </p>
+    <!-- Required regardless of pixel status (build standard §7): Meta's own
+         ad review policy requires this on any page an ad points at. -->
+    <p class="lpftr__meta">This page is not part of, and is not endorsed by, Facebook™ or Meta.</p>
   </div>
 </footer>
 
@@ -62,8 +90,16 @@ const year = new Date().getFullYear(); // build-time, not client
   }
   .lpftr__legal a { color: var(--white); text-decoration: none; }
   .lpftr__legal a:hover { text-decoration: underline; text-underline-offset: 3px; }
-  .lpftr__credit { color: var(--text-muted-inverse); }
-  .lpftr__credit a { color: var(--text-muted-inverse); text-decoration: underline; text-underline-offset: 3px; }
+  .lpftr__consentlink {
+    font-family: var(--font-body);
+    font-size: inherit;
+    color: var(--white);
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  .lpftr__consentlink:hover { text-decoration: underline; text-underline-offset: 3px; }
 
   .lpftr__addr {
     font-style: normal;
@@ -75,5 +111,9 @@ const year = new Date().getFullYear(); // build-time, not client
     line-height: var(--leading-relaxed);
     color: var(--text-muted-inverse);
     max-width: 720px;
+  }
+  .lpftr__meta {
+    font-size: 12.5px;
+    color: var(--text-muted-inverse);
   }
 </style>

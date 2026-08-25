@@ -81,6 +81,14 @@ export const routes = {
      website terms, so they get their own page rather than being buried inside
      /terms/. */
   homecareTerms: '/homecare-plan-terms/',
+  /* The boiler-draw prize terms, separate from the Home Care Plan contract
+     terms above. First added 25 Aug 2026 at `/prize-draw-terms/` so the
+     landing pages' "full terms" link had a real destination instead of an
+     in-page promise to publish later; superseded the same day by the full
+     numbered-clause version at `/lp/boiler-draw-terms/` (Josh's brief),
+     which is noindex/chromeless like the campaign pages rather than a
+     site-wide indexed legal page. The old path 301s here (netlify.toml). */
+  drawTerms: '/lp/boiler-draw-terms/',
   cookies: '/cookies/',
   credits: '/credits/',
 } as const;

@@ -8,94 +8,107 @@ import PhotoSlot from '../../../components/PhotoSlot.astro';
 import FAQ from '../../../components/FAQ.astro';
 import EnquiryForm from '../../../components/EnquiryForm.astro';
 import Photo from '../../../components/Photo.astro';
-import { nap, site, ratings, homecareReviews } from '../../../data/site.ts';
+import { nap, site, ratings, homecareReviews, routes } from '../../../data/site.ts';
 
 /* =====================================================================
-   /lp/homecare-boiler-draw/ — Homecare BOILER-DRAW campaign landing page.
-   Rebuilt 12 August 2026 as a lean giveaway lead-gen page (Josh): the first
-   build read as a brochure. ONE message and ONE action. The prize leads: the
-   hero is prize image + headline + countdown + one big CTA that jumps to the
-   single form directly below it (the form is NOT in the hero — on a giveaway
-   the prize is the hook, and a form up there fought it and would not fit above
-   the mobile fold). The deadline is prominent, and half the old sections are gone.
+   /lp/service-care-boiler-draw/ — "Variant A": the PLAN-LED sibling of
+   `/lp/homecare-boiler-draw/`. Built 25 Aug 2026 to a brief from Josh.
 
-   WHAT WAS CUT, and why it is fine: the plan-picker quiz, the three-plan
-   pricing grid with buy buttons, the six-point service grid and the
-   without/with comparison table all came out. A visitor here has clicked an
-   advert and is weighing the prize and how easy it is to enter, not comparing
-   subscription tiers. Everything cut still lives on `/homecare-plans/` and the
-   evergreen `/lp/homecare/`, which are untouched.
+   THE DIFFERENCE FROM THE PRIZE-LED PAGE, and why it exists as a separate
+   file rather than a prop on that one: the traffic here clicked an ad
+   selling £276 of cover for £9.99 a month, a service included rather than
+   charged, or the same local engineers every year — the prize was a
+   postscript in the ad, so it stays a postscript here. The plan is the
+   offer; the draw is the deadline. `/lp/homecare-boiler-draw/` runs the
+   opposite way round (prize leads, plan follows) for the ad angle that
+   sells on the giveaway itself. Same design system, same plan facts, same
+   compliance rules, different argument — so most sections below share
+   markup and CSS with that page nearly verbatim (the countdown, the free
+   postal-entry box, "who you are dealing with", the prize draw terms), and
+   are flagged as such where they do.
 
-   RELATIONSHIP TO `/lp/homecare/`. That is the EVERGREEN homecare LP, run all
-   year and built to educate a problem-aware visitor. THIS is its time-boxed,
-   conversion-first sibling for the boiler draw. They share the design system
-   and the plan facts, not their structure.
+   COMPLIANCE, LOAD-BEARING, same as the sibling page: the form is "get
+   started, we will call you back", never "you are now entered" — entry is
+   an actual sign-up or a free postal entry, never a form submission. The
+   significant-conditions line, the free-postal-entry block and the terms
+   link are all present and prominent. No insurance/policy/claim/premium
+   wording. British English, no em dashes, no exclamation marks.
 
-   COMPLIANCE, LOAD-BEARING. The form is "get started, we will call you",
-   never "you are now entered". Entry into the draw happens only on an actual
-   paid sign-up (or a free postal entry), so the giveaway styling must not imply
-   the form itself enters anyone — the hero form's own microcopy says so. The
-   significant-conditions line, the free-postal-entry block with the office
-   address, and the terms link are all present and prominent, not buried.
-   No insurance/policy/claim/premium wording anywhere. British English, no
-   em dashes, no exclamation marks.
+   ONE JUDGEMENT CALL FLAGGED: the brief's hero subhead said "one free
+   call-out" without qualifying it. Every other place on this page that
+   states the entitlement (the offer stack, the FAQ) carries "one hour of
+   engineer time, parts quoted separately" — the wording Josh required,
+   "do not soften", when correcting the sibling page days earlier. The hero
+   is the most-read, most-skimmed surface on the page, so the same
+   qualifier has been added there too rather than left unqualified. Flagged
+   for Josh rather than silently changed without note.
 
-   FUNNEL. A form submission is interest, not entry, so it posts to
-   PUBLIC_GHL_WEBHOOK then to `/thank-you/` ("thanks, we have got your
-   details") and joins the lead/nurture path. UTMs travel with it via
-   EnquiryForm's read-at-submit attribution (no hidden fields, no device
-   storage — the deliberate PECR-safe pattern, see EnquiryForm.astro).
+   FIXED 25 Aug 2026, from a QA pass: the "How it works" step 2 line
+   ("...one free call-out, £9.99 a month") was the one remaining place on
+   this page stating the entitlement without the qualifier — a leftover the
+   build session missed. Now carries the same "(one hour of engineer time,
+   parts quoted separately)" wording as everywhere else, approved by Josh
+   in the same round that answered the outstanding Abbey questions.
 
-   ONE FORM, MANY CTAs. There is a single EnquiryForm, directly under the hero
-   (id="enquiry"). Every CTA on the page — the hero button, the between-section
-   rows, the final CTA — is a link to #enquiry that jumps to it. EnquiryForm's
-   own script handles submit/webhook/redirect.
+   OTHER OPEN ITEMS, carried over rather than invented: the offer-stack
+   small print (parts/priority-response wording) and the new "what is not
+   covered" FAQ answer are both marked [CONFIRM WITH ABBEY] in code
+   comments, not in visible copy — see `_Specs/01 OUTSTANDING FROM
+   CLIENT.md`. The proof-strip quote is a trimmed edit of Angela's verified
+   review, not a verbatim excerpt; flagged near its constant below, because
+   the project's standing rule is verbatim-only review quotes.
 
-   HELD, do not build yet: the self-serve sign-up/payment path and its "you are
-   in" thank-you (pending Amy on site payment); the landlord variant (pending
-   James). Tracking/consent is a separate task (Josh, 12 August 2026); nothing
-   tracking-related fires here.
-
-   PLACEHOLDERS pending the solicitor: the significant-conditions wording and
-   the full-terms link (see the constants below). Pending the prize being
-   confirmed: the hero prize image is a PhotoSlot, to be swapped for a clean
-   product shot of the actual boiler on a white background. Launch also needs
-   the live GHL webhook URL.
+   FOOTER: this variant's brief asks for Privacy and Cookies only, dropping
+   Website Terms and the Home Care Plan Terms that every other `/lp/` page
+   carries. Built as asked via `LpFooter`'s new `links` prop (see that
+   component), but flagged there too: this page sells the Home Care Plan
+   itself, and dropping the one link to that plan's own terms removes the
+   cancellation/14-day cooling-off disclosure from a page taking a
+   subscription sign-up. Confirm before this variant takes spend.
    ===================================================================== */
 
-const title = 'Win a New Boiler | Homecare from £9.99 a Month | Abbey Group';
+const title = '£276 of Boiler Cover for £9.99 a Month | Abbey Group';
 const description =
-  'Join an Abbey Group homecare plan before 26 September to enter our free draw to win a new boiler. Gas Safe cover in Whitby from £9.99 a month.';
+  'Service Care: £276 of annual boiler cover for £9.99 a month in Whitby. Join before 26 September to also enter our free boiler prize draw.';
 
 /* ---- Competition constants ----
-   ⚠️ `conditionsLine` is PLACEHOLDER wording. Replace with the solicitor's
-   exact short-form conditions before launch. The mechanic, the date and the
-   free route are correct; only the precise legal phrasing is pending.
-   Dates corrected 19 Aug 2026: 18 Aug decision moved the open day to
-   19 September and the draw itself to 26 September (see Launch Readiness
-   Checklist) — this page previously still had the old 19 Sep close date. */
+   Identical to `/lp/homecare-boiler-draw/`; see that file's history for why
+   DEADLINE_ISO carries an explicit +01:00 (BST) offset. */
 const DRAW_CLOSE = '26 September 2026';
 const DRAW_CLOSE_SHORT = '26 September';
-const DEADLINE_ISO = '2026-09-26T23:59:59';
+const DEADLINE_ISO = '2026-09-26T23:59:59+01:00';
 const conditionsLine =
   'No purchase necessary. Free postal entry available. One entry per person. Draw closes 26 September 2026. Terms apply.';
 const TERMS_HREF = '#draw-terms';
 
 /* Shared form attributes, so the hero form and the final-CTA form stay in step. */
-const FORM_SOURCE = 'lp-homecare-boiler-draw';
-const FORM_TAGS = 'homecare,boiler-cover,competition,comp-enquired';
+const FORM_SOURCE = 'lp-service-care-boiler-draw';
+const FORM_TAGS = 'homecare,service-care,competition,comp-enquired';
 
-/* Two verified reviews for the short trust block, verbatim from the master
-   (convention 8). Angela evidences priority response, Dan the whole job. */
+/* Two verified reviews for the "who you are dealing with" section, identical
+   selection to the sibling page (convention 8). */
 const trustReviews = homecareReviews.filter((r) => r.name === 'Angela' || r.name === 'Dan McDermott');
 
-/* Short, competition-specific FAQ. Four questions, no more. Kept local rather
-   than reusing the evergreen set because these answer the draw, not the plans.
-   No page-level FAQPage schema is emitted (this is an LP). */
+/* ⚠️ PROOF STRIP QUOTE — this is a trimmed edit of Angela's Google review
+   ("As always reliable and efficient. They came within hours when I had no
+   heating. They have a home plan that covers servicing and one callout per
+   year taking the sting out of a big bill."), not a verbatim excerpt. The
+   project's standing rule (convention 8, `_Specs/06`) is verbatim-only
+   review quotes — flagging rather than silently "fixing" it, since the
+   brief gave this exact wording. If it needs to be verbatim, the source
+   sentence to use unedited is: "They came within hours when I had no
+   heating." */
+const proofQuote = 'They came within hours when I had no heating. The plan takes the sting out of a big bill.';
+const proofReview = homecareReviews.find((r) => r.name === 'Angela');
+
+/* Six questions: the four already answered on the sibling page (kept
+   verbatim, including its 25 Aug 2026 call-out correction), plus two new
+   ones for this plan-led argument. No page-level FAQPage schema (this is
+   an LP). */
 const drawFaqs = [
   {
     q: 'What does £9.99 a month cover?',
-    a: 'Your annual boiler service, a gas safety certificate, a heating health check, priority response and one free call-out, every year you are covered. It is a service plan looked after by the same local team.',
+    a: 'Your annual boiler service, a gas safety certificate, a heating health check and priority response, every year you are covered. One free call-out a year, one hour of engineer time included, parts quoted separately. It is a service plan looked after by the same local team.',
   },
   {
     q: 'How do I enter the draw?',
@@ -109,6 +122,15 @@ const drawFaqs = [
     q: 'Can I cancel?',
     a: 'Yes, any time. There is no minimum term and no cancellation fee, and if you change your mind within 14 days you get a full refund.',
   },
+  {
+    /* ⚠️ [CONFIRM WITH ABBEY] final wording, per the brief. */
+    q: 'What is not covered?',
+    a: 'Your plan covers the annual service, gas safety certificate, flue gas analysis, filter clean, radiator balance, health check and one call-out a year with one hour of engineer time. Parts, and any second call-out in the same year, are charged separately, and we will always tell you the cost before we do the work. Faults that already exist when you join are not covered.',
+  },
+  {
+    q: 'Will I get a hard sell on the call?',
+    a: 'No. We ring, explain the plan, answer your questions, and set you up if you want it. If you do not, that is the end of it.',
+  },
 ];
 ---
 <BaseLayout
@@ -117,34 +139,29 @@ const drawFaqs = [
   noindex={true}
   chromeless={true}
   division="homecare"
+  footerLinks={['privacy', 'cookies']}
 >
-  <!-- 1. HERO — prize leads. The form is NOT in the hero (Josh, 12 August
-       2026): on a giveaway the prize is the emotional driver, and a four-field
-       form up here fought it and would not fit above the mobile fold alongside
-       the headline and prize image. So the hero is prize image + headline +
-       countdown + one big CTA that jumps to the form directly below. That keeps
-       the CTA unmistakably above the fold on mobile, where most traffic lands.
-
-       Grid areas, not source order: the MOBILE stack is lead, panel, foot, so
-       the headline, countdown and CTA button come first (above the fold) and the
-       prize image sits just under them. Desktop keeps copy+CTA left, image right. -->
+  <!-- 1. HERO — plan-led. £276 of value, £9.99 a month, is the offer; the
+       draw is a postscript, stated once and with its value visible (the
+       brief's own note: "it is currently only in the footer terms and it
+       is the number that makes £9.99 look small"). Same grid/countdown
+       mechanics as the sibling page. -->
   <section class="hero" id="entry">
     <div class="container hero__grid">
       <div class="hero__lead">
-        <p class="hero__eyebrow">Abbey Group homecare · Whitby</p>
-        <h1 class="hero__h1">Win a New Boiler for Your Home</h1>
-        <!-- ⚠️ Add the real, verifiable prize value when confirmed
-             (for example "a boiler supplied and fitted, worth £X"). Do NOT ship
-             a placeholder figure: an unverifiable prize value is a compliance
-             risk on a prize draw. -->
+        <p class="hero__eyebrow">Abbey Home Care, Whitby</p>
+        <h1 class="hero__h1">£276 of boiler cover, for £9.99 a month</h1>
+        <!-- ⚠️ Judgement call, see the file header: the brief's subhead said
+             "one free call-out" unqualified. The parenthetical is added so
+             the hero does not contradict the offer stack and FAQ below it,
+             per Josh's "do not soften this" ruling on the sibling page. -->
         <p class="hero__sub">
-          Join an Abbey Group homecare plan before 26 September and you are entered into the draw
-          for a new Ideal Logic Max boiler, worth £2,800, supplied and installed by Abbey Group.
-          Cover starts at £9.99 a month.
+          Annual service, gas safety certificate, health check and one free call-out (one
+          hour of engineer time, parts quoted separately), from the same Whitby engineers
+          every year. Join Service Care before {DRAW_CLOSE_SHORT} and you are also in the
+          draw for a brand new Ideal Logic Max boiler, worth £2,800, fitted free.
         </p>
 
-        <!-- Deadline, prominent. The label is the no-JS fallback; the countdown
-             is filled in and revealed by the script at the foot of the page. -->
         <div class="cd" data-deadline={DEADLINE_ISO}>
           <span class="cd__label">Entries close {DRAW_CLOSE_SHORT}</span>
           <span class="cd__timer" hidden>
@@ -156,53 +173,127 @@ const drawFaqs = [
 
         <div class="hero__cta">
           <Button href="#enquiry" size="lg">Get Me Covered</Button>
-          <a class="hero__call" href={`tel:${nap.phone.tel}`}>or call the office on {nap.phone.label}</a>
+          <a class="hero__call" href={`tel:${nap.phone.tel}`}>or call the Whitby office on {nap.phone.label}</a>
         </div>
+
+        <p class="hero__trust">
+          <Icon name="badge-check" size={16} />
+          <span>Gas Safe {site.gasSafeNo} · Whitby's own since 2008 · {ratings.google.value} from {ratings.google.count} Google reviews</span>
+        </p>
       </div>
 
       <div class="hero__panel">
-        <!-- ⚠️ PLACEHOLDER: swap for a clean product shot of the actual prize
-             boiler on a white background once the prize is confirmed. Portrait,
-             because a boiler is a tall unit and it balances the copy column.
-             Not a lifestyle kitchen photo. -->
+        <!-- ⚠️ PLACEHOLDER: swap for a clean product shot of the actual
+             prize boiler on a white background once the prize is confirmed.
+             Use this exact string as the <Photo> `alt` on swap:
+             "Ideal Logic Max boiler, the prize in the Abbey Home Care draw" -->
         <PhotoSlot
           class="hero__prize"
           ratio="4 / 5"
           radius="lg"
-          caption="Prize boiler image to follow: a clean product shot of the Ideal Logic Max, worth £2,800, on a white background"
+          caption="Ideal Logic Max boiler, the prize in the Abbey Home Care draw"
         />
       </div>
 
       <div class="hero__foot">
-        <p class="hero__trust">
-          <Icon name="star" size={16} />
-          <span>{ratings.google.value} from {ratings.google.count} Google reviews · Whitby's own since 2008</span>
-        </p>
         <p class="hero__cond">{conditionsLine} <a href={TERMS_HREF}>Full terms</a>.</p>
       </div>
     </div>
   </section>
 
-  <!-- 1b. THE FORM — the single conversion point, directly under the hero so the
-       hero CTA jumps straight to it. Every other CTA on the page targets it too
-       (#enquiry). It carries the load-bearing compliance line the hero form used
-       to: this is a callback request, and entry happens on joining, not on
-       submit. EnquiryForm's script wires it and posts to the webhook then
-       /thank-you/. -->
+  <!-- 2. PAIN — new. The reason the plan exists, before any figures. -->
+  <Section bg="white">
+    <div class="pain reveal">
+      <Eyebrow>Why the plan exists</Eyebrow>
+      <h2 class="h2">Boilers never break in June</h2>
+      <p class="pain__p">
+        They break on the coldest weekend of the year, which is exactly when every
+        engineer's diary in the county is already full.
+      </p>
+      <p class="pain__p">
+        So you ring round on a wet December morning, and the first date anyone can offer
+        you is a week on Thursday. Then the bill lands on top of it.
+      </p>
+      <p class="pain__p">
+        The £9.99 a month is not really for the service. The service is the bit you can
+        plan for. The £9.99 is for the day you cannot.
+      </p>
+      <a class="textcta" href="#enquiry">Get Me Covered</a>
+    </div>
+  </Section>
+
+  <!-- 3. OFFER STACK — new, and the most important section on the page: the
+       itemised value behind £9.99 a month, then the anchor (£276 struck
+       through against £9.99/mo) that makes the price look small. -->
+  <Section bg="sunken">
+    <div class="stack reveal">
+      <Eyebrow>What £9.99 a month gets you</Eyebrow>
+      <h2 class="h2">Everything included, every year</h2>
+
+      <ul class="stack__list">
+        <li><span>Full boiler service and gas safety certificate</span><b class="tnum">£96</b></li>
+        <li><span>Heating health check and filter clean</span><b class="tnum">£66</b></li>
+        <li><span>One free call-out, one hour of engineer time</span><b class="tnum">£114</b></li>
+        <li><span>Flue gas analysis, filter clean, radiators balanced</span><b class="tnum">Included</b></li>
+        <li><span>Priority response, weekdays</span><b class="tnum">Included</b></li>
+        <li><span>5% off any other work</span><b class="tnum">Included</b></li>
+        <li class="stack__total"><span>Total value</span><b class="tnum">£276</b></li>
+      </ul>
+
+      <div class="stack__anchor">
+        <div class="stack__arow stack__arow--was">
+          <span class="stack__alabel">Paid for separately</span>
+          <span class="stack__anum">£276</span>
+        </div>
+        <div class="stack__arow stack__arow--now">
+          <span class="stack__alabel">Service Care</span>
+          <span class="stack__anum stack__anum--now">£9.99<span class="stack__amo">/mo</span></span>
+          <span class="stack__athen">£119.88 a year</span>
+        </div>
+        <p class="stack__save">You save £156.</p>
+      </div>
+
+      <!-- ⚠️ [CONFIRM WITH ABBEY] wording per the brief, before publishing. -->
+      <p class="stack__small">
+        Parts are quoted separately and we will always tell you the cost before we do the
+        work. Priority response covers weekday call-outs, 9am to 5pm Monday to Friday.
+      </p>
+      <p class="stack__risk">No minimum term. Cancel any month you like. Full refund if you change your mind within 14 days.</p>
+
+      <div class="ctarow reveal">
+        <Button href="#enquiry" size="lg">Get Me Covered</Button>
+      </div>
+    </div>
+  </Section>
+
+  <!-- 4. PROOF STRIP — single line, immediately above the form. See the
+       ⚠️ note on `proofQuote` above: trimmed from Angela's review, not
+       verbatim. -->
+  <Section bg="white" pad="tight">
+    <p class="proof reveal">
+      <span class="proof__q">{proofQuote}</span>
+      <span class="proof__by">{proofReview?.name}, {proofReview?.source}</span>
+    </p>
+  </Section>
+
+  <!-- 5. THE FORM — the single conversion point. Every CTA on the page
+       jumps to it. -->
   <EnquiryForm
-    eyebrow="Enter in under a minute"
-    heading="Leave your details and we will call you back"
-    lead="We ring you back to set your plan up or talk it through, whichever you need. It takes under a minute, and you can also enter free by post. You enter the draw by joining a plan, not by sending this form."
+    eyebrow="Get started"
+    heading="Leave your number and we will call you back"
+    lead="We ring you back to set your plan up or just talk it through, whichever you need. It takes under five minutes, and you can also enter the draw free by post. You enter the draw by joining a plan, not by sending this form."
     source={FORM_SOURCE}
     tags={FORM_TAGS}
     submitLabel="Get Me Covered"
     bg="sunken"
-    redirect="/thank-you/"
+    redirect="/lp/thank-you/"
+    planInterest="Service Care"
+    microNote="We will only use your details to talk to you about your enquiry."
     fields={[
       { name: 'name', label: 'Full name', required: true, autocomplete: 'name' },
-      { name: 'phone', label: 'Phone', type: 'tel', required: true, autocomplete: 'tel' },
-      { name: 'email', label: 'Email', type: 'email', required: true, autocomplete: 'email' },
-      { name: 'postcode', label: 'Postcode', autocomplete: 'postal-code' },
+      { name: 'phone', label: 'Best number to reach you', type: 'tel', required: true, autocomplete: 'tel' },
+      { name: 'email', label: 'Email', required: true, type: 'email', autocomplete: 'email' },
+      { name: 'postcode', label: 'Postcode', required: true, autocomplete: 'postal-code' },
     ]}
   >
     <ul class="ef__risk">
@@ -211,37 +302,38 @@ const drawFaqs = [
       <li><Icon name="check" size={15} /><span>Full refund within 14 days</span></li>
     </ul>
     <p class="ef__talk">
-      Prefer to talk? Call the Whitby office on
+      Prefer to talk? Call
       <a class="tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>
       and a real person will answer.
     </p>
   </EnquiryForm>
 
-  <!-- 2. HOW IT WORKS — three short steps. -->
+  <!-- 6. HOW IT WORKS — reframed away from the raffle: covered first, in the
+       draw as well. The free-postal-entry box is unchanged from the
+       sibling page, wording and address exactly as it is there. -->
   <Section bg="white">
     <div class="how__head reveal">
       <Eyebrow>How it works</Eyebrow>
-      <h2 class="h2">Three steps to your chance at a new boiler</h2>
+      <h2 class="h2">Covered in three steps, and in the draw as well</h2>
     </div>
     <ol class="how__steps reveal">
       <li class="how__step">
         <span class="how__num tnum" aria-hidden="true">1</span>
-        <h3 class="how__t">Join a homecare plan</h3>
-        <p class="how__d">Start any plan before {DRAW_CLOSE_SHORT}, from £9.99 a month. We set it up with you on a quick call.</p>
+        <h3 class="how__t">Leave your number</h3>
+        <p class="how__d">We ring you back, usually the same day. Under five minutes to set up, nothing to fill in online.</p>
       </li>
       <li class="how__step">
         <span class="how__num tnum" aria-hidden="true">2</span>
-        <h3 class="how__t">You are entered</h3>
-        <p class="how__d">Once your plan is active we add you to the draw. One entry per person, and there is nothing else to fill in.</p>
+        <h3 class="how__t">Your cover starts</h3>
+        <p class="how__d">Annual service, gas safety certificate, health check and one free call-out (one hour of engineer time, parts quoted separately), £9.99 a month. Cancel any month you like.</p>
       </li>
       <li class="how__step">
         <span class="how__num tnum" aria-hidden="true">3</span>
-        <h3 class="how__t">Winner drawn {DRAW_CLOSE_SHORT}</h3>
-        <p class="how__d">We draw one winner when entries close and fit their new boiler. A chance to win, not a guarantee.</p>
+        <h3 class="how__t">You are in the draw</h3>
+        <p class="how__d">Every active plan before {DRAW_CLOSE_SHORT} goes into the draw for a brand new Ideal Logic Max boiler, worth £2,800, fitted free. One winner, drawn after entries close. One entry per person.</p>
       </li>
     </ol>
 
-    <!-- Free postal route, genuinely on the page (no purchase necessary). -->
     <div class="postal reveal">
       <div>
         <h3 class="postal__t">Prefer not to join? Enter free by post</h3>
@@ -260,10 +352,8 @@ const drawFaqs = [
     </div>
   </Section>
 
-  <!-- 3. WHY ABBEY — short: the "not a call centre" line, a real team/James photo
-       (only James has a headshot; the rest of the team is shown as they actually
-       are, in the group-and-fleet photograph — same rule as `/lp/homecare/`, no
-       stock faces), plus two real reviews. -->
+  <!-- 7. WHO YOU ARE DEALING WITH — unchanged from the sibling page, per the
+       brief ("It is the strongest thing on the page... Do not touch it"). -->
   <Section bg="sunken">
     <div class="why">
       <div class="why__copy reveal">
@@ -310,10 +400,10 @@ const drawFaqs = [
     </div>
   </Section>
 
-  <!-- 4. THE OFFER — retired as a discount (17 Aug 2026): there is no £48 and no
-       separate joining charge. Service Care is £9.99 a month and simply includes
-       the annual service, this one and every one after. Presented as an honest
-       one-off-vs-plan choice. -->
+  <!-- 8. JOINING OFFER — kept from the sibling page, with one correction:
+       "Start Service Care" → "Join Service Care", to match the verb used
+       everywhere else on this page (hero, final CTA). Everything else,
+       including the £96-struck-through card, is unchanged. -->
   <Section bg="dark" bleed>
     <div class="offer">
       <img class="offer__mark" src="/brand/crescent/mark-homecare.svg" alt="" aria-hidden="true" width="360" height="378" />
@@ -322,7 +412,7 @@ const drawFaqs = [
           <Eyebrow tone="inverse">The joining offer</Eyebrow>
           <h2 class="offer__h2">Already booking a service? Turn it into cover for good.</h2>
           <p class="offer__lead">
-            The engineer is coming anyway. Start Service Care instead of paying for a one-off
+            The engineer is coming anyway. Join Service Care instead of paying for a one-off
             visit, and this service is included today, and every year after, for £9.99 a month.
           </p>
           <p class="offer__guar">
@@ -352,23 +442,22 @@ const drawFaqs = [
     </div>
   </Section>
 
-  <!-- 5. SHORT FAQ — four questions. FAQ renders its own section (white). -->
+  <!-- 9. FAQ — six questions: four kept verbatim from the sibling page, two
+       new for this plan-led argument. -->
   <FAQ
     eyebrow="Good to know"
-    heading="Four quick questions"
+    heading="Six quick questions"
     items={drawFaqs}
     bg="white"
   />
 
-  <!-- 6. FINAL CTA — a button back to the single form, for readers who reach the
-       end. Not a second form: the page has one form (under the hero), and every
-       CTA jumps to it. -->
+  <!-- 10. FINAL CTA -->
   <Section bg="sunken">
     <div class="final reveal">
-      <h2 class="final__h2">Ready for your chance at a new boiler?</h2>
+      <h2 class="final__h2">Ready to get covered before the draw closes?</h2>
       <p class="final__lead">
-        Join before {DRAW_CLOSE}, from £9.99 a month, and you are entered into the draw. No
-        purchase necessary, and you can also enter free by post.
+        Join Service Care from £9.99 a month before {DRAW_CLOSE} and you are entered into the
+        draw. No purchase necessary, and you can also enter free by post.
       </p>
       <div class="ctarow ctarow--center">
         <Button href="#enquiry" size="lg">Get Me Covered</Button>
@@ -377,10 +466,9 @@ const drawFaqs = [
     </div>
   </Section>
 
-  <!-- DRAW TERMS — the "Full terms" anchor target and the foot-of-page
-       restatement of the significant conditions. Placeholder wording pending
-       the solicitor; the significant conditions are carried in full so the page
-       stands on its own, and `TERMS_HREF` is never a dead link. -->
+  <!-- 11. PRIZE DRAW TERMS — kept from the sibling page, unchanged, including
+       its 25 Aug 2026 fix linking to the full terms page instead of a
+       "will be published later" note. -->
   <Section bg="white" id="draw-terms">
     <div class="drawterms">
       <h2 class="drawterms__h2">Prize draw terms</h2>
@@ -390,10 +478,15 @@ const drawFaqs = [
         <li>Enter by joining any Abbey Group homecare plan that is active before entries close on {DRAW_CLOSE}, or free by post to the address above.</li>
         <li>One entry per person. The prize is one new Ideal Logic Max boiler (combi, system or heat-only, whichever suits the winner's property), natural gas or LPG only, with a Wifi HALO thermostat, supplied and installed by Abbey Group, worth £2,800. A cash alternative of £2,500 may be offered if the property is unsuitable for a boiler or the winner prefers it.</li>
         <li>The winner is drawn after entries close and will be contacted using the details provided.</li>
-        <li>Full terms and conditions are available from the office on request, and the complete written terms will be published here before the campaign goes live.</li>
+        <li>Read the <a href={routes.drawTerms}>full prize draw terms</a>, or ask for them at the office.</li>
       </ul>
     </div>
   </Section>
+
+  <!-- 12. FOOTER — handled by BaseLayout's `footerLinks` prop above (Privacy
+       and Cookies only, plus the company details LpFooter always shows).
+       See the file header for the compliance flag on dropping the Home
+       Care Plan Terms link from a page selling that plan. -->
 </BaseLayout>
 
 <style>
@@ -416,9 +509,6 @@ const drawFaqs = [
     background: var(--page-accent, var(--orange-500)); opacity: 0.9;
   }
 
-  /* Desktop: copy left (lead over foot), prize+form panel right. Mobile: the
-     source order (lead, panel, foot) stacks, so headline, deadline and form
-     land above the fold. */
   .hero__grid {
     position: relative;
     display: grid;
@@ -429,10 +519,7 @@ const drawFaqs = [
     align-items: start;
   }
   .hero__lead { grid-area: lead; }
-  /* Flex column so the prize image and form can be re-ordered when the hero
-     stacks (mobile): form first, image below, so the form is reachable without
-     scrolling (change ticket 1.4). Desktop keeps source order: image over form. */
-  .hero__panel { grid-area: panel; display: flex; flex-direction: column; }
+  .hero__panel { grid-area: panel; display: flex; flex-direction: column; justify-content: center; }
   .hero__foot { grid-area: foot; align-self: end; }
 
   .hero__eyebrow {
@@ -447,12 +534,12 @@ const drawFaqs = [
     letter-spacing: var(--tracking-tight); text-wrap: balance; color: var(--white);
   }
   .hero__sub {
-    margin-top: 18px; max-width: 46ch;
+    margin-top: 18px; max-width: 48ch;
     font-size: var(--text-md); line-height: var(--leading-relaxed);
     color: var(--text-body-inverse);
   }
 
-  /* Deadline / countdown */
+  /* Deadline / countdown — identical to the sibling page. */
   .cd {
     display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
     margin-top: 24px; padding: 14px 18px;
@@ -475,36 +562,96 @@ const drawFaqs = [
   .cd__box b { font-size: 20px; font-weight: var(--weight-bold); line-height: 1; color: var(--white); font-family: var(--font-body); }
   .cd__box i { margin-top: 3px; font-style: normal; font-size: 10px; letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted-inverse); }
 
-  /* Hero CTA: the big button that jumps to the form, plus a quiet call link. */
   .hero__cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 28px; }
   .hero__call { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--text-body-inverse); text-decoration: underline; text-underline-offset: 3px; }
   .hero__call:hover { color: var(--white); }
 
-  /* Panel: just the portrait prize image, filling the right column. `:global`
-     because the class is passed INTO PhotoSlot, so the element carries
-     PhotoSlot's scope id, not this page's (Astro scoping gotcha). */
-  .hero__panel { justify-content: center; }
   .hero__panel :global(.hero__prize) { width: 100%; max-width: 420px; margin-inline: auto; }
 
-  .hero__foot { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
-  .hero__trust { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: var(--weight-semibold); color: var(--text-body-inverse); }
+  .hero__trust { display: flex; align-items: center; gap: 8px; margin-top: 22px; font-size: 13.5px; font-weight: var(--weight-semibold); color: var(--text-body-inverse); }
   .hero__trust :global(svg) { color: var(--page-accent-on-dark, var(--orange-400)); flex: none; }
+
+  .hero__foot { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
   .hero__cond { font-size: 12px; line-height: var(--leading-relaxed); color: var(--text-muted-inverse); max-width: 62ch; }
   .hero__cond a { color: var(--page-accent-on-dark, var(--orange-400)); font-weight: var(--weight-semibold); text-decoration: underline; }
 
-  /* ---- shared: CTA row ------------------------------------------------- */
+  /* ---- shared: CTA row --------------------------------------------------- */
   .ctarow { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 20px; margin-top: 40px; }
   .ctarow__note { font-size: 13.5px; font-weight: var(--weight-bold); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--page-accent-ink, var(--orange-800)); }
   .ctarow--dark { margin-top: 36px; position: relative; }
   .ctarow--dark .ctarow__note { color: var(--page-accent-on-dark, var(--orange-400)); }
   .ctarow--center { justify-content: center; margin-top: 28px; }
 
-  /* ---- 6. FINAL CTA ---------------------------------------------------- */
-  .final { max-width: 640px; margin-inline: auto; text-align: center; }
-  .final__h2 { font-size: clamp(28px, 3vw, 40px); color: var(--text-heading); }
-  .final__lead { margin-top: 14px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
+  /* ---- 2. PAIN ----------------------------------------------------------- */
+  .pain { max-width: 640px; margin-inline: auto; text-align: center; }
+  .pain__p { margin-top: 18px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
+  .pain__p:first-of-type { margin-top: 18px; }
+  .textcta {
+    display: inline-block; margin-top: 28px;
+    font-size: var(--text-base); font-weight: var(--weight-bold);
+    color: var(--page-accent-ink, var(--orange-800));
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .textcta:hover { color: var(--text-heading); }
 
-  /* ---- 2. HOW IT WORKS ------------------------------------------------- */
+  /* ---- 3. OFFER STACK ----------------------------------------------------- */
+  .stack { max-width: 720px; margin-inline: auto; }
+  .stack__list { margin-top: 28px; display: flex; flex-direction: column; }
+  .stack__list li {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
+    padding: 13px 0; border-bottom: 1px solid var(--border-subtle);
+    font-size: 15px; color: var(--text-body);
+  }
+  .stack__list li span { flex: 1; }
+  .stack__list li b { flex: none; font-weight: var(--weight-semibold); color: var(--text-heading); }
+  .stack__total {
+    margin-top: 4px; border-bottom: 0 !important; padding-top: 16px !important;
+    border-top: 2px solid var(--text-heading) !important;
+  }
+  .stack__total span, .stack__total b { font-size: 17px; font-weight: var(--weight-bold); color: var(--text-heading); }
+
+  .stack__anchor {
+    margin-top: 32px; padding: 26px 28px;
+    background: var(--white); border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl); box-shadow: var(--shadow-md);
+  }
+  .stack__arow { display: flex; flex-direction: column; gap: 2px; }
+  .stack__arow--now { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+  .stack__alabel { font-size: 12.5px; font-weight: var(--weight-semibold); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted); }
+  .stack__anum { font-size: 28px; font-weight: var(--weight-bold); color: var(--text-muted); text-decoration: line-through; }
+  .stack__anum--now { font-size: 44px; color: var(--page-accent-ink, var(--orange-800)); text-decoration: none; }
+  .stack__amo { font-size: 18px; font-weight: var(--weight-semibold); color: var(--text-muted); }
+  .stack__athen { font-size: var(--text-sm); color: var(--text-muted); margin-top: 2px; }
+  .stack__save {
+    margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border-default);
+    font-size: 19px; font-weight: var(--weight-bold); color: var(--text-heading);
+  }
+
+  .stack__small { margin-top: 20px; font-size: 13px; line-height: var(--leading-relaxed); color: var(--text-muted); }
+  .stack__risk { margin-top: 10px; font-size: 14.5px; font-weight: var(--weight-medium); color: var(--text-heading); }
+
+  /* ---- 4. PROOF STRIP ----------------------------------------------------- */
+  .proof {
+    display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center;
+    gap: 8px 10px; text-align: center;
+    font-size: 15px; line-height: var(--leading-relaxed); color: var(--text-heading);
+  }
+  .proof__q { font-weight: var(--weight-medium); }
+  .proof__by { font-size: var(--text-sm); font-weight: var(--weight-bold); color: var(--text-muted); }
+
+  /* ---- FORM SLOT (EnquiryForm) -------------------------------------------- */
+  /* Same fix as the sibling page: this page's own LpBar measures 75px, so
+     the shared `body[data-chromeless] :target { scroll-margin-top: 24px }`
+     rule in global.css is not enough to clear it on a #enquiry jump. */
+  :global(#enquiry) { scroll-margin-top: 99px; }
+
+  .ef__risk { display: flex; flex-direction: column; gap: 9px; margin-top: 4px; }
+  .ef__risk li { display: flex; gap: 10px; align-items: center; font-size: 14.5px; font-weight: var(--weight-medium); color: var(--text-heading); }
+  .ef__risk :global(svg) { color: var(--page-accent-ink, var(--orange-800)); flex: none; }
+  .ef__talk { font-size: var(--text-sm); line-height: var(--leading-relaxed); color: var(--text-muted); }
+  .ef__talk a { color: var(--text-link); font-weight: var(--weight-bold); white-space: nowrap; }
+
+  /* ---- 6. HOW IT WORKS ---------------------------------------------------- */
   .how__head { max-width: 640px; margin-bottom: 36px; }
   .how__steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .how__step {
@@ -534,7 +681,7 @@ const drawFaqs = [
     padding-left: 22px; border-left: 3px solid var(--page-accent, var(--orange-500));
   }
 
-  /* ---- 3. WHY ABBEY ---------------------------------------------------- */
+  /* ---- 7. WHO YOU ARE DEALING WITH, unchanged ---------------------------- */
   .why { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
   .why__lead { margin-top: 16px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
   .why__facts { display: flex; flex-direction: column; gap: 12px; margin-top: 22px; }
@@ -555,7 +702,7 @@ const drawFaqs = [
   .why__by { margin-top: 12px; font-size: var(--text-sm); color: var(--text-muted); }
   .why__by span { font-weight: var(--weight-bold); color: var(--text-heading); }
 
-  /* ---- 4. OFFER (dark band) -------------------------------------------- */
+  /* ---- 8. JOINING OFFER (dark band), unchanged --------------------------- */
   .offer { position: relative; overflow: hidden; padding-block: 80px; background: radial-gradient(900px 560px at 82% 25%, color-mix(in oklch, var(--page-accent-glow, var(--orange-900)) 55%, transparent) 0%, transparent 65%); }
   .offer__mark { position: absolute; left: -100px; top: 42%; transform: translateY(-50%); width: 360px; opacity: 0.1; pointer-events: none; }
   .offer__inner { position: relative; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
@@ -573,7 +720,7 @@ const drawFaqs = [
     border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); padding: 28px; backdrop-filter: blur(6px);
   }
   .offer__row { display: flex; flex-direction: column; gap: 2px; }
-  .offer__row--now, .offer__row--plan { padding-top: 18px; margin-top: 16px; border-top: 1px solid var(--border-inverse); }
+  .offer__row--now { padding-top: 18px; margin-top: 16px; border-top: 1px solid var(--border-inverse); }
   .offer__label { font-size: 12.5px; font-weight: var(--weight-semibold); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted-inverse); }
   .offer__num { font-size: 40px; font-weight: var(--weight-bold); line-height: 1.05; color: var(--white); }
   .offer__row--was .offer__num { font-size: 28px; color: var(--text-muted-inverse); text-decoration: line-through; text-decoration-color: color-mix(in oklch, var(--white) 45%, transparent); }
@@ -581,14 +728,12 @@ const drawFaqs = [
   .offer__mo { font-size: 20px; font-weight: var(--weight-semibold); color: var(--text-muted-inverse); }
   .offer__then { font-size: var(--text-sm); color: var(--text-body-inverse); margin-top: 2px; }
 
-  /* ---- FORM SLOT (final EnquiryForm) ---------------------------------- */
-  .ef__risk { display: flex; flex-direction: column; gap: 9px; margin-top: 4px; }
-  .ef__risk li { display: flex; gap: 10px; align-items: center; font-size: 14.5px; font-weight: var(--weight-medium); color: var(--text-heading); }
-  .ef__risk :global(svg) { color: var(--page-accent-ink, var(--orange-800)); flex: none; }
-  .ef__talk { font-size: var(--text-sm); line-height: var(--leading-relaxed); color: var(--text-muted); }
-  .ef__talk a { color: var(--text-link); font-weight: var(--weight-bold); white-space: nowrap; }
+  /* ---- 10. FINAL CTA ------------------------------------------------------ */
+  .final { max-width: 640px; margin-inline: auto; text-align: center; }
+  .final__h2 { font-size: clamp(28px, 3vw, 40px); color: var(--text-heading); }
+  .final__lead { margin-top: 14px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
 
-  /* ---- DRAW TERMS ------------------------------------------------------ */
+  /* ---- 11. DRAW TERMS ------------------------------------------------------ */
   .drawterms { max-width: 820px; }
   .drawterms__h2 { font-size: clamp(24px, 2.2vw, 30px); color: var(--text-heading); }
   .drawterms__line { margin-top: 14px; font-size: var(--text-base); font-weight: var(--weight-medium); color: var(--text-heading); }
@@ -596,10 +741,8 @@ const drawFaqs = [
   .drawterms__list li { padding-left: 18px; position: relative; font-size: 14px; line-height: var(--leading-relaxed); color: var(--text-body); }
   .drawterms__list li::before { content: ''; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; border-radius: 50%; background: var(--page-accent, var(--orange-500)); }
 
-  /* ---- RESPONSIVE ------------------------------------------------------ */
+  /* ---- RESPONSIVE ---------------------------------------------------------- */
   @media (max-width: 1024px) {
-    /* Stacked: headline, countdown and the CTA button (all in lead) come first
-       and above the fold; the prize image sits just under them. */
     .hero__grid { grid-template-columns: 1fr; grid-template-areas: "lead" "panel" "foot"; row-gap: 24px; }
     .hero__sub { max-width: none; }
     .hero__panel :global(.hero__prize) { max-width: 340px; }
@@ -611,20 +754,17 @@ const drawFaqs = [
     .how__steps { grid-template-columns: 1fr; }
     .postal { grid-template-columns: 1fr; gap: 16px; }
     .postal__addr { padding-left: 0; padding-top: 14px; border-left: 0; border-top: 1px solid var(--border-subtle); }
+    .stack__list li { font-size: 14px; }
   }
   @media (max-width: 700px) {
     .hero { padding-top: 88px; }
-    /* Cap the portrait prize image on mobile so the section is not over-tall. */
     .hero__panel :global(.hero__prize) { aspect-ratio: 3 / 2 !important; max-width: 300px; }
     .hero__cta :global(.btn) { flex: 1 1 auto; }
   }
 </style>
 
 <script>
-  /* Countdown to the draw close. The `.cd__label` text is the no-JS fallback;
-     this fills the day/hour/minute boxes and reveals them, and switches the
-     label to a closed state once the deadline passes. Date.now() is fine in a
-     browser page script. */
+  /* Countdown to the draw close — identical to the sibling page. */
   (function () {
     const el = document.querySelector<HTMLElement>('.cd');
     if (!el) return;

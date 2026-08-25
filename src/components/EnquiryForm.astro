@@ -2,13 +2,32 @@
 import Section from './Section.astro';
 import Eyebrow from './Eyebrow.astro';
 import Button from './Button.astro';
-import { routes } from '../data/site.ts';
+import { routes, nap } from '../data/site.ts';
 
 /* Enquiry form — built to build-standard §8 (GHL webhook pattern):
    merges stored attribution (gclid/utm) into the payload, disables the
-   button with progress copy while in-flight, and always reaches the success
-   state. The webhook URL is read from PUBLIC_GHL_WEBHOOK; until GHL access is
-   granted it is unset, so the form validates + confirms without posting. */
+   button with progress copy while in-flight, and validates client-side
+   before it ever tries to send.
+
+   WEBHOOK URL, 25 Aug 2026 (Josh): reads `PUBLIC_GHL_WEBHOOK` first (the
+   env var every launch doc — LAUNCH.md, Outstanding B1 — already documents
+   setting in Netlify), and falls back to the literal string
+   `/GHL_WEBHOOK_URL` when that env var is unset, so there is always an
+   obvious, greppable placeholder in the request rather than a silent
+   no-op. Leading slash so it resolves the same way (site root, not
+   page-relative) no matter which page's form fires it. That placeholder
+   resolves to a same-origin 404, which is what drives the form into its
+   real failure path below until the env var is set — a feature, not a
+   bug: it proves the failure path actually works before a single real
+   lead depends on it.
+
+   SUCCESS VS FAILURE IS NOW REAL, not assumed. Before 25 Aug 2026 this
+   always reached the success state regardless of what the fetch did,
+   because the webhook did not exist yet and there was nothing to fail.
+   Once wiring a real destination is the point, "always succeeds" becomes
+   the exact failure mode the LP spec itself warns against — a lead
+   silently discarded while the page looks like it worked — so this now
+   checks `response.ok` and only proceeds to success on a true 2xx. */
 interface Field {
   name: string;
   label: string;
@@ -42,11 +61,26 @@ interface Props {
      visitor's answers to their device is not "strictly necessary" under PECR and
      there is no consent layer yet (LAUNCH.md, 30 July 2026). */
   planPickerTags?: boolean;
+  /** Overrides the fixed line beneath the submit button ("We will only use
+      your details to help with your enquiry. See our privacy policy."). The
+      privacy-policy link is always appended after it, so pass only the
+      sentence before it. */
+  microNote?: string;
+  /** A fixed plan name for pages that sell only one plan (e.g. "Landlord
+      Care"), as opposed to `planPickerTags`, which reads a plan the VISITOR
+      chose via the quiz. Sent to GHL as `planInterest`, and — when
+      `redirect` is also set — appended to the redirect URL as `?plan=`, so
+      a shared thank-you page can show the right plan's figures to the right
+      visitor without a server round trip. Omit on pages with no single
+      plan (e.g. the evergreen homecare page, which uses the picker instead). */
+  planInterest?: string;
 }
 const {
   heading, lead, source, tags, submitLabel, fields,
   bg = 'sunken', eyebrow = 'Get in touch',
   redirect, planPickerTags = false,
+  microNote = 'We will only use your details to help with your enquiry.',
+  planInterest,
 } = Astro.props;
 const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 ---
@@ -66,8 +100,19 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
       data-tags={tags}
       data-redirect={redirect}
       data-picker-tags={planPickerTags ? '' : undefined}
+      data-plan-interest={planInterest}
       novalidate
     >
+      <!-- Honeypot: invisible to a real visitor (off-screen, aria-hidden,
+           unreachable by Tab), but a simple bot that fills every field it
+           finds will fill this one too. A submission with this non-empty
+           is treated as spam and quietly dropped — see the script below.
+           No CAPTCHA, which the brief is explicit costs conversions. -->
+      <p class="ef__hp" aria-hidden="true">
+        <label for={`${formId}-company`}>Company</label>
+        <input id={`${formId}-company`} name="company" type="text" tabindex="-1" autocomplete="off" />
+      </p>
+
       <div class="ef__grid">
         {fields.map((f) => (
           <p class:list={['ef__field', { 'ef__field--full': f.full || f.type === 'textarea' }]}>
@@ -96,13 +141,19 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
       <Button type="submit" size="lg" class="ef__submit">{submitLabel}</Button>
       <p class="ef__micro">
-        We will only use your details to help with your enquiry. See our
+        {microNote} See our
         <a href={routes.privacy}>privacy policy</a>.
       </p>
 
       <p class="ef__success" role="status" hidden>
         Thanks, that is with us. A real person from the Whitby office will be in touch in
         working hours, Monday to Friday, 9am to 5pm.
+      </p>
+
+      <p class="ef__error" role="alert" hidden>
+        Something went wrong at our end. Please ring us on
+        <a href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a> and we will sort it in a
+        couple of minutes.
       </p>
     </form>
   </div>
@@ -158,6 +209,30 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
     font-size: var(--text-sm);
     font-weight: var(--weight-medium);
   }
+  .ef__error {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    background: color-mix(in oklch, var(--cta) 10%, var(--white));
+    border: 1px solid color-mix(in oklch, var(--cta) 40%, var(--white));
+    color: var(--ink-600);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-relaxed);
+  }
+  .ef__error a { color: var(--cta); font-weight: var(--weight-bold); white-space: nowrap; }
+
+  /* Honeypot: off-screen rather than `display:none`, because some bots
+     skip fields a stylesheet hides outright. Unreachable by keyboard or
+     screen reader (aria-hidden + tabindex="-1"), so no real visitor ever
+     knows it exists. */
+  .ef__hp {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
 
   @media (max-width: 860px) { .ef { grid-template-columns: 1fr; gap: 28px; } }
   @media (max-width: 520px) { .ef__grid { grid-template-columns: 1fr; } }
@@ -198,7 +273,45 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
     return found;
   };
 
-  const WEBHOOK = import.meta.env.PUBLIC_GHL_WEBHOOK as string | undefined;
+  /* See the component's file header: env var first, obvious literal
+     placeholder second, so there is never a silent no-op destination. */
+  const WEBHOOK = (import.meta.env.PUBLIC_GHL_WEBHOOK as string | undefined) || '/GHL_WEBHOOK_URL';
+
+  /* Client-side format checks beyond the browser's own `required`/`type`
+     handling, keyed by field NAME rather than a new prop — so every page
+     that happens to have a `phone` or `postcode` field gets them for free,
+     and a page without one is simply skipped. Loose on purpose: this is a
+     lead-capture form, not a bank, and "loose" was the postcode brief. */
+  const UK_PHONE = /^(?:0\d{10}|\+44\d{10})$/;
+  const UK_POSTCODE = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const validateFormat = (form: HTMLFormElement): boolean => {
+    let ok = true;
+    const phone = form.querySelector<HTMLInputElement>('[name="phone"]');
+    if (phone) {
+      const stripped = phone.value.replace(/\s+/g, '');
+      phone.value = stripped;
+      const invalid = stripped.length > 0 && !UK_PHONE.test(stripped);
+      phone.setCustomValidity(invalid ? 'Enter a UK phone number, for example 01947 821374 or 07000 000000.' : '');
+      if (invalid) ok = false;
+    }
+    const postcode = form.querySelector<HTMLInputElement>('[name="postcode"]');
+    if (postcode) {
+      const trimmed = postcode.value.trim();
+      const invalid = trimmed.length > 0 && !UK_POSTCODE.test(trimmed);
+      postcode.setCustomValidity(invalid ? 'Enter a UK postcode, for example YO21 3AJ.' : '');
+      if (invalid) ok = false;
+    }
+    const email = form.querySelector<HTMLInputElement>('[name="email"]');
+    if (email) {
+      const trimmed = email.value.trim();
+      const invalid = trimmed.length > 0 && !EMAIL.test(trimmed);
+      email.setCustomValidity(invalid ? 'Enter a valid email address.' : '');
+      if (invalid) ok = false;
+    }
+    return ok;
+  };
 
   /* The plan picker's answers, read from the DOM at submit and stored nowhere.
 
@@ -241,20 +354,47 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
   document.querySelectorAll<HTMLFormElement>('form[data-source]').forEach((form) => {
     const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
     const success = form.querySelector<HTMLElement>('.ef__success');
+    const error = form.querySelector<HTMLElement>('.ef__error');
     const submitLabel = submit?.querySelector('span')?.textContent ?? 'Send';
+
+    const setSending = (sending: boolean) => {
+      if (!submit) return;
+      submit.disabled = sending;
+      const span = submit.querySelector('span');
+      if (span) span.textContent = sending ? 'Sending…' : submitLabel;
+    };
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!form.reportValidity()) return;
+      if (error) error.hidden = true;
 
-      if (submit) {
-        submit.disabled = true;
-        const span = submit.querySelector('span');
-        if (span) span.textContent = 'Sending…';
+      /* Format checks run BEFORE reportValidity(), because they work by
+         setting custom validity messages that reportValidity() then shows
+         as the browser's own inline bubble — same mechanism as `required`,
+         no separate error UI needed for a bad phone or postcode. */
+      const formatOk = validateFormat(form);
+      if (!form.reportValidity() || !formatOk) return;
+
+      /* Honeypot: a real visitor can never have typed into a field that is
+         off-screen and unreachable by keyboard, so any value here means a
+         bot filled every input it could find. Pretend it worked — no error,
+         no post, no retry — so the bot has no signal to adjust and try
+         again. */
+      const honeypot = form.querySelector<HTMLInputElement>('[name="company"]');
+      if (honeypot && honeypot.value.trim().length > 0) {
+        setSending(true);
+        const redirect = form.dataset.redirect;
+        if (redirect) { window.location.assign(redirect); return; }
+        form.querySelectorAll('.ef__grid, .ef__submit, .ef__micro').forEach((el) => ((el as HTMLElement).hidden = true));
+        if (success) success.hidden = false;
+        return;
       }
+
+      setSending(true);
 
       const data: Record<string, unknown> = {};
       new FormData(form).forEach((v, k) => (data[k] = v));
+      delete data.company; // the honeypot field itself never travels
       const attribution = readAttribution();
 
       /* Quiz answers travel as extra tags (a field GHL already maps, per
@@ -264,36 +404,62 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
       const picker = form.dataset.pickerTags !== undefined ? readPicker() : null;
       const allTags = [form.dataset.tags, ...(picker?.answers ?? [])].filter(Boolean).join(',');
 
+      /* Field names below are the exact GHL custom-field names to create —
+         see the chat response for the full GHL setup this pairs with.
+         `source_page` is the page's own slug-style `source` (e.g.
+         `lp-landlord-care-boiler-draw`), not the raw pathname, so it reads
+         the same as a tag or a workflow filter would want it to. */
       const payload = {
         ...data,
-        source: form.dataset.source,
+        source_page: form.dataset.source,
         page: window.location.pathname,
         tags: allTags,
         ...(picker?.plan ? { recommendedPlan: picker.plan } : {}),
-        timestamp: new Date().toISOString(),
+        ...(form.dataset.planInterest ? { plan_interest: form.dataset.planInterest } : {}),
+        submitted_at: new Date().toISOString(),
         ...attribution,
       };
 
+      let ok = false;
       try {
-        if (WEBHOOK) {
-          await fetch(WEBHOOK, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            keepalive: true,
-          });
-        }
-      } catch { /* always resolve to the success state regardless */ }
+        const response = await fetch(WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          keepalive: true,
+        });
+        ok = response.ok;
+      } catch { ok = false; }
+
+      if (!ok) {
+        setSending(false);
+        if (error) error.hidden = false;
+        return;
+      }
 
       /* A landing page sends the visitor to a real URL, because that is what an
-         ad platform can count as a conversion. Same "always resolves" rule as
-         the inline path: the visitor has done their part either way. */
+         ad platform can count as a conversion.
+
+         `name` (first token only), `source` and `plan` (from `planInterest`)
+         travel as query params, not device storage, so a shared thank-you
+         page can personalise its heading and show the right plan's figures
+         without a server round trip — this is a static site, so there is no
+         other way to hand it that context. Nothing here is written to the
+         visitor's device, so it needs no consent gate. */
       const redirect = form.dataset.redirect;
-      if (redirect) { window.location.assign(redirect); return; }
+      if (redirect) {
+        const params = new URLSearchParams();
+        const firstName = String(data.name ?? '').trim().split(/\s+/)[0];
+        if (firstName) params.set('name', firstName);
+        if (form.dataset.source) params.set('source', form.dataset.source);
+        if (form.dataset.planInterest) params.set('plan', form.dataset.planInterest);
+        const qs = params.toString();
+        window.location.assign(qs ? `${redirect}${redirect.includes('?') ? '&' : '?'}${qs}` : redirect);
+        return;
+      }
 
       form.querySelectorAll('.ef__grid, .ef__submit, .ef__micro').forEach((el) => ((el as HTMLElement).hidden = true));
       if (success) success.hidden = false;
-      if (submit) { submit.disabled = false; const span = submit.querySelector('span'); if (span) span.textContent = submitLabel; }
     });
   });
 </script>

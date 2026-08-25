@@ -10,3 +10,24 @@
 # `/page/index.html`, which Netlify serves at `/page/` by default — this file
 # exists so the build command and Node version are explicit and versioned,
 # not left to Netlify's autodetection.
+
+# /lp/homecare-boiler-draw/ retired 25 Aug 2026 (Josh): superseded by
+# /lp/win-a-new-boiler/, the prize-led page paired with Variant A's fuller
+# body. Its source page was deleted, so this redirect is load-bearing, not
+# a belt-and-braces extra — without it the URL 404s. `force = true` so it
+# still applies even if a stale build ever leaves a file at that path.
+[[redirects]]
+  from = "/lp/homecare-boiler-draw/"
+  to = "/lp/win-a-new-boiler/"
+  status = 301
+  force = true
+
+# /prize-draw-terms/ retired 25 Aug 2026 (Josh): superseded by the full
+# numbered-clause version at /lp/boiler-draw-terms/. Never had ad spend or
+# indexing behind it, but the redirect costs nothing and closes off a URL
+# that briefly existed.
+[[redirects]]
+  from = "/prize-draw-terms/"
+  to = "/lp/boiler-draw-terms/"
+  status = 301
+  force = true

@@ -5,7 +5,13 @@ import Icon from './Icon.astro';
 
 /* FAQ accordion (native <details> — zero JS, keyboard-accessible).
    Pass the same items to schema.faqPage() in the page and hand the result
-   to BaseLayout `schemas` so the markup and FAQPage schema stay in sync. */
+   to BaseLayout `schemas` so the markup and FAQPage schema stay in sync.
+
+   Optional named slot "aside": at desktop the left column (eyebrow + heading)
+   is narrower than the accordion column and leaves empty space beneath the
+   heading. Pages with something worth putting there (e.g. a small risk-
+   reversal card) can pass it in; empty by default, so every other page that
+   uses this component is unaffected. */
 interface Props {
   eyebrow?: string;
   heading?: string;
@@ -22,6 +28,7 @@ const itemBg = bg === 'white' ? 'var(--surface-sunken)' : 'var(--white)';
     <div class="faq__head reveal">
       <Eyebrow>{eyebrow}</Eyebrow>
       <h2 class="faq__title">{heading}</h2>
+      <slot name="aside" />
     </div>
     <div class="faq__list reveal" style={`--faq-item-bg:${itemBg}`}>
       {items.map((it) => (
