@@ -5,6 +5,53 @@
 
 Living tick-list of what is done and what is still open. Update as items land.
 
+## Boiler-draw campaign build + two things parked for the next phase (25 August 2026)
+
+The three campaign landing pages, the shared `/lp/thank-you/`, the full
+`/lp/boiler-draw-terms/`, the GHL webhook wiring, and the cookie-consent +
+GA4/Meta tracking scaffolding are all built (see the campaign folder's
+`Launch Readiness Checklist.md` for the campaign-side status). Real hero
+images are in. Abbey's outstanding answers are folded in, and the draw terms
+have had a legal-hardening pass ahead of the solicitor.
+
+**Still blocking the campaign going live** (owners in brackets):
+
+- [ ] **GA4 property + Meta Pixel created for Abbey (Codebreak).** This is on
+      us to set up in Abbey's Google/Meta accounts. It cannot be done from the
+      codebase: it needs account access and business verification. The moment
+      the two IDs exist, wiring them is three edits (consent registry, the two
+      Netlify env vars, `legal.ts` processors) and the consent banner then goes
+      live on its own. Meta domain verification + Aggregated Event Measurement
+      have lead time, so start them alongside, not after.
+- [ ] **GHL webhook live.** Field mapping and custom fields done (Josh, 25 Aug).
+      Remaining: the variant-tagging If/Else, the notify/nurture workflow
+      actions, and setting `PUBLIC_GHL_WEBHOOK` in Netlify, then a live test.
+- [ ] **Solicitor pass** on `/lp/boiler-draw-terms/` and on the Home Care Plan
+      Terms landlord amendment (see below).
+- [ ] **Priority response, weekend or weekday** — Abbey to confirm; the site is
+      already weekday-only, so this is about the ad/email copy in the campaign
+      folder, not the site.
+- [ ] **Landlord Care terms.** `/homecare-plan-terms/` was amended (25 Aug) so
+      it no longer says owner-occupier / owned-property-only, which had
+      contradicted Landlord Care. It carries a visible "Amendment for review"
+      flag. This is a plain-language fix to remove the contradiction, NOT final
+      legal drafting: the solicitor and Abbey must confirm it, especially how
+      the landlord's Gas Safety (Installation and Use) Regulations 1998 duties
+      and tenant access sit alongside the Plan.
+
+**Parked for the next phase, once the campaign pages are signed off** (raised
+by Josh, 25 Aug, so they are not forgotten):
+
+1. **Site-wide tracking + consent activation.** The consent banner already lives
+   in `BaseLayout`, so it is site-wide by construction, not per-page: the one
+   registry/env-var flip that turns it on for the campaign turns it on
+   everywhere. No extra per-page work. Just needs the real IDs (above).
+2. **Main-site GHL automations.** The main site's forms (Contact, Homecare,
+   the service pages) already POST to the same `PUBLIC_GHL_WEBHOOK` pattern, so
+   they will flow to GHL once the env var is set, but they will want their own
+   workflow routing distinct from the campaign (different tags, different
+   follow-up, no draw logic). To be built when we move onto the main site.
+
 ## Repo now on GitHub, deploy still needs Netlify connected (5 August 2026)
 
 The repo was local-only with nothing pushed until today (see `08 BUILD

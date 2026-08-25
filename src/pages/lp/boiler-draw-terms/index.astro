@@ -22,17 +22,24 @@ import { nap, site, routes } from '../../../data/site.ts';
    irrelevant sidebar linking to Credits and Cookies from a page about a
    prize draw, and put the full site header on a noindex campaign page.
 
-   UPDATED 25 Aug 2026 with Abbey's answers. Four of the five original
-   pending items are now resolved and the pending boxes removed: clause 1
-   (address is 20 Skinner Street, not the brochure's 3 The Archway), clause 7
-   (nothing is excluded — a free boiler and a free installation of it, full
-   stop), clause 8 (drawn the week beginning 28 September 2026), clause 11
-   (cancelling before the draw does void the entry). Clause 9 is only
-   PARTLY resolved — Abbey confirmed a winner will always eventually be
-   found (so the prize is never simply unclaimed), but not the specific
-   number of days before a non-responding winner is redrawn, so a narrower
-   pending note stays on that one point. See the chat response for Abbey's
-   exact wording on each.
+   UPDATED 25 Aug 2026 with Abbey's answers, then a legal-hardening pass.
+   ALL pending items are now resolved, so the page carries no "awaiting
+   confirmation" boxes: clause 1 (address is 20 Skinner Street), clause 7
+   (nothing excluded — a free boiler and a free installation), clause 8
+   (drawn the week beginning 28 September), clause 9 (48-hour response window
+   before a redraw, Josh's call), clause 11 (cancelling voids the entry).
+
+   HARDENING PASS, same date, at Josh's request ("as close as possible to
+   the law"): added the standard CAP/consumer provisions a UK free prize
+   draw needs — eligibility exclusions for employees and their families
+   (clause 2), the equal-chance statement for the free route (clause 4),
+   installation subject to survey (clause 6), an independent/verifiable
+   random draw (clause 8), winner details available on request (clause 10),
+   and new clauses for liability (13), changes/cancellation (14) and
+   acceptance (15). STILL A PLAIN-LANGUAGE DRAFT, NOT FINAL LEGAL DRAFTING:
+   it is written to be as complete and correct as possible before the
+   solicitor's pass, not to replace it. 48 hours (clause 9) is on the tight
+   side of the norm; the solicitor should sanity-check it.
    ===================================================================== */
 
 const title = 'Boiler Prize Draw Terms | Abbey Group';
@@ -71,6 +78,10 @@ const description = 'The full terms and conditions of the Abbey Group boiler pri
           (Whitby and the surrounding area of North Yorkshire) at the time of entry. One
           entry is permitted per person, regardless of route.
         </p>
+        <p>
+          Employees of the promoter, their immediate families, and anyone else professionally
+          connected with this draw are not eligible to enter.
+        </p>
       </div>
 
       <div class="clause">
@@ -89,6 +100,10 @@ const description = 'The full terms and conditions of the Abbey Group boiler pri
           clearly marked "Boiler Draw entry", to the promoter's address given in clause 1.
           Postal entries must be <strong>received</strong> by the promoter before entries
           close. The postmark date does not count — only the date the entry actually arrives.
+        </p>
+        <p>
+          There is no purchase necessary to enter, and a postal entry has exactly the same
+          chance of winning as joining a plan.
         </p>
       </div>
 
@@ -110,6 +125,11 @@ const description = 'The full terms and conditions of the Abbey Group boiler pri
           where the winner prefers it. No alternative prize other than this cash alternative
           will be offered, and the prize is not transferable.
         </p>
+        <p>
+          The installation will be arranged directly with the winner at a mutually convenient
+          time, and is subject to a survey of the property to confirm the boiler can be fitted
+          safely and to the correct standard.
+        </p>
       </div>
 
       <div class="clause">
@@ -120,22 +140,19 @@ const description = 'The full terms and conditions of the Abbey Group boiler pri
       <div class="clause">
         <h2 class="clause__h"><span class="clause__n">8</span> How and when the winner is drawn</h2>
         <p>
-          The winner will be chosen at random from all valid entries after entries close on
-          26 September 2026, in the week beginning 28 September 2026.
+          The winner will be chosen at random from all valid entries by an independent person,
+          or by an independent computer process that produces a verifiably random result,
+          after entries close on 26 September 2026, in the week beginning 28 September 2026.
         </p>
       </div>
 
       <div class="clause">
         <h2 class="clause__h"><span class="clause__n">9</span> How the winner is contacted</h2>
         <p>
-          The winner will be contacted using the details provided at entry. If they do not
-          respond, the prize will be redrawn from the remaining valid entries, and this will
-          be repeated until it is claimed — a winner is always found.
-        </p>
-        <p class="pending">
-          <strong>Awaiting confirmation:</strong> the specific number of days a winner has to
-          respond before a redraw. Abbey has confirmed a winner is always eventually found;
-          the exact response window is the only remaining detail.
+          The winner will be contacted using the details provided at entry. If the winner does
+          not respond within 48 hours of the promoter first making contact, the promoter may
+          draw a replacement winner from the remaining valid entries, and this will be repeated
+          until the prize is claimed. A winner is always found.
         </p>
       </div>
 
@@ -145,6 +162,11 @@ const description = 'The full terms and conditions of the Abbey Group boiler pri
           By entering, you agree that the promoter may announce the winner's first name and
           general locality (for example, their town). The winner is not obliged to take part
           in any further publicity.
+        </p>
+        <p>
+          After the draw, the promoter will make the winner's first name and county available
+          to anyone who asks, by writing to the promoter's address in clause 1 within one month
+          of the closing date.
         </p>
       </div>
 
@@ -166,13 +188,42 @@ const description = 'The full terms and conditions of the Abbey Group boiler pri
       </div>
 
       <div class="clause">
-        <h2 class="clause__h"><span class="clause__n">13</span> Not a Meta promotion</h2>
-        <p>This promotion is in no way sponsored, endorsed, administered by, or associated with Meta.</p>
+        <h2 class="clause__h"><span class="clause__n">13</span> Liability</h2>
+        <p>
+          The promoter is not responsible for entries that are lost, delayed, damaged or not
+          received, whatever the cause. Nothing in these terms limits or excludes the
+          promoter's liability for death or personal injury caused by its negligence, for
+          fraud, or for anything else that cannot lawfully be limited or excluded. Subject to
+          that, the promoter is not liable for any loss or damage arising from entering the
+          draw or from accepting or using the prize.
+        </p>
       </div>
 
       <div class="clause">
-        <h2 class="clause__h"><span class="clause__n">14</span> Governing law</h2>
-        <p>These terms are governed by the law of England and Wales.</p>
+        <h2 class="clause__h"><span class="clause__n">14</span> Changes to, or cancellation of, the draw</h2>
+        <p>
+          If events outside the promoter's reasonable control make it necessary, the promoter
+          may amend these terms, or suspend or cancel the draw. Where it can, the promoter will
+          give reasonable notice of any such change.
+        </p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">15</span> Acceptance of these terms</h2>
+        <p>Entering the draw, by either route, means you accept these terms.</p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">16</span> Not a Meta promotion</h2>
+        <p>
+          This promotion is in no way sponsored, endorsed, administered by, or associated with
+          Meta, or with any other platform on which it is advertised.
+        </p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">17</span> Governing law</h2>
+        <p>These terms are governed by the law of England and Wales, and are subject to the exclusive jurisdiction of the courts of England and Wales.</p>
       </div>
     </div>
   </Section>
