@@ -1,0 +1,251 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Section from '../../../components/Section.astro';
+import { nap, site, routes } from '../../../data/site.ts';
+
+/* =====================================================================
+   /lp/boiler-draw-terms/ — the FULL boiler prize draw terms, 14 numbered
+   clauses, built 25 Aug 2026 to a brief from Josh. Plain and readable, no
+   marketing copy, and using only facts already confirmed elsewhere in
+   this project — nothing here is invented.
+
+   SUPERSEDES `/prize-draw-terms/` (built earlier the same day, a shorter
+   version put up only to close the "full terms will be published later"
+   note-to-self on the landing pages). That page is deleted; `routes.
+   drawTerms` now points here, so every "Full prize draw terms" link on
+   the three campaign pages and the shared thank-you page follows through
+   automatically, and `netlify.toml` 301s the old URL.
+
+   NOINDEX/CHROMELESS, not LegalLayout: this route sits under `/lp/`
+   deliberately, alongside the campaign it belongs to and nowhere near the
+   site's five indexed legal pages. `LegalLayout` would also load an
+   irrelevant sidebar linking to Credits and Cookies from a page about a
+   prize draw, and put the full site header on a noindex campaign page.
+
+   UPDATED 25 Aug 2026 with Abbey's answers. Four of the five original
+   pending items are now resolved and the pending boxes removed: clause 1
+   (address is 20 Skinner Street, not the brochure's 3 The Archway), clause 7
+   (nothing is excluded — a free boiler and a free installation of it, full
+   stop), clause 8 (drawn the week beginning 28 September 2026), clause 11
+   (cancelling before the draw does void the entry). Clause 9 is only
+   PARTLY resolved — Abbey confirmed a winner will always eventually be
+   found (so the prize is never simply unclaimed), but not the specific
+   number of days before a non-responding winner is redrawn, so a narrower
+   pending note stays on that one point. See the chat response for Abbey's
+   exact wording on each.
+   ===================================================================== */
+
+const title = 'Boiler Prize Draw Terms | Abbey Group';
+const description = 'The full terms and conditions of the Abbey Group boiler prize draw: entry, the prize, and how the winner is chosen.';
+---
+<BaseLayout
+  title={title}
+  description={description}
+  noindex={true}
+  chromeless={true}
+  division="homecare"
+  footerLinks={['privacy', 'cookies']}
+>
+  <Section bg="white">
+    <div class="terms">
+      <h1 class="terms__h1">Boiler Prize Draw — Terms and Conditions</h1>
+      <p class="terms__intro">
+        These are the terms of the free prize draw run alongside Abbey Home Care plans.
+        This is a working draft for solicitor and client review. Anything marked
+        <strong>awaiting confirmation</strong> below is not yet settled and must not be
+        relied on as final.
+      </p>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">1</span> The promoter</h2>
+        <p>
+          The promoter is {site.legalName}, company number {site.companyNo}, registered in
+          England and Wales. The promoter's address for this draw is {nap.addressFull}.
+        </p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">2</span> Who can enter</h2>
+        <p>
+          You must be 18 years of age or over, and resident in the area Abbey Group serves
+          (Whitby and the surrounding area of North Yorkshire) at the time of entry. One
+          entry is permitted per person, regardless of route.
+        </p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">3</span> How to enter by joining a plan</h2>
+        <p>
+          Join any active Abbey Home Care plan that is started before entries close on 26
+          September 2026. Entry follows automatically once the plan is active; there is
+          nothing further to send in.
+        </p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">4</span> How to enter free by post</h2>
+        <p>
+          Send a postcard with your full name, address, telephone number and email address,
+          clearly marked "Boiler Draw entry", to the promoter's address given in clause 1.
+          Postal entries must be <strong>received</strong> by the promoter before entries
+          close. The postmark date does not count — only the date the entry actually arrives.
+        </p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">5</span> Closing date and time</h2>
+        <p>
+          Entries close at 23:59 (UK time) on 26 September 2026. No entry, by either route,
+          counts after this time.
+        </p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">6</span> The prize</h2>
+        <p>
+          One new Ideal Logic Max boiler (combi, system or heat-only, whichever suits the
+          winner's property), natural gas or LPG only, with a Wifi HALO thermostat, supplied
+          and installed by Abbey Group, worth £2,800. A cash alternative of £2,500 will be
+          offered instead where the property is unsuitable for a boiler installation, or
+          where the winner prefers it. No alternative prize other than this cash alternative
+          will be offered, and the prize is not transferable.
+        </p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">7</span> What is not included in the prize</h2>
+        <p>Nothing. The prize is a new boiler and its installation, both free.</p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">8</span> How and when the winner is drawn</h2>
+        <p>
+          The winner will be chosen at random from all valid entries after entries close on
+          26 September 2026, in the week beginning 28 September 2026.
+        </p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">9</span> How the winner is contacted</h2>
+        <p>
+          The winner will be contacted using the details provided at entry. If they do not
+          respond, the prize will be redrawn from the remaining valid entries, and this will
+          be repeated until it is claimed — a winner is always found.
+        </p>
+        <p class="pending">
+          <strong>Awaiting confirmation:</strong> the specific number of days a winner has to
+          respond before a redraw. Abbey has confirmed a winner is always eventually found;
+          the exact response window is the only remaining detail.
+        </p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">10</span> Publicity</h2>
+        <p>
+          By entering, you agree that the promoter may announce the winner's first name and
+          general locality (for example, their town). The winner is not obliged to take part
+          in any further publicity.
+        </p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">11</span> Cancelling a plan before the draw</h2>
+        <p>
+          If you cancel your plan before the draw takes place, your entry is void.
+        </p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">12</span> Data</h2>
+        <p>
+          Abbey Group collects the name, address, phone number and email address entrants
+          provide, whether through joining a plan or a free postal entry. This is used to
+          administer the draw and to contact entrants about Abbey's homecare plans. For full
+          detail on how your data is used, see our <a href={routes.privacy}>privacy policy</a>.
+        </p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">13</span> Not a Meta promotion</h2>
+        <p>This promotion is in no way sponsored, endorsed, administered by, or associated with Meta.</p>
+      </div>
+
+      <div class="clause">
+        <h2 class="clause__h"><span class="clause__n">14</span> Governing law</h2>
+        <p>These terms are governed by the law of England and Wales.</p>
+      </div>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .terms { max-width: 760px; margin-inline: auto; }
+  .terms__h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(30px, 3.2vw, 44px);
+    line-height: var(--leading-tight);
+    color: var(--text-heading);
+  }
+  .terms__intro {
+    margin-top: 18px;
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+  }
+  .terms__intro strong { color: var(--text-heading); }
+
+  .clause {
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .clause:first-of-type { margin-top: 40px; }
+  .clause__h {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 17px;
+    font-weight: var(--weight-bold);
+    color: var(--text-heading);
+  }
+  .clause__n {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 26px;
+    flex: none;
+    border-radius: var(--radius-pill);
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-subtle);
+    font-size: 13px;
+    font-weight: var(--weight-bold);
+    color: var(--page-accent-ink, var(--orange-800));
+  }
+  .clause p {
+    margin-top: 12px;
+    font-size: 15px;
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+  }
+  .clause p a { color: var(--text-link); font-weight: var(--weight-semibold); text-decoration: underline; }
+
+  /* Same convention as `homecare-plan-terms.astro`'s `.legal-gap`: a
+     visible marker for anything still awaiting the client, so a gap can
+     never be mistaken for finished text. */
+  .pending {
+    margin-top: 14px !important;
+    padding: 13px 15px;
+    border-left: 3px solid var(--cta);
+    background: var(--surface-sunken);
+    border-radius: var(--radius-md);
+    font-size: 14px !important;
+    color: var(--text-body);
+  }
+  .pending strong { color: var(--text-heading); }
+
+  @media (max-width: 700px) {
+    .terms__h1 { margin-top: 4px; }
+  }
+</style>
