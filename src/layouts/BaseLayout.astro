@@ -35,6 +35,7 @@ import LpBar from '../components/LpBar.astro';
 import LpFooter from '../components/LpFooter.astro';
 import ScrollTop from '../components/ScrollTop.astro';
 import PlanPrompt from '../components/PlanPrompt.astro';
+import CookieConsent from '../components/CookieConsent.astro';
 import { site } from '../data/site.ts';
 import { organization, website } from '../lib/schema.ts';
 import { divisionVars, type DivisionKey } from '../data/divisions.ts';
@@ -63,6 +64,9 @@ interface Props {
      Organization/WebSite schema all still belong on these pages, and <head> is
      where any future tracking has to live. */
   chromeless?: boolean;
+  /** Passed straight to `LpFooter`'s own `links` prop when chromeless.
+      Omit to get LpFooter's default (all four legal pages). */
+  footerLinks?: Array<'privacy' | 'terms' | 'homecareTerms' | 'cookies'>;
 }
 
 const {
@@ -74,6 +78,7 @@ const {
   schemas = [],
   division = 'group',
   chromeless = false,
+  footerLinks,
 } = Astro.props;
 
 const canonicalURL = new URL(canonical ?? Astro.url.pathname, Astro.site).href;
@@ -102,6 +107,22 @@ const showPlanPrompt = !chromeless && !Astro.url.pathname.startsWith('/homecare-
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <!-- Google Consent Mode v2 — default-denied, fires before anything else
+         on the page (build standard §6/§7). This is the one Google signal
+         permitted before consent; it is a no-op today (no GA4 tag is loaded
+         to read it — see `src/lib/tracking.ts`) but has to be in place
+         before that tag is, not added alongside it under launch pressure. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(...args) { window.dataLayer.push(args); }
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+      });
+    </script>
 
     <link rel="preload" href={dmSerif400} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={inter400} as="font" type="font/woff2" crossorigin />
@@ -139,9 +160,10 @@ const showPlanPrompt = !chromeless && !Astro.url.pathname.startsWith('/homecare-
     <main id="main">
       <slot />
     </main>
-    {chromeless ? <LpFooter /> : <Footer division={division} />}
+    {chromeless ? <LpFooter links={footerLinks} /> : <Footer division={division} />}
     <ScrollTop />
     {showPlanPrompt && <PlanPrompt />}
+    <CookieConsent />
 
     <script>
       /* Hero watermark motion — ONE implementation for every hero on the site

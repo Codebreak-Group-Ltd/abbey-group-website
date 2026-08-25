@@ -3,12 +3,16 @@ import Icon from './Icon.astro';
 import Lockup from './Lockup.astro';
 import { site, nap, ratings, social, footerNav, routes } from '../data/site.ts';
 import type { DivisionKey } from '../data/divisions.ts';
+import { consentRegistry } from '../data/consent-registry.ts';
 
 interface Props {
   division?: DivisionKey;
 }
 const { division = 'group' } = Astro.props;
 const year = new Date().getFullYear(); // build-time, not client
+/* Only renders once there is something to manage — see CookieConsent.astro
+   and cookies.astro, which gate on the same `consentRegistry.length`. */
+const hasConsentServices = consentRegistry.length > 0;
 ---
 <footer class="ftr">
   <div class="container ftr__inner">
@@ -82,6 +86,9 @@ const year = new Date().getFullYear(); // build-time, not client
         <li><a href={routes.terms}>Website Terms</a></li>
         <li><a href={routes.homecareTerms}>Home Care Plan Terms</a></li>
         <li><a href={routes.cookies}>Cookies</a></li>
+        {hasConsentServices && (
+          <li><button type="button" class="ftr__consentlink" data-open-consent>Cookie preferences</button></li>
+        )}
         <li>
           <span class="ftr__credit">
             Website by
@@ -179,6 +186,17 @@ const year = new Date().getFullYear(); // build-time, not client
     transition: color var(--duration-fast) var(--ease-standard);
   }
   .ftr__legal a:hover { color: var(--white); }
+  .ftr__consentlink {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-muted-inverse);
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    transition: color var(--duration-fast) var(--ease-standard);
+  }
+  .ftr__consentlink:hover { color: var(--white); }
   .ftr__credit { font-size: 13px; color: var(--text-muted-inverse); }
   .ftr__credit a { text-decoration: underline; text-underline-offset: 2px; }
   .ftr__copy { font-size: 13px; color: var(--text-muted-inverse); }
