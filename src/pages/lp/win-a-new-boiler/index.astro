@@ -4,7 +4,6 @@ import Section from '../../../components/Section.astro';
 import Eyebrow from '../../../components/Eyebrow.astro';
 import Button from '../../../components/Button.astro';
 import Icon from '../../../components/Icon.astro';
-import PhotoSlot from '../../../components/PhotoSlot.astro';
 import FAQ from '../../../components/FAQ.astro';
 import EnquiryForm from '../../../components/EnquiryForm.astro';
 import Photo from '../../../components/Photo.astro';
@@ -149,15 +148,22 @@ const drawFaqs = [
       </div>
 
       <div class="hero__panel">
-        <!-- ⚠️ PLACEHOLDER: swap for a clean product shot of the actual
-             prize boiler on a white background once the prize is confirmed.
-             Use this exact string as the <Photo> `alt` on swap:
-             "Ideal Logic Max boiler, the prize in the Abbey Home Care draw" -->
-        <PhotoSlot
+        <!-- Prize-led hero image (25 Aug 2026): the "boiler as a gift"
+             concept, mirroring one of Sel's ad creatives for message match
+             (LP checklist). No real product shot of the prize exists and one
+             is not coming (Josh, 25 Aug), so this stands in for it. The copy
+             and the terms state the actual prize (Ideal Logic Max, £2,800);
+             the alt is written as a wrapped-gift CONCEPT, not a claim to be a
+             photo of the real prize. Source in `Landing pages/images/`. -->
+        <Photo
           class="hero__prize"
+          src="/images/prize-gift-boiler.webp"
+          alt="A new boiler wrapped as a gift, the prize in the Abbey Home Care draw"
           ratio="4 / 5"
           radius="lg"
-          caption="Ideal Logic Max boiler, the prize in the Abbey Home Care draw"
+          width={840}
+          height={1050}
+          eager
         />
       </div>
 
@@ -706,7 +712,12 @@ const drawFaqs = [
   }
   @media (max-width: 700px) {
     .hero { padding-top: 88px; }
-    .hero__panel :global(.hero__prize) { aspect-ratio: 3 / 2 !important; max-width: 300px; }
+    /* Keep the 4/5 portrait crop on mobile too — these are real environmental
+       photos, so the old landscape (3/2) cap for a white-background product
+       shot would slice the tall boiler out of frame. The image sits below the
+       headline/countdown/CTA in the mobile stack, so its height does not push
+       the CTA down. */
+    .hero__panel :global(.hero__prize) { max-width: 300px; }
     .hero__cta :global(.btn) { flex: 1 1 auto; }
   }
 </style>

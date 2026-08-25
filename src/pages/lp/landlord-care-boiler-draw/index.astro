@@ -4,7 +4,6 @@ import Section from '../../../components/Section.astro';
 import Eyebrow from '../../../components/Eyebrow.astro';
 import Button from '../../../components/Button.astro';
 import Icon from '../../../components/Icon.astro';
-import PhotoSlot from '../../../components/PhotoSlot.astro';
 import FAQ from '../../../components/FAQ.astro';
 import EnquiryForm from '../../../components/EnquiryForm.astro';
 import Photo from '../../../components/Photo.astro';
@@ -163,15 +162,20 @@ const drawFaqs = [
       </div>
 
       <div class="hero__panel">
-        <!-- ⚠️ PLACEHOLDER: swap for a clean product shot of the actual
-             prize boiler on a white background once the prize is confirmed.
-             Use this exact string as the <Photo> `alt` on swap:
-             "Ideal Logic Max boiler, the prize in the Abbey Home Care draw" -->
-        <PhotoSlot
+        <!-- Plan-led hero image (25 Aug 2026): a REAL Ideal boiler installed
+             by Abbey Group (confirmed by Josh), not the prize. Same image and
+             reasoning as the Service Care variant — an authentic install
+             reinforces the offer without overselling the draw. Source in
+             `Landing pages/images/` (abbey-ideal-install.jpg). -->
+        <Photo
           class="hero__prize"
+          src="/images/ideal-boiler-install.webp"
+          alt="An Ideal boiler installed by Abbey Group"
           ratio="4 / 5"
           radius="lg"
-          caption="Ideal Logic Max boiler, the prize in the Abbey Home Care draw"
+          width={840}
+          height={1050}
+          eager
         />
       </div>
 
@@ -727,7 +731,12 @@ const drawFaqs = [
   }
   @media (max-width: 700px) {
     .hero { padding-top: 88px; }
-    .hero__panel :global(.hero__prize) { aspect-ratio: 3 / 2 !important; max-width: 300px; }
+    /* Keep the 4/5 portrait crop on mobile too — this is a real environmental
+       photo, so the old landscape (3/2) cap for a white-background product
+       shot would slice the tall boiler out of frame. The image sits below the
+       headline/countdown/CTA in the mobile stack, so its height does not push
+       the CTA down. */
+    .hero__panel :global(.hero__prize) { max-width: 300px; }
     .hero__cta :global(.btn) { flex: 1 1 auto; }
   }
 </style>
