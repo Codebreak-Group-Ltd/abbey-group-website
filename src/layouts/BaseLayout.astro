@@ -84,16 +84,22 @@ const {
 const canonicalURL = new URL(canonical ?? Astro.url.pathname, Astro.site).href;
 const ogImageURL = new URL(ogImage, Astro.site).href;
 
-/* Netlify sets CONTEXT during every build it runs ('production',
-   'deploy-preview', 'branch-deploy'). Anything other than a production
-   build gets a blanket noindex, regardless of the page's own `noindex` prop —
-   canonicals already point every page at the live abbeygroup.uk URL, but that
-   only protects a preview from a WELL-BEHAVED crawler. Without this, the
-   .netlify.app host itself is indexable in the meantime. A local `npm run
-   build` (CONTEXT unset) also gets noindex, which is the safe default: the
-   only build that should ever ship without it is the one Netlify runs with
-   CONTEXT=production. */
-const isPreviewBuild = process.env.CONTEXT !== 'production';
+/* CORRECTED 29 Aug 2026: this used to key off Netlify's CONTEXT var, but
+   CONTEXT is 'production' for every build of the site's designated production
+   branch (main) — that is about which BRANCH triggered the build, not which
+   DOMAIN it is served on. Until abbeygroup.uk is actually attached and DNS
+   switched, main still deploys to the *.netlify.app default domain, so a
+   CONTEXT-only check would have shipped the site indexable there right now.
+
+   `URL` is Netlify's build-time env var for the deploy's actual primary
+   domain: the *.netlify.app subdomain until a custom domain is attached and
+   verified, then the custom domain itself, automatically, with no further
+   change needed here. Comparing it to the real production domain (matching
+   astro.config's `site`) is what actually answers "is this live at
+   abbeygroup.uk", which is the only question that matters. A local `npm run
+   build` (URL unset) also gets noindex, the safe default. */
+const PRODUCTION_URL = 'https://abbeygroup.uk';
+const isPreviewBuild = process.env.URL !== PRODUCTION_URL;
 const shouldNoindex = noindex || isPreviewBuild;
 
 /* ---- Site-wide schema: Organization + WebSite ----
