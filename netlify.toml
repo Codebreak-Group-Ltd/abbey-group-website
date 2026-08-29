@@ -5,6 +5,46 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Security headers (SEO audit, 29 Aug 2026). HSTS already comes from Netlify's
+# own default; everything else was missing entirely.
+#
+# CSP keeps 'unsafe-inline' on script-src and style-src rather than nonces:
+# this is a static build (no per-request server to mint a nonce), and the site
+# already ships several legitimate inline <script> tags (BaseLayout's Consent
+# Mode default, the hero motion/scroll-reveal scripts, CookieConsent's own
+# script) and inline `style={...}` attributes throughout the component set.
+# Rewriting all of that to hashed/external scripts is real future work, not a
+# launch blocker — what this DOES lock down today is arbitrary remote script
+# injection (script-src has an explicit host allowlist, no wildcard), framing
+# (frame-ancestors 'none' — nothing on the site is ever framed), and the
+# base/object/form-action vectors, which cost nothing to close now.
+#
+# Hosts allowlisted below are every external endpoint the site actually
+# loads/posts to today (`src/lib/tracking.ts`, `EnquiryForm.astro`,
+# `consent-registry.ts`): GA4, Meta Pixel, and Codebreak's own campaign
+# tracking/AI-qualification and GoHighLevel webhooks. None of these fire
+# before consent (build standard §6/§7) — this header only controls what the
+# BROWSER is allowed to load, not when.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+    Content-Security-Policy = '''
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net https://ai.codebreak.co.uk;
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: https://www.facebook.com;
+      font-src 'self';
+      connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://www.facebook.com https://services.leadconnectorhq.com https://ai.codebreak.co.uk https://app.usecortana.ai;
+      frame-ancestors 'none';
+      base-uri 'self';
+      form-action 'self' https://services.leadconnectorhq.com https://ai.codebreak.co.uk https://app.usecortana.ai;
+      object-src 'none';
+    '''
+
 # Directory-style URLs (trailing slash canon, see astro.config.mjs and
 # _Specs/05 ASTRO BUILD STANDARD.md §1). Astro's own build already emits
 # `/page/index.html`, which Netlify serves at `/page/` by default — this file

@@ -654,7 +654,14 @@ const schemas = [
     .trust { grid-template-columns: repeat(2, 1fr); gap: 20px 24px; }
   }
   @media (max-width: 700px) {
-    .hero { padding-top: 132px; }
+    /* Trimmed from 132px and the copy gap tightened below (29 Aug 2026, SEO
+       audit): the cookie-consent banner sits fixed at the bottom of the
+       viewport once its registry is non-empty (28 Aug 2026), and at 390px
+       the hero CTA was landing far enough down the page that the banner
+       covered it on first visit. This is the only hero on the site short
+       enough of its own trust row to need the extra room. */
+    .hero { padding-top: 104px; }
+    .hero__copy { gap: 16px; }
     .hero__cta { width: 100%; }
     .hero__cta :global(.btn) { flex: 1 1 auto; }
     .hero__van { width: 124vw; margin: 24px -14vw 0 auto; }

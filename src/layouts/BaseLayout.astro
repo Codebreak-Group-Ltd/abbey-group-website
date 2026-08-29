@@ -84,6 +84,18 @@ const {
 const canonicalURL = new URL(canonical ?? Astro.url.pathname, Astro.site).href;
 const ogImageURL = new URL(ogImage, Astro.site).href;
 
+/* Netlify sets CONTEXT during every build it runs ('production',
+   'deploy-preview', 'branch-deploy'). Anything other than a production
+   build gets a blanket noindex, regardless of the page's own `noindex` prop —
+   canonicals already point every page at the live abbeygroup.uk URL, but that
+   only protects a preview from a WELL-BEHAVED crawler. Without this, the
+   .netlify.app host itself is indexable in the meantime. A local `npm run
+   build` (CONTEXT unset) also gets noindex, which is the safe default: the
+   only build that should ever ship without it is the one Netlify runs with
+   CONTEXT=production. */
+const isPreviewBuild = process.env.CONTEXT !== 'production';
+const shouldNoindex = noindex || isPreviewBuild;
+
 /* ---- Site-wide schema: Organization + WebSite ----
    Both now live in `src/lib/schema.ts` alongside every other builder, so the
    entity data (knowsAbout, offer catalogue, founder, company number) has one
@@ -130,7 +142,7 @@ const showPlanPrompt = !chromeless && !Astro.url.pathname.startsWith('/homecare-
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
-    {noindex && <meta name="robots" content="noindex,follow" />}
+    {shouldNoindex && <meta name="robots" content="noindex,follow" />}
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />

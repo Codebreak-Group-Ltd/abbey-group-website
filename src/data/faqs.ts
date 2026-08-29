@@ -30,11 +30,11 @@ export const homeFaqs: Faq[] = [
   },
   {
     q: 'Is Abbey Group the same company as Abbeygas?',
-    a: 'Yes. Abbey Group is the same local team many people in Whitby know as Abbeygas.',
+    a: "Yes. Abbey Group is the same local team many people in Whitby know as Abbeygas, trading under one name for the boiler cover, plumbing and heating work it has always done. The wider Abbey Group also brings together renovations, building and joinery, and electrical work, which used to sit across separate sites, so the same team and the same office now cover the whole job rather than just the gas and heating side. If you have used Abbeygas before, you are already a customer of Abbey Group, and the same people pick up the phone.",
   },
   {
     q: 'Are your engineers Gas Safe registered?',
-    a: 'Yes. Abbey Group is Gas Safe registered under number 303376. Any gas work is carried out by a Gas Safe engineer, which is a legal requirement for work on boilers and gas appliances.',
+    a: "Yes. Abbey Group is Gas Safe registered under number 303376, which you can check for yourself on the Gas Safe Register. Any work on a boiler or gas appliance is carried out by a Gas Safe engineer, which is a legal requirement in the UK, not just good practice, and it is what makes a gas safety certificate valid. Electrical work is covered separately: our electricians are NAPIT registered and City & Guilds qualified, which is the equivalent standard for wiring and electrical installations. Both registrations mean the work is checked against a real, independently held standard, not just our own word for it.",
   },
 ];
 

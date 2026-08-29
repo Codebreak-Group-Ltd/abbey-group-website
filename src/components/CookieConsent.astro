@@ -168,16 +168,23 @@ const categoryCopy: Record<string, string> = {
   }
 
   /* Compact mobile variant (build standard §10): a full banner ate ~40% of a
-     phone viewport in the reference build. Tighter padding, no separate
-     manage-preferences row wrap, buttons still both full-width so Accept and
-     Reject stay equally easy to tap. */
+     phone viewport in the reference build. Tighter padding, buttons still
+     both full-width so Accept and Reject stay equally easy to tap.
+
+     Manage preferences dropped its own full-width row (29 Aug 2026, SEO
+     audit): that third row was the difference between the banner clearing
+     the homepage hero CTA at 390px and covering it. It now sits as a plain
+     inline text link above the two primary actions instead — still reachable,
+     still not competing with Accept/Reject for size (rule 17), just no
+     longer costing an entire row's height on the viewport that can least
+     afford it. */
   @media (max-width: 640px) {
     .cc { padding: 10px; }
-    .cc__banner { padding: 14px 16px; gap: 10px; }
+    .cc__banner { padding: 14px 16px; gap: 8px; }
     .cc__text { font-size: 13px; flex-basis: 100%; }
-    .cc__actions { width: 100%; gap: 8px; }
+    .cc__actions { width: 100%; gap: 8px; flex-wrap: wrap; }
     .cc__btn { flex: 1 1 auto; padding: 10px 12px; }
-    .cc__btn--ghost { flex: 1 1 100%; order: 3; text-align: center; padding-block: 4px; }
+    .cc__btn--ghost { flex: 1 1 100%; order: -1; text-align: left; padding-block: 0; }
     .cc__panel { max-width: none; }
   }
 </style>
