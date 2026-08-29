@@ -26,7 +26,7 @@ export const nap = {
   mobile: { label: '07769 702 525', tel: '+447769702525' },
   email: 'office@abbeygroup.uk',
   // Mon–Fri office hours; phone lines take messages 24/7 (not a callout guarantee).
-  hours: 'Monday to Friday, 9am to 5pm',
+  hours: 'Monday to Friday, 9am to 4pm',
   /* Latitude/longitude of the Skinner Street office. LEFT NULL DELIBERATELY:
      coordinates are the strongest single location signal an AI assistant reads,
      and a guessed pin would place Abbey on the wrong spot in an answer, which is
@@ -49,9 +49,10 @@ export const social = {
 } as const;
 
 // Villages Abbey covers — feeds `areaServed` schema + areas blocks.
+// Egton Bridge merged into Egton, and Hawsker/Guisborough added, per Amy, 28 Aug 2026.
 export const areasServed = [
   'Whitby', 'Sandsend', 'Sleights', 'Ruswarp', "Robin Hood's Bay",
-  'Egton', 'Egton Bridge', 'Goathland', 'Staithes', 'Runswick Bay', 'Scarborough',
+  'Egton', 'Hawsker', 'Goathland', 'Staithes', 'Runswick Bay', 'Scarborough', 'Guisborough',
 ] as const;
 
 // ---- ServiceM8 booking links (confirmed by Amy, 27 July 2026) ----
@@ -61,6 +62,15 @@ export const booking = {
   boilerService: `${SM8}#8dc9a474-3b99-42c7-917c-2245195fd18b`,
   quote: `${SM8}#11d4612f-b653-4caf-b018-22451c24af1b`,
   landlordGasSafety: `${SM8}#d72f6d42-6190-46b4-9621-2245198f5f0b`,
+} as const;
+
+// ---- GoCardless direct sign-up (confirmed by Amy, 28 Aug 2026) ----
+// Only Service Care and Landlord Care can be joined instantly, matching
+// abbeyhomecare.co.uk's own behaviour — every other plan needs a visit first,
+// so it stays enquiry-only.
+export const gocardless = {
+  serviceCare: 'https://pay.gocardless.com/billing/static/collect-customer-details?id=BRF01M14FZXSD2B7EBF54ZEVPFV4XY0A&initial=%2Fcollect-customer-details',
+  landlordCare: 'https://pay.gocardless.com/billing/static/collect-customer-details?id=BRF01M14G084ZBZKCAJN051FXG468P9Z&initial=%2Fcollect-customer-details',
 } as const;
 
 // ---- Routes (trailing-slash canon) ----

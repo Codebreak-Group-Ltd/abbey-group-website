@@ -5,6 +5,114 @@
 
 Living tick-list of what is done and what is still open. Update as items land.
 
+## Meta Pixel + Codebreak tracking + AI webhooks live on the two active boiler-draw pages (28 August 2026)
+
+Meta Ads are being built for the boiler-draw campaign, so tracking and lead
+routing needed to go live now (Josh). Confirmed with Josh: only two of the
+four `/lp/` pages are actually in use —
+`/lp/service-care-boiler-draw/` (homeowners, £276/£9.99) and
+`/lp/landlord-care-boiler-draw/` (landlords, £342/£13.99). `win-a-new-boiler`
+and `homecare` were left untouched.
+
+**Done:**
+
+- [x] `PUBLIC_META_PIXEL_ID` (1651657059710628) and
+      `PUBLIC_CODEBREAK_PIXEL_SRC` set in `.env`. `loadMetaPixel()` already
+      existed inert in `src/lib/tracking.ts`; added `loadCodebreakPixel()`
+      alongside it, same env-var-gated pattern. Both now load on Accept/Save
+      via `loadConsentedTracking()` — Meta under `advertising`, Codebreak
+      under `analytics`.
+- [x] Both added to `src/data/consent-registry.ts` (the registry went from
+      empty to two real entries — the banner now renders site-wide, which is
+      correct: it's one registry, not per-page) and to `processors` in
+      `src/data/legal.ts` (Meta, and Codebreak as our own agency/processor).
+- [x] Two new AI-system webhooks (`PUBLIC_HOMEOWNERS_WEBHOOK` →
+      ai.codebreak.co.uk, `PUBLIC_LANDLORDS_WEBHOOK` → app.usecortana.ai) set
+      in `.env` and wired into `EnquiryForm.astro` via a new
+      `secondaryAudience="homeowner"|"landlord"` prop, one per live page.
+      They fire **alongside** GHL, not instead of it (Josh confirmed) — a
+      fire-and-forget second `fetch`, never awaited into the success/error
+      state, so a problem with the new system can never block a real lead
+      reaching GHL.
+- [x] Verified end-to-end in the dev preview with `fetch` mocked (no test
+      data sent to the real GHL/Codebreak/Cortana endpoints): cookie banner
+      now renders and gates correctly, Accept loads the Meta Pixel + Codebreak
+      script, and a submission on each of the two live pages posts to GHL
+      **and** the correct audience-specific webhook — no cross-wiring.
+      `npm run verify` passes clean (22 pages, no errors).
+
+**Still open:**
+
+- [ ] **Set the same four env vars in Netlify** (`PUBLIC_META_PIXEL_ID`,
+      `PUBLIC_CODEBREAK_PIXEL_SRC`, `PUBLIC_HOMEOWNERS_WEBHOOK`,
+      `PUBLIC_LANDLORDS_WEBHOOK`) — `.env` is local/gitignored only, so
+      production is still inert until these are added in Netlify's site
+      settings and a new deploy triggered. This needs whoever has Netlify
+      access (see Outstanding B3).
+- [ ] **Meta domain verification** (Business Manager → Brand Safety) has to
+      be done against whatever domain is actually live when the ads run —
+      redo it if the domain changes later (e.g. once abbeygroup.uk's own DNS
+      cutover happens). Not needed to launch the pixel itself, but needed for
+      full iOS14+/Aggregated Event Measurement attribution.
+- [ ] Confirm with whoever owns the GHL/Codebreak/Cortana accounts that a
+      real submission reaches all three once the Netlify env vars are set —
+      the dev-side check above only proves the code fires the right requests,
+      not that the receiving systems are configured to accept them.
+
+## Legacy domain consolidation — redirect map built, DNS access is the only blocker (28 August 2026)
+
+Abbey Group owns four live URLs today: `abbeygroup.uk/` and
+`abbeygroup.uk/building-joinery/` (the current WordPress site being replaced
+by this build), plus the two separate domains `abbeygas.com` and
+`abbeyhomecare.co.uk`, which this build folds in permanently (see CLAUDE.md).
+This is a genuine cross-domain migration, not a same-domain replatform, so
+`_Specs/05 ASTRO BUILD STANDARD.md` §11's launch sequence (written for
+replatforming on one domain) doesn't cover it on its own — the steps below do.
+
+**Done (28 Aug 2026):**
+
+- [x] Crawled both legacy sites live (their sitemaps were unreliable —
+      abbeygas.com's XML sitemap reported only its homepage). Full inventory:
+      abbeygas.com has 13 real pages (nav-derived); abbeyhomecare.co.uk has
+      one real page (its Elementor homepage) plus a stray default `hello-world/`
+      post. Cross-checked against Google's index (`site:` search) — only 2 of
+      abbeygas.com's pages and none of abbeyhomecare.co.uk's are actually
+      indexed, so redirect equity at stake is modest either way.
+- [x] Full URL-by-URL 301 map written as domain-qualified rules in
+      `netlify.toml` (see the "Legacy domain consolidation" block). `npm run
+      verify` passes clean with these in place.
+- [x] Confirmed via `dig` that all three domains — abbeygroup.uk,
+      abbeygas.com, abbeyhomecare.co.uk — sit on the same IONOS nameservers
+      (`ui-dns.com/org/de/biz`). Very likely one registrar login unlocks DNS
+      for all three; worth confirming with James before assuming three
+      separate logins are needed.
+
+**Blocked on DNS/hosting access (owner: James/Abbey, or whoever holds the
+IONOS login) — nothing below can happen without it:**
+
+- [ ] Get registrar/DNS access for abbeygas.com and abbeyhomecare.co.uk
+      (tracked in `_Specs/01 OUTSTANDING FROM CLIENT.md` §B3, alongside the
+      abbeygroup.uk DNS access already listed there).
+- [ ] Add both domains as domain aliases on the Netlify site; point their DNS
+      here. The `netlify.toml` redirect rules are inert until this happens —
+      Netlify never sees traffic for a domain it isn't serving.
+- [ ] Wait for SSL to provision on both (automatic once DNS resolves, usually
+      minutes, occasionally longer).
+- [ ] Spot-check a handful of real old URLs from each domain in a browser to
+      confirm the 301s actually fire and land on the right new page.
+- [ ] Run Google Search Console's **Change of Address** tool for each old
+      domain (needs a verified GSC property for abbeygas.com and
+      abbeyhomecare.co.uk — check whether one already exists before creating
+      new ones).
+- [ ] Update the two social bios found on abbeygas.com's homepage
+      (`facebook.com/Abbeygas`, `instagram.com/abbeygas_plumbingandheating`) to
+      point at abbeygroup.uk once it's live, so new traffic doesn't bounce
+      through an old-domain redirect unnecessarily.
+- [ ] Only once redirects are confirmed working for a few weeks: cancel or
+      downgrade the old WordPress hosting for both domains. Don't cancel on
+      cutover day — a DNS or redirect mistake is much cheaper to fix while the
+      old hosting still exists as a fallback.
+
 ## Boiler-draw campaign build + two things parked for the next phase (25 August 2026)
 
 The three campaign landing pages, the shared `/lp/thank-you/`, the full
@@ -583,10 +691,10 @@ plan Abbey would have to refuse.
   work" discount covers an installation, and whether James would rather lead old
   boilers with a replacement quote outright.
 
-**One open item:** the half-price offer is shown on Service Care and Landlord
-Care only, because those are the two Amy confirmed. Josh believes it applies to
-all plans, but it appears **nowhere in the January 2026 brochure**, including the
-terms. Logged in Outstanding C3. If Amy confirms, it is one line per result.
+**One open item (superseded 17 Aug 2026 — see the offer strategy note further up
+this file):** whether the future-work discount applies to a new boiler
+installation. It appears nowhere in the January 2026 brochure, including the
+terms. Logged in Outstanding C3.
 
 **Also found while checking the brochure** (all logged in `02 PLAN DATA`): every
 price and inclusion matches what we had; "Home Electrics" is listed in the
@@ -1152,7 +1260,7 @@ controller = Abbey Gas (Whitby) Limited, co. no. 08134722, registered office
       Those pages are approved, so I have not changed them: worth a decision to
       apply the "Recommends" label there too.
 - [ ] Live Google feed stays off, per Amy. If that changes it needs Google Business
-      Profile access, and it would surface the lower reviews she wants held back.
+      Profile access, and the curated review wall would need rethinking alongside it.
 
 ## Contact + Book Online built, round 8 refinements (30 July 2026)
 

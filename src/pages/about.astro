@@ -25,8 +25,8 @@ const title = 'About Abbey Group | Local Tradesmen in Whitby Since 2008';
 const description =
   'Meet the Abbey Group team in Whitby: plumbing, heating, renovations, building and electrical work. Gas Safe registered, serving Whitby since 2008.';
 
-/* Amy's confirmed list. James is the only one with a headshot so far, so the
-   others carry a monogram rather than a stock face (see image-manifest). */
+/* Amy, Natasha and James Fawcett's headshots landed 28 Aug 2026. Richard and
+   Mal still carry a monogram rather than a stock face (see image-manifest). */
 const team = [
   {
     name: 'James Eddon',
@@ -41,11 +41,15 @@ const team = [
     name: 'Amy',
     role: 'Operations Manager',
     bio: 'Keeps Abbey Group running, coordinating the teams, the schedules and the day-to-day.',
+    photo: '/images/about-amy.webp',
+    alt: 'Amy, Operations Manager at Abbey Group',
   },
   {
     name: 'Natasha',
     role: 'Customer Experience Coordinator',
     bio: 'Welcomes customers, manages front of house and coordinates appointments, so every enquiry is looked after from the first call onwards.',
+    photo: '/images/about-natasha.webp',
+    alt: 'Natasha, Customer Experience Coordinator at Abbey Group',
   },
   {
     name: 'Richard',
@@ -61,6 +65,11 @@ const team = [
     name: 'James Fawcett',
     role: 'Plumbing',
     bio: 'Runs the plumbing side of things.',
+    /* Cropped from a family photo to a headshot on James alone — see the
+       chat response for why, and flagged to Josh: worth swapping for a
+       solo shot if one exists. */
+    photo: '/images/about-james-fawcett.webp',
+    alt: 'James Fawcett, plumbing at Abbey Group',
   },
 ];
 

@@ -83,13 +83,19 @@ const schemas = [
 ];
 ---
 <BaseLayout title={title} description={description} schemas={schemas} division="electrical">
-  <!-- No hero photograph exists for this trade, so the hero runs full-width on
-       copy rather than holding an empty slot. -->
+  <!-- Real hero photo landed 28 Aug 2026 — the first photograph this page has
+       ever had. Only the hero is wired in: the 30 source photos this batch
+       came with were all one electrician fitting a pendant light and a wall
+       socket, so nothing here genuinely shows a consumer unit, an EICR test,
+       an EV charger or a customer — those sections stay text/list-only until
+       photos matching those specific categories exist (see image-manifest). -->
   <PageHero
     division="electrical"
     title={h1}
     lead="Certified electrical work for homes and businesses across Whitby, done safely by a local team. Whether you need an electrician in Whitby for a repair, a rewire or a landlord safety report, a real person answers and the work is signed off properly."
     trust={['NAPIT registered', 'City & Guilds qualified', 'Local', 'Rated 4.6 on Google']}
+    image="/images/electrical-hero-electrician-working.webp"
+    imageAlt="Abbey Group electrician fitting a light fixture in a Whitby property"
   >
     <!-- Navy, not orange: this hero sits on a green ground, and the two are
          near-complementary at full strength (Josh, 29 July 2026). Orange stays

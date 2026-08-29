@@ -74,13 +74,21 @@ interface Props {
       visitor without a server round trip. Omit on pages with no single
       plan (e.g. the evergreen homecare page, which uses the picker instead). */
   planInterest?: string;
+  /** Sends the same payload to a second, best-effort webhook alongside GHL —
+      added 28 Aug 2026 for the boiler-draw campaign's AI qualification system
+      (`PUBLIC_HOMEOWNERS_WEBHOOK` / `PUBLIC_LANDLORDS_WEBHOOK`, read in the
+      script below). Omit on pages with no second destination. Unlike the GHL
+      fetch, this one's result never affects the success/error UI — GHL stays
+      the sole source of truth for whether the enquiry "worked", so a second
+      system being down never blocks a real lead. */
+  secondaryAudience?: 'homeowner' | 'landlord';
 }
 const {
   heading, lead, source, tags, submitLabel, fields,
   bg = 'sunken', eyebrow = 'Get in touch',
   redirect, planPickerTags = false,
   microNote = 'We will only use your details to help with your enquiry.',
-  planInterest,
+  planInterest, secondaryAudience,
 } = Astro.props;
 const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 ---
@@ -101,6 +109,7 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
       data-redirect={redirect}
       data-picker-tags={planPickerTags ? '' : undefined}
       data-plan-interest={planInterest}
+      data-secondary-audience={secondaryAudience}
       novalidate
     >
       <!-- Honeypot: invisible to a real visitor (off-screen, aria-hidden,
@@ -147,7 +156,7 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
       <p class="ef__success" role="status" hidden>
         Thanks, that is with us. A real person from the Whitby office will be in touch in
-        working hours, Monday to Friday, 9am to 5pm.
+        working hours, Monday to Friday, 9am to 4pm.
       </p>
 
       <p class="ef__error" role="alert" hidden>
@@ -276,6 +285,14 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
   /* See the component's file header: env var first, obvious literal
      placeholder second, so there is never a silent no-op destination. */
   const WEBHOOK = (import.meta.env.PUBLIC_GHL_WEBHOOK as string | undefined) || '/GHL_WEBHOOK_URL';
+
+  /* Second, best-effort destination for `secondaryAudience` — added 28 Aug
+     2026 for the boiler-draw campaign's AI qualification system, run
+     alongside GHL rather than instead of it (Josh, same day). No placeholder
+     fallback: an unset env var here should mean "nothing to send", not a
+     literal 404 request on every submission. */
+  const HOMEOWNERS_WEBHOOK = import.meta.env.PUBLIC_HOMEOWNERS_WEBHOOK as string | undefined;
+  const LANDLORDS_WEBHOOK = import.meta.env.PUBLIC_LANDLORDS_WEBHOOK as string | undefined;
 
   /* Client-side format checks beyond the browser's own `required`/`type`
      handling, keyed by field NAME rather than a new prop — so every page
@@ -430,6 +447,21 @@ const formId = `form-${source.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
         });
         ok = response.ok;
       } catch { ok = false; }
+
+      /* Best-effort second destination — see the component's Props comment.
+         Never awaited into `ok`: whether this succeeds has no bearing on the
+         success/error state the visitor sees. */
+      const secondaryWebhook = form.dataset.secondaryAudience === 'homeowner' ? HOMEOWNERS_WEBHOOK
+        : form.dataset.secondaryAudience === 'landlord' ? LANDLORDS_WEBHOOK
+        : undefined;
+      if (secondaryWebhook) {
+        fetch(secondaryWebhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          keepalive: true,
+        }).catch(() => {});
+      }
 
       if (!ok) {
         setSending(false);

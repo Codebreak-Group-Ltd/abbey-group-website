@@ -26,7 +26,7 @@ export const homeFaqs: Faq[] = [
   },
   {
     q: 'What areas around Whitby do you cover?',
-    a: "We cover Whitby and the surrounding coast and villages, including Sandsend, Sleights, Ruswarp, Robin Hood's Bay, Egton and Egton Bridge, Goathland, Staithes and Runswick Bay, as well as Scarborough. If you are nearby and not sure, ask, we're always happy to help.",
+    a: "We cover Whitby and the surrounding coast and villages, including Sandsend, Sleights, Ruswarp, Robin Hood's Bay, Egton, Hawsker, Goathland, Staithes and Runswick Bay, as well as Scarborough and Guisborough. If you are nearby and not sure, ask, we're always happy to help.",
   },
   {
     q: 'Is Abbey Group the same company as Abbeygas?',
@@ -71,7 +71,7 @@ export const electricalFaqs: Faq[] = [
   },
   {
     q: 'How quickly can an emergency electrician come out in Whitby?',
-    a: 'Our line is open 24 hours a day, so you can always get through and leave a message. A real local person takes your call and we get to you as quickly as we can, with urgent jobs prioritised. The office is open Monday to Friday, 9am to 5pm.',
+    a: 'Our line is open 24 hours a day, so you can always get through and leave a message. A real local person takes your call and we get to you as quickly as we can, with urgent jobs prioritised. The office is open Monday to Friday, 9am to 4pm.',
   },
   {
     q: 'Do you do electrical work for holiday lets and rental properties?',
@@ -143,7 +143,7 @@ export const contactFaqs: Faq[] = [
   },
   {
     q: "What are Abbey Group's opening hours?",
-    a: 'Our office is open Monday to Friday, 9am to 5pm. The phone line is open 24 hours a day so you can leave a message, and you can book online or send an enquiry any time.',
+    a: 'Our office is open Monday to Friday, 9am to 4pm. The phone line is open 24 hours a day so you can leave a message, and you can book online or send an enquiry any time.',
   },
   {
     q: 'How do I contact Abbey Group in an emergency?',

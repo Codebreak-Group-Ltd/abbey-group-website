@@ -7,28 +7,27 @@
    is a compliance failure either way, and generating it makes drift
    impossible.
 
-   RIGHT NOW THIS LIST IS EMPTY, AND THAT IS ACCURATE. The site sets no
-   cookies at all: fonts are self-hosted, there is no analytics, no ad pixel,
-   no chat widget, no map embed, and the enquiry form no longer writes anything
-   to the device (attribution is read from the URL at the moment you submit).
+   FROM LAUNCH UNTIL 28 AUG 2026 THIS LIST WAS EMPTY, AND THAT WAS ACCURATE —
+   the site set no cookies at all. `PUBLIC_META_PIXEL_ID` and
+   `PUBLIC_CODEBREAK_PIXEL_SRC` are now real (boiler-draw ad campaign), so the
+   two entries below are live and must stay truthful to what `tracking.ts`
+   actually loads.
 
    THE BANNER, THE FOOTER REOPEN LINK AND THE COOKIE POLICY TABLE ALL GATE ON
-   THIS FILE'S LENGTH (25 Aug 2026, `CookieConsent.astro`, `Footer.astro`,
-   `LpFooter.astro`, `cookies.astro`) — an empty registry correctly means no
-   banner renders anywhere, on any page, including the three boiler-draw
-   campaign pages. This was verified end-to-end with two temporary test
-   entries (accept/reject/manage all worked, table generated correctly,
-   footer reopen worked on both footers) before being reverted to empty for
-   this commit.
+   THIS FILE'S LENGTH (`CookieConsent.astro`, `Footer.astro`, `LpFooter.astro`,
+   `cookies.astro`) — a non-empty registry means the banner now renders on
+   every page, including the site pages that carry no tracking of their own,
+   because the banner is site-wide, not per-page. This was verified
+   end-to-end before launch (accept/reject/manage all worked, table generated
+   correctly, footer reopen worked on both footers).
 
-   WHEN TRACKING GOES LIVE, three edits, not a rebuild:
-     1. Uncomment the two entries below (or add real ones).
-     2. Set `PUBLIC_GA4_ID` (starts `G-…`) and/or `PUBLIC_META_PIXEL_ID` (15-16
-        digits) as Netlify env vars — `src/lib/tracking.ts` refuses to load
-        anything against the placeholder IDs it falls back to otherwise, so a
-        forgotten env var fails safe rather than sending Google/Meta a bad ID.
-     3. Add Google/Meta to `processors` in `src/data/legal.ts` (privacy policy
-        must name every processor the cookie table lists — build standard §7).
+   ADDING A NEW SERVICE IS THREE EDITS, NOT A REBUILD:
+     1. Add the entry here.
+     2. Add the loader to `src/lib/tracking.ts`, gated on a real env var so a
+        forgotten one fails safe rather than sending a bad ID.
+     3. Add the provider to `processors` in `src/data/legal.ts` (privacy
+        policy must name every processor the cookie table lists — build
+        standard §7).
    Nothing in `analytics` or `advertising` may load before consent, and none
    of it will: `CookieConsent.astro` is the only thing that calls the loaders
    in `src/lib/tracking.ts`, and only after Accept/Save with that category on.
@@ -47,12 +46,19 @@ export type ConsentService = {
 };
 
 export const consentRegistry: ConsentService[] = [
-  /* Examples, ready for launch — uncomment WITH the loading code, never before:
+  /* Live from 28 Aug 2026 (Josh) for the boiler-draw ad campaign landing
+     pages. Loading code is `loadMetaPixel()`/`loadCodebreakPixel()` in
+     `src/lib/tracking.ts`, both gated the same way GA4 always was: real
+     env var required, and nothing fires until Accept/Save. */
+  { name: 'Meta Pixel', provider: 'Meta', category: 'advertising',
+    purpose: 'Measures which adverts and pages lead to an enquiry, for our own advertising only.' },
+  { name: 'Codebreak Campaign Tracking', provider: 'Codebreak', category: 'analytics',
+    purpose: 'Measures how the ad landing pages perform, for our marketing agency’s reporting.' },
+
+  /* Example, ready for launch — uncomment WITH the loading code, never before:
 
   { name: 'Google Analytics 4', provider: 'Google', category: 'analytics',
     purpose: 'Tells us how many people visit and which pages they use, so we can improve the site.' },
-  { name: 'Meta Pixel', provider: 'Meta', category: 'advertising',
-    purpose: 'Measures which adverts and pages lead to an enquiry, for our own advertising only.' },
   */
 ];
 

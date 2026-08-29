@@ -10,7 +10,7 @@ import Reviews from '../components/Reviews.astro';
 import FAQ from '../components/FAQ.astro';
 import Areas from '../components/Areas.astro';
 import EnquiryForm from '../components/EnquiryForm.astro';
-import { nap, booking, routes, homecareReviews } from '../data/site.ts';
+import { nap, booking, routes, gocardless, homecareReviews } from '../data/site.ts';
 import { homecareFaqs } from '../data/faqs.ts';
 import { service, faqPage, breadcrumb } from '../lib/schema.ts';
 
@@ -18,10 +18,14 @@ const title = 'Boiler Cover Plans Whitby | From £9.99/Month | Abbey Group';
 const description =
   'Local, Gas Safe boiler cover in Whitby from £9.99 a month. Annual service, gas safety certificate and priority response from a real Whitby team.';
 
+/* `signup` is set only for the two plans a visitor can join instantly, same
+   as abbeyhomecare.co.uk (Amy, 28 Aug 2026) — everything else needs a visit
+   first, so it keeps the enquiry-form route. */
 const plans = [
   {
     name: 'Service Care', price: '£9.99', popular: false,
     blurb: 'Your full annual boiler service, gas safety certificate and heating health check, with one free call-out and priority response. The honest plan that keeps your boiler right.',
+    signup: gocardless.serviceCare,
   },
   {
     name: 'Service Care+', price: '£19.99', popular: true,
@@ -103,7 +107,11 @@ const schemas = [
           <h3 class="plan__name">{p.name}</h3>
           <p class="plan__price"><span class="tnum">{p.price}</span><span class="plan__per">/month</span></p>
           <p class="plan__blurb">{p.blurb}</p>
-          <Button href="#enquiry" variant={p.popular ? 'primary' : 'outline'} block>Choose This Plan</Button>
+          {p.signup ? (
+            <Button href={p.signup} external variant={p.popular ? 'primary' : 'outline'} block>Sign Up Online</Button>
+          ) : (
+            <Button href="#enquiry" variant={p.popular ? 'primary' : 'outline'} block>Choose This Plan</Button>
+          )}
         </li>
       ))}
     </ul>
@@ -113,6 +121,50 @@ const schemas = [
       <a class="tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>
       and we will talk it through honestly.
     </p>
+
+    <!-- OFFER STACK — ported from the boiler-draw landing pages (Amy, 28 Aug
+         2026): the itemised value behind Service Care's £9.99, then the same
+         anchor (£276 struck through against £9.99/mo) that makes the price
+         look small there. Same figures, because it is the same plan. Stays
+         inside this white section rather than its own, so the bg alternation
+         with "What every plan includes" below isn't disturbed. -->
+    <div class="stack reveal">
+      <Eyebrow>What £9.99 a month gets you</Eyebrow>
+      <h3 class="stack__h">Service Care, everything included, every year</h3>
+
+      <ul class="stack__list">
+        <li><span>Full boiler service and gas safety certificate</span><b class="tnum">£96</b></li>
+        <li><span>Heating health check and filter clean</span><b class="tnum">£66</b></li>
+        <li><span>One free call-out, one hour of engineer time</span><b class="tnum">£114</b></li>
+        <li><span>Flue gas analysis, filter clean, radiators balanced</span><b class="tnum">Included</b></li>
+        <li><span>Priority response, weekdays</span><b class="tnum">Included</b></li>
+        <li><span>5% off any other work</span><b class="tnum">Included</b></li>
+        <li class="stack__total"><span>Total value</span><b class="tnum">£276</b></li>
+      </ul>
+
+      <div class="stack__anchor">
+        <div class="stack__arow stack__arow--was">
+          <span class="stack__alabel">Paid for separately</span>
+          <span class="stack__anum">£276</span>
+        </div>
+        <div class="stack__arow stack__arow--now">
+          <span class="stack__alabel">Service Care</span>
+          <span class="stack__anum stack__anum--now">£9.99<span class="stack__amo">/mo</span></span>
+          <span class="stack__athen">£119.88 a year</span>
+        </div>
+        <p class="stack__save">You save £156.</p>
+      </div>
+
+      <p class="stack__small">
+        Parts are quoted separately and we will always tell you the cost before we do the
+        work. Priority response covers weekday call-outs, {nap.hours}.
+      </p>
+      <p class="stack__risk">No minimum term. Cancel any month you like. Full refund if you change your mind within 14 days.</p>
+
+      <div class="stack__cta">
+        <Button href={gocardless.serviceCare} external size="lg">Sign Up Online</Button>
+      </div>
+    </div>
   </Section>
 
   <!-- WHAT YOU GET -->
@@ -277,6 +329,7 @@ const schemas = [
           bundles that certificate, so your paperwork never lapses. Letting more than one
           property? We will sort cover across the portfolio.
         </p>
+        <Button href={gocardless.landlordCare} external variant="outline">Sign Up Online</Button>
       </article>
       <article class="lb__card">
         <h3 class="lb__title">Guest houses, B&amp;Bs and holiday lets</h3>
@@ -379,6 +432,44 @@ const schemas = [
   .plans__note { margin-top: 24px; text-align: center; font-size: var(--text-sm); color: var(--text-muted); }
   .plans__note a { color: var(--text-link); font-weight: var(--weight-semibold); }
 
+  /* OFFER STACK — ported from the boiler-draw landing pages, see the note
+     above the markup. */
+  .stack { max-width: 720px; margin: 56px auto 0; }
+  .stack__h { font-family: var(--font-display); font-size: clamp(24px, 2.4vw, 32px); color: var(--text-heading); margin-top: 10px; }
+  .stack__list { margin-top: 28px; display: flex; flex-direction: column; }
+  .stack__list li {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
+    padding: 13px 0; border-bottom: 1px solid var(--border-subtle);
+    font-size: 15px; color: var(--text-body);
+  }
+  .stack__list li span { flex: 1; }
+  .stack__list li b { flex: none; font-weight: var(--weight-semibold); color: var(--text-heading); }
+  .stack__total {
+    margin-top: 4px; border-bottom: 0 !important; padding-top: 16px !important;
+    border-top: 2px solid var(--text-heading) !important;
+  }
+  .stack__total span, .stack__total b { font-size: 17px; font-weight: var(--weight-bold); color: var(--text-heading); }
+
+  .stack__anchor {
+    margin-top: 32px; padding: 26px 28px;
+    background: var(--surface-sunken); border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl); box-shadow: var(--shadow-md);
+  }
+  .stack__arow { display: flex; flex-direction: column; gap: 2px; }
+  .stack__arow--now { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+  .stack__alabel { font-size: 12.5px; font-weight: var(--weight-semibold); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted); }
+  .stack__anum { font-size: 28px; font-weight: var(--weight-bold); color: var(--text-muted); text-decoration: line-through; }
+  .stack__anum--now { font-size: 44px; color: var(--page-accent-ink, var(--orange-800)); text-decoration: none; }
+  .stack__amo { font-size: 18px; font-weight: var(--weight-semibold); color: var(--text-muted); }
+  .stack__athen { font-size: var(--text-sm); color: var(--text-muted); margin-top: 2px; }
+  .stack__save {
+    margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border-default);
+    font-size: 19px; font-weight: var(--weight-bold); color: var(--text-heading);
+  }
+  .stack__small { margin-top: 20px; font-size: 13px; line-height: var(--leading-relaxed); color: var(--text-muted); }
+  .stack__risk { margin-top: 10px; font-size: 14.5px; font-weight: var(--weight-medium); color: var(--text-heading); }
+  .stack__cta { margin-top: 24px; text-align: center; }
+
   /* WHAT YOU GET */
   .get__head { max-width: 640px; margin-bottom: 36px; }
   .get__intro { margin-top: 16px; font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); }
@@ -464,6 +555,7 @@ const schemas = [
   .lb__title { font-family: var(--font-display); font-size: 22px; color: var(--text-heading); margin-bottom: 10px; }
   .lb__card p { font-size: 15px; line-height: var(--leading-relaxed); color: var(--text-body); }
   .lb__card strong { color: var(--text-heading); }
+  .lb__card :global(.btn) { margin-top: 16px; }
   .lb__cta { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 28px; }
   .lb__nums { font-size: var(--text-sm); color: var(--text-muted); font-weight: var(--weight-semibold); }
 

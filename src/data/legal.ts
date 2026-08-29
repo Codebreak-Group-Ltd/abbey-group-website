@@ -15,6 +15,12 @@
    TradeHelp is not from that list: it comes from Abbey's own Home Care Plan
    brochure, which names it as the administrator of the Plans. Plan customers'
    data reaches them, so it is a processor and has to be named.
+
+   Meta added 28 Aug 2026 (Josh): the Meta Pixel is now live on the
+   boiler-draw ad landing pages, per the 30 July line above. Codebreak added
+   the same day: their own tracking script and AI qualification webhooks now
+   also receive landing-page enquiry data, so they are a processor in their
+   own right, not covered by the earlier list.
    ===================================================================== */
 
 /** Publication date shown on every legal page. Update when the text changes. */
@@ -60,6 +66,16 @@ export const processors: Processor[] = [
     plansOnly: true,
     purpose:
       'Administers the Abbey Home Care Plans on our behalf, as set out in the Plan terms. Only the details needed to run your Plan are shared.',
+  },
+  {
+    name: 'Meta',
+    purpose:
+      'Runs the Meta Pixel on our advertising landing pages, which measures which adverts lead to an enquiry. Used for our own advertising only.',
+  },
+  {
+    name: 'Codebreak',
+    purpose:
+      'Our marketing agency. Their tracking script on the advertising landing pages measures campaign performance for their reporting to us, and enquiries from those pages are also sent to their AI qualification system.',
   },
 ];
 

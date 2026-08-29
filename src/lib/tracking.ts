@@ -26,6 +26,10 @@
 
 const GA4_ID = (import.meta.env.PUBLIC_GA4_ID as string | undefined) || 'GA4_MEASUREMENT_ID';
 const META_PIXEL_ID = (import.meta.env.PUBLIC_META_PIXEL_ID as string | undefined) || 'META_PIXEL_ID';
+/* Codebreak's own campaign-tracking script (the "hub" pixel), same
+   env-var-first/placeholder-fallback pattern as GA4/Meta above — a missing
+   env var means this stays inert rather than loading an empty `<script src>`. */
+const CODEBREAK_PIXEL_SRC = (import.meta.env.PUBLIC_CODEBREAK_PIXEL_SRC as string | undefined) || '';
 
 export const isRealGa4Id = (id: string) => /^G-[A-Z0-9]+$/.test(id);
 export const isRealMetaPixelId = (id: string) => /^\d{15,16}$/.test(id);
@@ -81,9 +85,24 @@ export function loadMetaPixel(): void {
   window.fbq!('track', 'PageView');
 }
 
+let codebreakLoaded = false;
+
+/** Injects Codebreak's campaign-tracking script tag. No-op if the src isn't set. */
+export function loadCodebreakPixel(): void {
+  if (codebreakLoaded || !CODEBREAK_PIXEL_SRC) return;
+  codebreakLoaded = true;
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = CODEBREAK_PIXEL_SRC;
+  document.head.appendChild(script);
+}
+
 /** Loads whichever consented, real-ID services aren't loaded yet. Safe to call repeatedly. */
 export function loadConsentedTracking(consent: { analytics: boolean; advertising: boolean }): void {
-  if (consent.analytics) loadGa4();
+  if (consent.analytics) {
+    loadGa4();
+    loadCodebreakPixel();
+  }
   if (consent.advertising) loadMetaPixel();
 }
 
@@ -91,10 +110,20 @@ export function loadConsentedTracking(consent: { analytics: boolean; advertising
  * Fires the boiler-draw campaign's Lead conversion. Called once, from
  * `/lp/thank-you/`. `planInterest`/`landingPage` come straight off that
  * page's own `?plan=`/`?source=` query params — see that page's script.
+ *
+ * `contentName` ('Homeowners' | 'Landlord', added 28 Aug 2026 for Meta ads
+ * reporting) lets the same shared thank-you page report the Lead as one of
+ * two named audiences, without a second thank-you page or a second pixel —
+ * the caller derives it from the same `isLandlord` check it already does to
+ * pick which confirmation block to show.
  */
-export function fireLead(params: { planInterest?: string; landingPage?: string }): void {
+export function fireLead(params: { planInterest?: string; landingPage?: string; contentName?: string }): void {
   if (window.fbq && isRealMetaPixelId(META_PIXEL_ID)) {
-    window.fbq('track', 'Lead', { plan_interest: params.planInterest, landing_page: params.landingPage });
+    window.fbq('track', 'Lead', {
+      plan_interest: params.planInterest,
+      landing_page: params.landingPage,
+      content_name: params.contentName,
+    });
   }
   if (window.gtag && isRealGa4Id(GA4_ID)) {
     window.gtag('event', 'conversion', { plan_interest: params.planInterest, landing_page: params.landingPage });

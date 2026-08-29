@@ -261,7 +261,7 @@ const drawFaqs = [
       <!-- ⚠️ [CONFIRM WITH ABBEY] wording per the brief, before publishing. -->
       <p class="stack__small">
         Parts are quoted separately and we will always tell you the cost before we do the
-        work. Priority response covers weekday call-outs, 9am to 5pm Monday to Friday.
+        work. Priority response covers weekday call-outs, 9am to 4pm Monday to Friday.
       </p>
       <p class="stack__risk">No minimum term. Cancel any month you like. Full refund if you change your mind within 14 days.</p>
 
@@ -293,6 +293,7 @@ const drawFaqs = [
     bg="sunken"
     redirect="/lp/thank-you/"
     planInterest="Service Care"
+    secondaryAudience="homeowner"
     microNote="We will only use your details to talk to you about your enquiry."
     fields={[
       { name: 'name', label: 'Full name', required: true, autocomplete: 'name' },
@@ -378,13 +379,22 @@ const drawFaqs = [
         <Photo
           src="/images/about-team-group.webp"
           alt="The Abbey Group team with their vans in Whitby"
-          ratio="4 / 3"
+          ratio="2 / 1"
         />
         <figure class="why__person">
           <img src="/images/about-james-eddon-headshot.webp" alt="James Eddon, Managing Director of Abbey Group" width="60" height="60" loading="lazy" decoding="async" />
           <figcaption>
             <strong>James Eddon</strong>
             <span>Managing Director. Set the business up as Abbey Gas in 2008.</span>
+          </figcaption>
+        </figure>
+        <!-- Added 28 Aug 2026 (Amy): both James and Amy are who visitors here
+             actually deal with, so both appear rather than James alone. -->
+        <figure class="why__person">
+          <img src="/images/about-amy.webp" alt="Amy, Operations Manager at Abbey Group" width="60" height="60" loading="lazy" decoding="async" />
+          <figcaption>
+            <strong>Amy</strong>
+            <span>Operations Manager. Runs the day-to-day and the plans.</span>
           </figcaption>
         </figure>
       </div>

@@ -176,7 +176,7 @@ const description = 'Thanks, you are on the list. Here is what happens next, and
         <!-- ⚠️ [CONFIRM WITH ABBEY] wording, same open item as the landing pages. -->
         <p class="stack__small">
           Parts are quoted separately and we will always tell you the cost before we do the
-          work. Priority response covers weekday call-outs, 9am to 5pm Monday to Friday.
+          work. Priority response covers weekday call-outs, 9am to 4pm Monday to Friday.
         </p>
       </div>
 
@@ -206,7 +206,7 @@ const description = 'Thanks, you are on the list. Here is what happens next, and
         <!-- ⚠️ [CONFIRM WITH ABBEY] wording, same open item as the landing pages. -->
         <p class="stack__small">
           Parts are quoted separately and we will always tell you the cost before we do the
-          work. Priority response covers weekday call-outs, 9am to 5pm Monday to Friday.
+          work. Priority response covers weekday call-outs, 9am to 4pm Monday to Friday.
         </p>
       </div>
     </div>
@@ -374,6 +374,7 @@ const description = 'Thanks, you are on the list. Here is what happens next, and
     const landingPage = params.get('source') ?? undefined;
 
     const isLandlord = planInterest === 'Landlord Care';
+    const contentName = isLandlord ? 'Landlord' : 'Homeowners';
     const serviceBlock = document.querySelector<HTMLElement>('[data-plan-block="service-care"]');
     const landlordBlock = document.querySelector<HTMLElement>('[data-plan-block="landlord-care"]');
     if (serviceBlock) serviceBlock.hidden = isLandlord;
@@ -387,13 +388,13 @@ const description = 'Thanks, you are on the list. Here is what happens next, and
        no real GA4/Meta ID yet, consent or not. No banner element at all
        means the registry is still empty, so there is nothing to wait for. */
     if (!document.querySelector('[data-cc]')) {
-      fireLead({ planInterest, landingPage });
+      fireLead({ planInterest, landingPage, contentName });
     } else {
       let attempts = 0;
       const tryFire = () => {
         attempts += 1;
         if (window.fbq || window.gtag || attempts > 20) {
-          fireLead({ planInterest, landingPage });
+          fireLead({ planInterest, landingPage, contentName });
           return;
         }
         setTimeout(tryFire, 100);

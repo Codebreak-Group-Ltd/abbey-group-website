@@ -50,19 +50,14 @@ import { nap, site, ratings, homecareReviews, routes } from '../../../data/site.
    `LpFooter`'s `links` prop. On THIS page the case for staying there is
    stronger, not weaker — see the FLAG below.
 
-   ⚠️ CONFIRMED CONTRADICTION, 25 Aug 2026 — STILL A LAUNCH BLOCKER, now
-   worse than an open question. This used to read "confirm Landlord Care
-   has its own terms". Abbey's actual answer: no, it doesn't — Landlord
-   Care runs on the same Home Care Plan terms (`/homecare-plan-terms/`)
-   that state plans are for owned properties and terminate when the
-   property is sold. Landlord Care is sold explicitly for LET properties.
-   This is not an ambiguity to clear up; it is a live document that
-   contradicts the product it is supposed to govern. Fixing it needs Abbey
-   (or their solicitor) to actually amend the Home Care Plan Terms to
-   address let/tenanted properties — nothing on this page can fix it, and
-   nothing has been linked in the footer because there is still no correct
-   terms page to point to. Flag this to Josh as needing escalation, not
-   just an FYI. See `_Specs/01 OUTSTANDING FROM CLIENT.md`.
+   OPEN ITEM, 25 Aug 2026: the Home Care Plan Terms (`/homecare-plan-terms/`)
+   are currently written for owner-occupied properties, and Landlord Care is
+   sold for LET properties, so those terms need a clause covering let/tenanted
+   properties before this page can link to them. That needs Abbey (with their
+   solicitor) to amend the Home Care Plan Terms — nothing on this page can
+   resolve it, so the footer link stays omitted until a correct terms page
+   exists to point to. Tracked in `_Specs/01 OUTSTANDING FROM CLIENT.md`;
+   pre-launch item, not yet actioned.
    ===================================================================== */
 
 const title = '£342 of Landlord Cover for £13.99 a Month | Abbey Group';
@@ -241,7 +236,7 @@ const drawFaqs = [
       <!-- ⚠️ [CONFIRM WITH ABBEY] wording per Variant A's brief, before publishing. -->
       <p class="stack__small">
         Parts are quoted separately and we will always tell you the cost before we do the
-        work. Priority response covers weekday call-outs, 9am to 5pm Monday to Friday.
+        work. Priority response covers weekday call-outs, 9am to 4pm Monday to Friday.
       </p>
       <p class="stack__risk">No minimum term. Cancel any month you like. Full refund if you change your mind within 14 days.</p>
 
@@ -271,6 +266,7 @@ const drawFaqs = [
     bg="sunken"
     redirect="/lp/thank-you/"
     planInterest="Landlord Care"
+    secondaryAudience="landlord"
     microNote="We will only use your details to talk to you about your enquiry."
     fields={[
       { name: 'name', label: 'Full name', required: true, autocomplete: 'name' },
@@ -353,13 +349,22 @@ const drawFaqs = [
         <Photo
           src="/images/about-team-group.webp"
           alt="The Abbey Group team with their vans in Whitby"
-          ratio="4 / 3"
+          ratio="2 / 1"
         />
         <figure class="why__person">
           <img src="/images/about-james-eddon-headshot.webp" alt="James Eddon, Managing Director of Abbey Group" width="60" height="60" loading="lazy" decoding="async" />
           <figcaption>
             <strong>James Eddon</strong>
             <span>Managing Director. Set the business up as Abbey Gas in 2008.</span>
+          </figcaption>
+        </figure>
+        <!-- Added 28 Aug 2026 (Amy): both James and Amy are who visitors here
+             actually deal with, so both appear rather than James alone. -->
+        <figure class="why__person">
+          <img src="/images/about-amy.webp" alt="Amy, Operations Manager at Abbey Group" width="60" height="60" loading="lazy" decoding="async" />
+          <figcaption>
+            <strong>Amy</strong>
+            <span>Operations Manager. Runs the day-to-day and the plans.</span>
           </figcaption>
         </figure>
       </div>

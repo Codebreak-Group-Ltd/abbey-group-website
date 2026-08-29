@@ -31,3 +31,105 @@
   to = "/lp/boiler-draw-terms/"
   status = 301
   force = true
+
+# --- Legacy domain consolidation (abbeygas.com, abbeyhomecare.co.uk) -------
+# Abbey Group is consolidating abbeygas.com and abbeyhomecare.co.uk into this
+# site under abbeygroup.uk (CLAUDE.md, build brief). URL inventory taken from
+# each live site's nav/sitemap on 28 Aug 2026 — see LAUNCH.md for the source
+# crawl. These rules are domain-qualified so they only fire once each domain
+# is added to this Netlify site (Domain management > Domain aliases) and its
+# DNS is pointed here — that DNS access is still outstanding, tracked in
+# `_Specs/01 OUTSTANDING FROM CLIENT.md` §B3. Until DNS is switched, these
+# rules are inert (Netlify never sees traffic for a domain it isn't serving).
+# Once live, each old domain should also go through Google Search Console's
+# Change of Address tool — this only handles the HTTP-level 301s.
+
+[[redirects]]
+  from = "https://abbeygas.com/about-us/"
+  to = "https://abbeygroup.uk/about/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://abbeygas.com/boilers/"
+  to = "https://abbeygroup.uk/plumbing-heating/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://abbeygas.com/central-heating/"
+  to = "https://abbeygroup.uk/plumbing-heating/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://abbeygas.com/underfloor-heating/"
+  to = "https://abbeygroup.uk/plumbing-heating/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://abbeygas.com/gas-safety-certificates/"
+  to = "https://abbeygroup.uk/plumbing-heating/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://abbeygas.com/bathroom-renovations/"
+  to = "https://abbeygroup.uk/renovations/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://abbeygas.com/kitchen-renovations/"
+  to = "https://abbeygroup.uk/renovations/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://abbeygas.com/online-quote/"
+  to = "https://abbeygroup.uk/contact/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://abbeygas.com/contact-us/"
+  to = "https://abbeygroup.uk/contact/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://abbeygas.com/book-online/"
+  to = "https://abbeygroup.uk/book-online/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://abbeygas.com/home/"
+  to = "https://abbeygroup.uk/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://abbeygas.com/website-credits/"
+  to = "https://abbeygroup.uk/credits/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://abbeygas.com/*"
+  to = "https://abbeygroup.uk/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://abbeyhomecare.co.uk/hello-world/"
+  to = "https://abbeygroup.uk/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://abbeyhomecare.co.uk/*"
+  to = "https://abbeygroup.uk/homecare-plans/"
+  status = 301
+  force = true
