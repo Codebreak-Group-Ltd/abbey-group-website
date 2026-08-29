@@ -59,11 +59,18 @@ interface Props {
   altHref?: string;
   altLabel?: string;
   ctaFirstPerson?: boolean;
+  /* Direct GoCardless sign-up for Service Care/Landlord Care is a MAIN-SITE
+     behaviour only (Josh, 28 Aug 2026): the site can sell there and then, but
+     every ad landing page is lead-only — the office phones the lead, never a
+     self-serve "buy now" on an `/lp/` page. Defaults on for the main site's
+     own use of this component; every `/lp/` usage must pass this false. */
+  directSignup?: boolean;
 }
 const {
   altHref = routes.plumbing,
   altLabel = 'See Plumbing & Heating',
   ctaFirstPerson = false,
+  directSignup = true,
 } = Astro.props;
 
 const cta = ctaFirstPerson
@@ -175,7 +182,9 @@ const state = [
           Start Service Care instead and it is <strong class="tnum">£9.99</strong> a month, this
           service included, today and every year after.
         </p>
-        <Button href={gocardless.serviceCare} external size="lg">{cta.service}</Button>
+        {directSignup
+          ? <Button href={gocardless.serviceCare} external size="lg">{cta.service}</Button>
+          : <Button href="#enquiry" size="lg">{cta.service}</Button>}
 
         <!-- Shown for a 10+ or unknown-age boiler only (Josh's suggestion, 31 July
              2026). Someone who has just been told parts cover is not available on
@@ -241,7 +250,9 @@ const state = [
           nothing else. Start Landlord Care instead and it is <strong class="tnum">£13.99</strong>
           a month, with the certificate booked in every year so it cannot lapse.
         </p>
-        <Button href={gocardless.landlordCare} external size="lg">{cta.landlord}</Button>
+        {directSignup
+          ? <Button href={gocardless.landlordCare} external size="lg">{cta.landlord}</Button>
+          : <Button href="#enquiry" size="lg">{cta.landlord}</Button>}
       </article>
 
       <article class="pp__r pp__r--commercial">
