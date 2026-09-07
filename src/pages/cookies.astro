@@ -6,17 +6,14 @@ import { consentRegistry, categoryLabels } from '../data/consent-registry.ts';
 /* Cookie policy — the table is GENERATED from the consent registry, so it can
    never drift from what the site actually loads (build standard §6/§7).
 
-   The registry is empty today and the page says so, which is the truthful
-   position: self-hosted fonts, no analytics, no pixels, no embeds, and the
-   enquiry form no longer writes anything to the device. Add a service to the
-   registry in the same change as the code that loads it and this page updates
-   itself. */
+   Add a service to the registry in the same change as the code that loads it
+   and this page, including its meta description below, updates itself. */
 
 const title = 'Cookie Policy | Abbey Group Whitby';
-const description =
-  'What this website stores on your device. Abbey Group currently sets no cookies: fonts are self-hosted and there is no analytics or advertising tracking.';
-
 const hasServices = consentRegistry.length > 0;
+const description = hasServices
+  ? 'What this website stores on your device, the services we use and how to manage your cookie preferences.'
+  : 'What this website stores on your device. Abbey Group currently sets no cookies: fonts are self-hosted and there is no analytics or advertising tracking.';
 ---
 <LegalLayout
   title={title}

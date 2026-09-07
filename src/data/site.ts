@@ -11,6 +11,18 @@ export const site = {
   tradingAs: 'Abbey Group',
   companyNo: '08134722',
   registeredIn: 'England & Wales',
+  /* Statutory registered office per Companies House (find-and-update.company-
+     information.service.gov.uk/company/08134722), checked 4 Sept 2026 — NOT
+     the same as `nap.addressLine` below, which is Abbey's trading address
+     (the Skinner Street office/shop). Companies House shows no filing for a
+     recent change of registered office, so this is the address that must
+     appear wherever a legal document states "our registered office", even
+     though everywhere else on the site correctly shows the trading address
+     for contact/local SEO. Worth a quick sanity check with Josh/Amy in case
+     Companies House is out of date, but it's the authoritative source for
+     this specific statutory disclosure and there's no reason to assume it's
+     wrong. */
+  registeredOffice: '5 Bobbies Bank, Spring Hill, Whitby, North Yorkshire, YO21 1EF',
   domain: 'https://abbeygroup.uk',
   positioning: "Whitby's one-stop home services team. One number, every trade, done properly.",
   gasSafeNo: '303376',

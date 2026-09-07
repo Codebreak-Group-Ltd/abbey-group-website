@@ -22,7 +22,8 @@ const description =
   <p>
     This website, {site.domain.replace('https://', '')}, is operated by {site.legalName},
     trading as {site.tradingAs}. We are registered in {site.registeredIn}, company number
-    {site.companyNo}, with our registered office at {nap.addressFull}.
+    {site.companyNo}, with our registered office at {site.registeredOffice}. Our trading
+    address is {nap.addressFull}.
   </p>
   {!vatNumber && (
     <span class="legal-gap">
@@ -77,6 +78,13 @@ const description =
     uninterrupted. Nothing in these terms limits our liability for death or personal
     injury caused by our negligence, for fraud, or for anything else that cannot be
     limited by law. Nothing here affects your statutory rights as a consumer.
+  </p>
+
+  <h2>Changes to these terms</h2>
+  <p>
+    We may update these terms from time to time, for example if we add a new feature to
+    the site or the law changes. The date at the top of this page shows when it last
+    changed. Continuing to use the site after a change means you accept the updated terms.
   </p>
 
   <h2>Governing law</h2>

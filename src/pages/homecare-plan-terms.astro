@@ -1,17 +1,22 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
-import { nap, routes } from '../data/site.ts';
+import { nap, routes, site } from '../data/site.ts';
 
 /* Abbey Home Care Plan Terms & Conditions.
 
    THIS IS NOT OUR TEXT. It is transcribed from Abbey's own "Abbey Home Care
    Plan" brochure, because it is their real, existing consumer contract. It is
-   reproduced faithfully rather than rewritten, and two queries are marked in the
-   page for Amy and the solicitor:
-     1. confirm this is still the current brochure edition, and
-     2. Section 3's heading in the brochure refers to Filter Monitoring but its
-        content is about quotes and works. We have not invented a heading to fix
-        that; it needs their answer.
+   reproduced faithfully rather than rewritten, other than two fairness fixes
+   noted in-page (the BER "sole discretion" wording, and the liability cap
+   query) and one remaining open question for the solicitor:
+     Section 3's heading in the brochure refers to Filter Monitoring but its
+     content is about quotes and works. We have not invented a heading to fix
+     that; it needs their answer.
+   The brochure-edition query is RESOLVED, 4 Sept 2026: abbeyhomecare.co.uk
+   currently serves the identical file (same filename, same Jan 2026 date) at
+   http://abbeyhomecare.co.uk/wp-content/uploads/2026/01/Abbey-Care-Brochure-JAN2026.pdf,
+   and the local PDF's own metadata confirms a 20 Jan 2026 creation date. This
+   is Abbey's live, current edition.
    Copy source: `11 Utility (Privacy, T&Cs, Credits)/Text/Utility Pages - COPY.md`. */
 
 const title = 'Home Care Plan Terms | Abbey Group Whitby';
@@ -29,8 +34,8 @@ const description =
 
   <span class="legal-gap">
     <strong>Before publication:</strong> these terms are transcribed from the Abbey Home
-    Care Plan brochure. Amy and James to confirm this is still the current edition, and
-    the solicitor to confirm the Section 3 heading (see the note there).
+    Care Plan brochure (confirmed current edition, Jan 2026). One item remains: the
+    solicitor to confirm the Section 3 heading (see the note there).
   </span>
 
   <h2>Section 1: Definitions</h2>
@@ -204,10 +209,9 @@ const description =
   </p>
   <p>
     Repairs to your boiler are not included under any service-only Plan and are excluded
-    under a boiler or system care Plan where the boiler is deemed, in our sole discretion,
-    to be Beyond Economic Repair (BER). Your boiler will be BER if the heat exchanger fails
-    or if the value of the boiler or programmer is less than the cost of the parts to
-    repair it.
+    under a boiler or system care Plan where the boiler is Beyond Economic Repair (BER).
+    Your boiler will be BER if the heat exchanger fails or if the value of the boiler or
+    programmer is less than the cost of the parts to repair it.
   </p>
   <p>
     If you need work or repairs carrying out that are not included in your Plan(s), we will
@@ -420,17 +424,20 @@ const description =
     Data relating to your Wi-Fi enabled filter.
   </p>
   <p>
-    We use this information to: provide you with the product(s) and/or services as detailed
-    in your Plan and in any Quote(s), and to take payment of Fees; administer and improve
-    our business; let you know about any ways in which we can improve the service you
-    receive from us; and tell you about any offers, products or services which may be of
-    interest to you. We may contact you by post, telephone, email and/or other electronic
-    messaging services. To change your marketing preference let us know by emailing or
-    writing to us.
+    We use this information to provide you with the product(s) and/or services detailed in
+    your Plan and in any Quote(s), to take payment of Fees, and to administer and improve
+    our business. We do this because it is necessary to run your Plan, and it does not
+    depend on a separate agreement from you.
   </p>
   <p>
-    By applying for a Plan you agree that we may use your data in the manner described
-    above. All use of your data will be in accordance with the most recent data protection
+    Separately, we may also tell you by post about other Abbey services which may be of
+    interest to you, which you can ask us to stop at any time by emailing or writing to us.
+    We will not email, text or call you about other services unless you have separately
+    told us you are happy to hear from us in that way, and every such message tells you how
+    to opt out. Declining marketing does not affect your Plan.
+  </p>
+  <p>
+    All use of your data will be in accordance with the most recent data protection
     legislation and we will not use your data in any other manner or for any other purpose
     than as described above.
   </p>
@@ -469,8 +476,25 @@ const description =
   </p>
   <p>
     Further, (to the extent permitted by English law, and not beyond,) our total liability
-    to you for negligence or breach of contract is limited to a sum equivalent to the Fees.
+    to you for breach of contract in carrying out or administering your Plan is limited to
+    a sum equivalent to the Fees. This limit does not apply to our liability for death or
+    personal injury caused by our negligence, for fraud, for damage to your property caused
+    by our negligence in carrying out Works, or for anything else that cannot lawfully be
+    limited.
   </p>
+  <span class="legal-gap">
+    <strong>Amendment for review, 4 Sept 2026:</strong> the original brochure capped total
+    liability, including for negligence causing property damage, at the value of the Fees.
+    A cap that low against a risk like escape-of-water damage is exactly the kind of term
+    the Consumer Rights Act 2015 fairness test targets, so the cap has been narrowed here to
+    cover breach-of-contract claims only (missed appointments, service not carried out,
+    that kind of thing) and no longer applies to negligence causing property damage, which
+    is now uncapped alongside the death/personal injury/fraud carve-outs already in the
+    brochure text. This is a deliberate, more consumer-favourable change from Abbey's
+    existing wording, made because it reduces Abbey's own legal exposure rather than
+    increases it — but Abbey and the solicitor should still confirm they're comfortable
+    with it before publication.
+  </span>
   <p>
     We do not provide insurance and the Plans are not contracts of insurance; they are
     service plans whereby you make pre-payments in return for our periodic maintenance of
@@ -511,6 +535,27 @@ const description =
     We've tried to make them both clear and fair, but if there is anything you don't
     understand or are unsure about, please discuss it with us before applying for a Plan or
     requesting a Quote.
+  </p>
+
+  <h2>Cancellation form</h2>
+  <p>
+    Use this form if you want to cancel your Plan, or cancel Works under a Quote within
+    the 14-day statutory period described above. You do not have to use this exact
+    wording, but it covers what we need to process your cancellation.
+  </p>
+  <p>
+    To: {site.legalName}, {nap.addressFull}, <a href={`mailto:${nap.email}`}>{nap.email}</a>
+  </p>
+  <p>
+    I/We hereby give notice that I/we cancel my/our Plan or contract for the supply of the
+    following service:
+  </p>
+  <p>
+    Ordered on / Plan or Quote reference: [insert]<br />
+    Name of consumer: [insert]<br />
+    Address of consumer: [insert]<br />
+    Signature of consumer (if this form is given on paper): [insert]<br />
+    Date: [insert]
   </p>
 
   <h2>How to contact us</h2>

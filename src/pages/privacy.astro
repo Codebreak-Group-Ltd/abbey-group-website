@@ -27,7 +27,8 @@ const tracking = consentRegistry.length > 0;
   <p>
     {site.legalName}, trading as {site.tradingAs}, is the data controller for the
     information described in this policy. We are registered in {site.registeredIn},
-    company number {site.companyNo}, and our registered office is {nap.addressFull}.
+    company number {site.companyNo}, and our registered office is {site.registeredOffice}.
+    Our trading address is {nap.addressFull}.
   </p>
   {vatNumber && <p>Our VAT registration number is {vatNumber}.</p>}
   {!vatNumber && (
@@ -92,8 +93,22 @@ const tracking = consentRegistry.length > 0;
         <td>Keeping the website working and secure</td>
         <td>Our legitimate interest in running the site</td>
       </tr>
+      <tr>
+        <td>Telling you by post about other Abbey services</td>
+        <td>Our legitimate interest in a limited, non-electronic way. You can opt out at any time by contacting us.</td>
+      </tr>
+      <tr>
+        <td>Telling you by email, text or phone about other Abbey services</td>
+        <td>Your consent, only if you have separately told us you are happy to hear from us that way. Every message tells you how to opt out.</td>
+      </tr>
     </tbody>
   </table>
+  <p>
+    We keep your information secure using appropriate technical and organisational
+    measures, including restricted access to our systems and secure hosting. No method of
+    storing or transmitting information is completely secure, but we work to protect your
+    information and review our arrangements regularly.
+  </p>
 
   <h2>Who we share it with</h2>
   <p>
@@ -113,7 +128,14 @@ const tracking = consentRegistry.length > 0;
     safeguards such as Standard Contractual Clauses are in place so your information
     stays protected.
   </p>
-  {!tracking && (
+  {tracking ? (
+    <p>
+      We use a small number of analytics and advertising services, listed with what they
+      do in our <a href={routes.cookies}>Cookie Policy</a>. None of them load until you
+      have given your consent, and you can change your mind at any time using the cookie
+      preferences link in the footer.
+    </p>
+  ) : (
     <p>
       We do not currently use any analytics or advertising services on this website. If
       that changes, this policy and our <a href={routes.cookies}>Cookie Policy</a> will be
@@ -154,7 +176,7 @@ const tracking = consentRegistry.length > 0;
   <h2>Cookies</h2>
   <p>
     See our <a href={routes.cookies}>Cookie Policy</a> for what this site stores on your
-    device. At the moment, that is nothing.
+    device{tracking ? ', and how to manage your preferences' : '. At the moment, that is nothing'}.
   </p>
 
   <h2>Changes to this policy</h2>
