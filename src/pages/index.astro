@@ -123,18 +123,22 @@ const schemas = [
 
     </div>
 
-    <!-- Real photo of Abbey's own liveried van, replacing the cut-out artwork,
-         28 Aug 2026. Supplied with the background already properly removed
-         (AbbeyGroupVan-transparent.png), so it sits cleanly on this hero's
-         dark ground. Still faces right like the artwork did, so the "drives
-         off to the right" animation below needs no change. The hero clips
-         it, so it can never cause horizontal overflow. -->
+    <!-- Real Abbey Home Care van, swapped in 7 Sep 2026 (was the pickup truck).
+         Supplied (AbbeyGroupVanNew.png) with a genuine transparent background,
+         but with 113px of transparent padding below the tyres (12% of the
+         file's own height) — left as supplied, `bottom: 0` below would have
+         floated the wheels visibly above the hero's floor instead of sitting
+         on it. Re-cropped tight to the opaque pixels (measured, not eyeballed)
+         so the convention documented on `.hero__van` below — bottom:0 puts the
+         tyre contact patches on the hero's floor — holds again. Still faces
+         right, so the "drives off to the right" animation needs no change.
+         The hero clips it, so it can never cause horizontal overflow. -->
     <div class="hero__van" data-van>
       <img
         src="/images/van-real-abbeygroup.webp"
         alt="An Abbey Group liveried van"
         width="1302"
-        height="490"
+        height="580"
         loading="eager"
         fetchpriority="high"
         decoding="auto"
@@ -385,6 +389,14 @@ const schemas = [
     letter-spacing: var(--tracking-tight);
     text-wrap: balance;
     color: var(--white);
+    /* Added 7 Sep 2026 (Josh): the van's `left` formula below is built to
+       clear exactly `--hero-lead-measure` of text width, but only the lead
+       paragraph respected that — the H1 had no width cap, so `text-wrap:
+       balance` could stretch it wide enough to run into the van at laptop
+       widths (confirmed visually at 1080-1440px, "Your Home Needs" touching
+       the van's silhouette). Same ceiling as the paragraph closes that gap
+       for good, not just at the widths tested. */
+    max-width: var(--hero-lead-measure);
   }
   .hero__lead {
     font-size: var(--text-md);
@@ -404,10 +416,13 @@ const schemas = [
        the van over the lead paragraph and the CTA. The hero clips it, so it still
        cannot cause horizontal overflow.
 
-       Pulled back in and dropped to the floor (Josh, 30 July 2026). The asset is
-       tightly cropped (opaque pixels run x 2-1300 of 1302 and y 1-473 of 475,
-       measured off the file), so `bottom: 0` puts the tyre contact patches
-       exactly on the hero's bottom edge: 0.9px of gap, nothing to fake.
+       Pulled back in and dropped to the floor (Josh, 30 July 2026). The
+       convention this depends on: whatever van image is here must be cropped
+       tight to its own opaque pixels (measured, not eyeballed — the file
+       supplied 7 Sep 2026 had 113px of transparent padding below the tyres
+       and needed re-cropping before it matched this), so `bottom: 0` puts the
+       tyre contact patches on the hero's floor rather than floating them
+       above it. Check this again if the van image is ever swapped.
 
        Horizontally it is now the smaller of two rules, because -340px alone
        drives the van's rear into the hero lead, and the pixels it would sit
