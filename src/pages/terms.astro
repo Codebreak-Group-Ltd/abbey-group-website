@@ -23,7 +23,7 @@ const description =
     This website, {site.domain.replace('https://', '')}, is operated by {site.legalName},
     trading as {site.tradingAs}. We are registered in {site.registeredIn}, company number
     {site.companyNo}, with our registered office at {site.registeredOffice}. Our trading
-    address is {nap.addressFull}.
+    address is {nap.addressFull}.{vatNumber && ` Our VAT registration number is ${vatNumber}.`}
   </p>
   {!vatNumber && (
     <span class="legal-gap">

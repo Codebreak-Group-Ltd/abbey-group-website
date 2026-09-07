@@ -32,7 +32,7 @@ export const legalUpdated = '30 July 2026';
    E-Commerce Regulations require the VAT number on the website. Set it here
    and it appears everywhere it should.
    --------------------------------------------------------------------- */
-export const vatNumber: string | null = null;
+export const vatNumber: string | null = 'GB 143 0164 55'; // confirmed by James via Josh, 7 Sep 2026
 
 export type Processor = {
   name: string;

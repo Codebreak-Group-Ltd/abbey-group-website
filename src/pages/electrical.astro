@@ -5,6 +5,7 @@ import Eyebrow from '../components/Eyebrow.astro';
 import Button from '../components/Button.astro';
 import Icon from '../components/Icon.astro';
 import PageHero from '../components/PageHero.astro';
+import Photo from '../components/Photo.astro';
 import Reviews from '../components/Reviews.astro';
 import FAQ from '../components/FAQ.astro';
 import Areas from '../components/Areas.astro';
@@ -83,11 +84,12 @@ const schemas = [
 ];
 ---
 <BaseLayout title={title} description={description} schemas={schemas} division="electrical">
-  <!-- Real hero photo landed 28 Aug 2026 — the first photograph this page has
-       ever had. Only the hero is wired in: the 30 source photos this batch
-       came with were all one electrician fitting a pendant light and a wall
-       socket, so nothing here genuinely shows a consumer unit, an EICR test,
-       an EV charger or a customer — those sections stay text/list-only until
+  <!-- Hero + a body photo (in the cred aside below) from the electrician's
+       socket-work set. Updated 7 Sep 2026 (Amy): swapped the hero from the
+       pendant-light shot to a clearer socket-work close-up. The 30 source
+       photos are all this one electrician on a pendant light and a wall
+       socket, so nothing genuinely shows a consumer unit, an EICR test, an
+       EV charger or a customer — those sections stay text/list-only until
        photos matching those specific categories exist (see image-manifest). -->
   <PageHero
     division="electrical"
@@ -95,7 +97,7 @@ const schemas = [
     lead="Certified electrical work for homes and businesses across Whitby, done safely by a local team. Whether you need an electrician in Whitby for a repair, a rewire or a landlord safety report, a real person answers and the work is signed off properly."
     trust={['NAPIT registered', 'City & Guilds qualified', 'Local', 'Rated 4.6 on Google']}
     image="/images/electrical-hero-electrician-working.webp"
-    imageAlt="Abbey Group electrician fitting a light fixture in a Whitby property"
+    imageAlt="Abbey Group electrician wiring a socket in a Whitby property"
   >
     <!-- Navy, not orange: this hero sits on a green ground, and the two are
          near-complementary at full strength (Josh, 29 July 2026). Orange stays
@@ -137,6 +139,18 @@ const schemas = [
            because its wordmark is navy. Extracted from the supplied PDF at
            3375px, background removed, trimmed (see LAUNCH.md). -->
       <aside class="cred reveal">
+        <!-- Real electrical work photo added 7 Sep 2026 (Amy): a genuine
+             close-up of an Abbey electrician working a socket, so this page
+             carries a body image like the sibling service pages rather than
+             leaning only on the hero. -->
+        <Photo
+          src="/images/electrical-socket-detail.webp"
+          alt="Abbey Group electrician wiring a socket in a Whitby home"
+          ratio="4 / 3"
+          radius="lg"
+          width={900}
+          height={675}
+        />
         <img
           class="cred__logo"
           src="/brand/logos/abbey-electrical-lockup.webp"
