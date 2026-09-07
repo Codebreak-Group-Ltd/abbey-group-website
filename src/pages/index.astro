@@ -62,13 +62,13 @@ const divisions: DivisionCard[] = [
     // card tab and chip tint take the logo's main green, and the icon and link
     // text take --green-ink, which is now the dark end of that same family
     // rather than an olive stand-in.
-    // No photograph exists for this trade at all (outstanding §C1), so the card
-    // carries a designed division panel with a real credential on it rather
-    // than a hatched placeholder or stock. Give it an `img` and it renders a
-    // photo like the other five, no other change needed.
+    // Real electrical photo landed 7 Sep 2026 (Amy): the card now carries a
+    // photo like the other five, so the homepage grid is coherent. The
+    // designed division-panel fallback (`slot`) stays defined but is unused
+    // while `img` is set.
     title: 'Electrical', href: routes.electrical, icon: 'zap', accent: 'var(--accent-electrical)', ink: 'var(--green-ink)',
     desc: 'Safe, certified electrical work for your home.',
-    link: 'Explore Electrical', img: null, photo: 'Certified Abbey Group electrical work',
+    link: 'Explore Electrical', img: '/images/card-electrical.webp', photo: 'Abbey Group electrician wiring a socket in a Whitby home',
     slot: { division: 'electrical' as const, label: 'NAPIT registered', sub: 'Part P self-certified, City & Guilds qualified' },
   },
 ];
