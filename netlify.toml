@@ -56,6 +56,17 @@
 # body. Its source page was deleted, so this redirect is load-bearing, not
 # a belt-and-braces extra — without it the URL 404s. `force = true` so it
 # still applies even if a stale build ever leaves a file at that path.
+# /hello-world/ was the old WordPress default post on the apex domain, retired
+# at the abbeygroup.uk launch (8 Sep 2026). Sent to the homepage so the one
+# stray non-spam URL from the old site doesn't 404. (The injected casino-spam
+# posts are deliberately NOT redirected — they should 404 so Google drops them
+# rather than being told they "moved" to the new site.)
+[[redirects]]
+  from = "/hello-world/"
+  to = "/"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/lp/homecare-boiler-draw/"
   to = "/lp/win-a-new-boiler/"

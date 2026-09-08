@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+import { routes, nap } from '../data/site.ts';
+
+/* Custom 404. Added 8 Sep 2026 for the abbeygroup.uk launch: the old
+   WordPress site left a handful of stray URLs (a default post and some
+   injected spam) that will 404 on the new site, and any mistyped URL should
+   land somewhere on-brand with a way back, not Netlify's generic page.
+   noindex so the 404 itself never gets indexed. */
+
+const title = 'Page not found | Abbey Group Whitby';
+const description =
+  'That page has moved or no longer exists. Head back to the Abbey Group homepage, or get in touch with the Whitby team.';
+---
+<BaseLayout title={title} description={description} noindex={true}>
+  <Section bg="white">
+    <div class="nf reveal">
+      <p class="nf__code" aria-hidden="true">404</p>
+      <h1 class="nf__h1">We could not find that page</h1>
+      <p class="nf__lead">
+        The page you were after has moved or no longer exists. Here is where most people
+        head next.
+      </p>
+      <div class="nf__cta">
+        <Button href={routes.home} size="lg">Back to Home</Button>
+        <Button href={routes.homecare} variant="outline" size="lg">Homecare Plans</Button>
+        <Button href={routes.contact} variant="outline" size="lg">Contact Us</Button>
+      </div>
+      <p class="nf__phone">
+        Or call the Whitby office on
+        <a class="tnum" href={`tel:${nap.phone.tel}`}>{nap.phone.label}</a>, and a real
+        person will answer.
+      </p>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .nf { max-width: 640px; margin: 0 auto; text-align: center; padding: 32px 0; }
+  .nf__code {
+    font-family: var(--font-display);
+    font-size: clamp(72px, 13vw, 128px);
+    line-height: 1;
+    color: var(--cta);
+  }
+  .nf__h1 { font-size: clamp(28px, 3.6vw, 44px); color: var(--text-heading); margin-top: 6px; }
+  .nf__lead {
+    margin-top: 16px;
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    color: var(--text-body);
+  }
+  .nf__cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 28px; }
+  .nf__phone { margin-top: 24px; font-size: var(--text-sm); color: var(--text-muted); }
+  .nf__phone a { color: var(--text-link); font-weight: var(--weight-semibold); }
+</style>
