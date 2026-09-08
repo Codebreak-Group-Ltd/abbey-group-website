@@ -262,12 +262,19 @@ const schemas = [
   <!-- 8. FIND US -->
   <Section bg="white">
     <div class="find">
-      <div class="find__map reveal">
+      <a
+        class="find__map reveal"
+        href="https://www.google.com/maps/search/?api=1&query=Abbey%20Group%2C%2020%20Skinner%20Street%2C%20Whitby%2C%20YO21%203AJ"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open 20 Skinner Street, Whitby YO21 3AJ in Google Maps (opens in a new tab)"
+      >
         <!-- Custom static map (8 Sep 2026): a branded SVG built from OpenStreetMap
              data with the marker on 20 Skinner Street. Chosen over a live Maps
              embed so it needs no consent layer and sets no cookies (build standard
              §6/§7); the OSM attribution is baked into the image. 1200x840 (10/7),
-             so ratio matches the file exactly and nothing is cropped. -->
+             so ratio matches the file exactly and nothing is cropped. Wrapped in a
+             link (8 Sep 2026, Josh) so a tap opens the address in Google Maps. -->
         <Photo
           src="/images/abbey-group-whitby-map.svg"
           alt="Map showing Abbey Group at 20 Skinner Street, Whitby YO21 3AJ, near Pannett Park and Whitby train station"
@@ -276,7 +283,7 @@ const schemas = [
           width={1200}
           height={840}
         />
-      </div>
+      </a>
       <div class="find__copy reveal">
         <Eyebrow>Come and find us</Eyebrow>
         <h2 class="h2">Find us on Skinner Street</h2>
@@ -644,6 +651,11 @@ const schemas = [
 
   /* ---------- 7. FIND US ---------- */
   .find { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .find__map { display: block; border-radius: var(--radius-xl); transition: transform 160ms ease, box-shadow 160ms ease; }
+  .find__map:hover { transform: translateY(-2px); }
+  .find__map:hover :global(.photo) { box-shadow: var(--shadow-lg); }
+  .find__map:focus-visible { outline: 2px solid var(--blue-500); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .find__map { transition: none; } .find__map:hover { transform: none; } }
   .find__copy { display: flex; flex-direction: column; gap: 20px; align-items: flex-start; }
   .find__lead { font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-body); max-width: 480px; }
   .find__list { display: flex; flex-direction: column; gap: 14px; }
