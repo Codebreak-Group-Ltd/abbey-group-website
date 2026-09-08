@@ -161,6 +161,19 @@ body[data-chromeless] :target {
   }
 }
 
+/* ---- Netlify free-plan badge ----
+   Netlify injects a "Powered by Netlify" badge at the edge on the free plan
+   via /.netlify/scripts/hud (not in our HTML). It renders as an iframe with
+   id #nl-badge-frame appended to the page. Its own dismiss control only sets a
+   per-device localStorage flag, so it stays visible for every visitor. Hide it
+   site-wide here so the client's site carries no third-party branding.
+   (8 Sep 2026, Josh.) Remove this rule if the site ever moves to a paid Netlify
+   plan, where the badge is not injected at all. */
+#nl-badge-frame,
+#nl-hud-frame {
+  display: none !important;
+}
+
 /* ---- Layout container ----
    Caps width and folds the gutter in so desktop column width is unchanged
    while mobile keeps side padding (§10). */
