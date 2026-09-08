@@ -263,10 +263,19 @@ const schemas = [
   <Section bg="white">
     <div class="find">
       <div class="find__map reveal">
-        <!-- Placeholder until the consent layer lands and a real Maps embed can
-             load (build standard §6/§7). Caption reworded 30 July 2026: it was
-             the one em dash in visible copy anywhere on the site. -->
-        <PhotoSlot ratio="4 / 3" radius="xl" caption="Map of 20 Skinner Street, Whitby YO21 3AJ" />
+        <!-- Custom static map (8 Sep 2026): a branded SVG built from OpenStreetMap
+             data with the marker on 20 Skinner Street. Chosen over a live Maps
+             embed so it needs no consent layer and sets no cookies (build standard
+             §6/§7); the OSM attribution is baked into the image. 1200x840 (10/7),
+             so ratio matches the file exactly and nothing is cropped. -->
+        <Photo
+          src="/images/abbey-group-whitby-map.svg"
+          alt="Map showing Abbey Group at 20 Skinner Street, Whitby YO21 3AJ, near Pannett Park and Whitby train station"
+          ratio="10 / 7"
+          radius="xl"
+          width={1200}
+          height={840}
+        />
       </div>
       <div class="find__copy reveal">
         <Eyebrow>Come and find us</Eyebrow>

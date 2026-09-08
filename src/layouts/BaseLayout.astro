@@ -126,12 +126,15 @@ const showPlanPrompt = !chromeless && !Astro.url.pathname.startsWith('/homecare-
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
-    <!-- Meta (Facebook) Business domain verification, 7 Sep 2026 — verifies
-         homecare.abbeygroup.uk for the boiler-draw ad account so pixel events
-         and iOS-14+ Aggregated Event Measurement attribute correctly. Sitewide
-         is fine: Meta only needs to find it on the domain. Remove/replace if
-         the ad domain ever changes. -->
+    <!-- Meta (Facebook) Business domain verification. Two tags, one per domain
+         Meta needs to trust; both are served sitewide (Meta only needs to find
+         the matching one on each domain). Remove/replace if a domain changes.
+         - homecare.abbeygroup.uk (7 Sep 2026): the interim boiler-draw ad domain.
+         - abbeygroup.uk (8 Sep 2026): the main site, now that the apex is live —
+           verifies it for the ad account so pixel events and iOS-14+ Aggregated
+           Event Measurement attribute correctly once ads point at abbeygroup.uk. -->
     <meta name="facebook-domain-verification" content="t4790fui4urd62pc7ff36nu6zp3pgc" />
+    <meta name="facebook-domain-verification" content="5obud5182xmz02r6e1gau4vpydfulr" />
 
     <!-- Google Consent Mode v2 — default-denied, fires before anything else
          on the page (build standard §6/§7). This is the one Google signal
