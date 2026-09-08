@@ -162,7 +162,9 @@ const schemas = [
       <p class="stack__risk">No minimum term. Cancel any month you like. Full refund if you change your mind within 14 days.</p>
 
       <div class="stack__cta">
-        <Button href={gocardless.serviceCare} external size="lg">Sign Up Online</Button>
+        {gocardless.serviceCare
+          ? <Button href={gocardless.serviceCare} external size="lg">Sign Up Online</Button>
+          : <Button href="#enquiry" size="lg">Choose This Plan</Button>}
       </div>
     </div>
   </Section>
@@ -329,7 +331,9 @@ const schemas = [
           bundles that certificate, so your paperwork never lapses. Letting more than one
           property? We will sort cover across the portfolio.
         </p>
-        <Button href={gocardless.landlordCare} external variant="outline">Sign Up Online</Button>
+        {gocardless.landlordCare
+          ? <Button href={gocardless.landlordCare} external variant="outline">Sign Up Online</Button>
+          : <Button href="#enquiry" variant="outline">Choose This Plan</Button>}
       </article>
       <article class="lb__card">
         <h3 class="lb__title">Guest houses, B&amp;Bs and holiday lets</h3>

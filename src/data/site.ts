@@ -76,14 +76,22 @@ export const booking = {
   landlordGasSafety: `${SM8}#d72f6d42-6190-46b4-9621-2245198f5f0b`,
 } as const;
 
-// ---- GoCardless direct sign-up (confirmed by Amy, 28 Aug 2026) ----
-// Only Service Care and Landlord Care can be joined instantly, matching
-// abbeyhomecare.co.uk's own behaviour — every other plan needs a visit first,
-// so it stays enquiry-only.
-export const gocardless = {
-  serviceCare: 'https://pay.gocardless.com/billing/static/collect-customer-details?id=BRF01M14FZXSD2B7EBF54ZEVPFV4XY0A&initial=%2Fcollect-customer-details',
-  landlordCare: 'https://pay.gocardless.com/billing/static/collect-customer-details?id=BRF01M14G084ZBZKCAJN051FXG468P9Z&initial=%2Fcollect-customer-details',
-} as const;
+// ---- GoCardless direct sign-up ----
+// DISABLED 8 Sep 2026. The two links below are GoCardless *Billing Request
+// Flows* (the `id=BRF...` form) — per-customer, single-session links that
+// EXPIRE. They cannot serve as reusable website buttons: once the flow expires
+// every visitor hits a GoCardless error page, which is exactly what happened.
+// Set to null until Abbey provide durable, *reusable* GoCardless payment links
+// for each plan (requested from Amy, 8 Sep 2026). While null, the homecare page
+// routes "Sign Up Online" to the on-page enquiry form (#enquiry -> GHL) instead
+// of a dead link — see homecare-plans.astro. To restore: paste the durable
+// links back in below and the "Sign Up Online" buttons return automatically.
+//   Service Care (expired BRF):  https://pay.gocardless.com/billing/static/collect-customer-details?id=BRF01M14FZXSD2B7EBF54ZEVPFV4XY0A&initial=%2Fcollect-customer-details
+//   Landlord Care (expired BRF): https://pay.gocardless.com/billing/static/collect-customer-details?id=BRF01M14G084ZBZKCAJN051FXG468P9Z&initial=%2Fcollect-customer-details
+export const gocardless: { serviceCare: string | null; landlordCare: string | null } = {
+  serviceCare: null,
+  landlordCare: null,
+};
 
 // ---- Routes (trailing-slash canon) ----
 export const routes = {
