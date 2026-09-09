@@ -215,7 +215,8 @@ const categoryCopy: Record<string, string> = {
        before this script runs; this just updates them once a choice exists. */
     const updateConsentMode = (c: Consent) => {
       window.dataLayer = window.dataLayer || [];
-      window.gtag = window.gtag || function (...args: unknown[]) { window.dataLayer!.push(args); };
+      // Canonical arguments-object shim (see BaseLayout) — array-form breaks gtag.js.
+      window.gtag = window.gtag || function () { window.dataLayer!.push(arguments); };
       window.gtag('consent', 'update', {
         analytics_storage: c.analytics ? 'granted' : 'denied',
         ad_storage: c.advertising ? 'granted' : 'denied',

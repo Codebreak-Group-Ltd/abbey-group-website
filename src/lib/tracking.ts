@@ -51,7 +51,9 @@ export function loadGa4(): void {
   if (ga4Loaded || !isRealGa4Id(GA4_ID)) return;
   ga4Loaded = true;
   window.dataLayer = window.dataLayer || [];
-  window.gtag = window.gtag || function (...args: unknown[]) { window.dataLayer!.push(args); };
+  // Canonical arguments-object shim (see BaseLayout) — an array-form shim stops
+  // gtag.js registering the GA4 tag (no cookie, no hits).
+  window.gtag = window.gtag || function () { window.dataLayer!.push(arguments); };
   const script = document.createElement('script');
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`;
