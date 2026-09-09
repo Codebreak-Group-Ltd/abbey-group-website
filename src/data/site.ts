@@ -77,20 +77,19 @@ export const booking = {
 } as const;
 
 // ---- GoCardless direct sign-up ----
-// DISABLED 8 Sep 2026. The two links below are GoCardless *Billing Request
-// Flows* (the `id=BRF...` form) — per-customer, single-session links that
-// EXPIRE. They cannot serve as reusable website buttons: once the flow expires
-// every visitor hits a GoCardless error page, which is exactly what happened.
-// Set to null until Abbey provide durable, *reusable* GoCardless payment links
-// for each plan (requested from Amy, 8 Sep 2026). While null, the homecare page
-// routes "Sign Up Online" to the on-page enquiry form (#enquiry -> GHL) instead
-// of a dead link — see homecare-plans.astro. To restore: paste the durable
-// links back in below and the "Sign Up Online" buttons return automatically.
-//   Service Care (expired BRF):  https://pay.gocardless.com/billing/static/collect-customer-details?id=BRF01M14FZXSD2B7EBF54ZEVPFV4XY0A&initial=%2Fcollect-customer-details
-//   Landlord Care (expired BRF): https://pay.gocardless.com/billing/static/collect-customer-details?id=BRF01M14G084ZBZKCAJN051FXG468P9Z&initial=%2Fcollect-customer-details
+// Reusable subscription-template links (BRT...) from Abbey's GoCardless account,
+// mapping confirmed with Josh 9 Sep 2026. Unlike the old `BRF...` billing-request
+// -flow links (single-use, they EXPIRED and broke the buttons), a BRT template
+// link spins up a fresh flow per customer on each click, so it stays valid
+// indefinitely. Prices verified against the site: Service Care £9.99/mo,
+// Landlord Care £13.99/mo. NB the £9.99 plan is named "Boiler Care" inside
+// GoCardless (the site rebranded it to Service Care), so the GC checkout page
+// shows "Boiler Care" — same plan, same price.
+// Kept `string | null`: if a link ever breaks again, set it back to null and the
+// button degrades to the enquiry form instead of a dead link (homecare-plans.astro).
 export const gocardless: { serviceCare: string | null; landlordCare: string | null } = {
-  serviceCare: null,
-  landlordCare: null,
+  serviceCare: 'https://pay.gocardless.com/BRT0003E6B9KGEH',
+  landlordCare: 'https://pay.gocardless.com/BRT0003QHK8R37S',
 };
 
 // ---- Routes (trailing-slash canon) ----
