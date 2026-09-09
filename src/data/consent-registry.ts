@@ -55,11 +55,13 @@ export const consentRegistry: ConsentService[] = [
   { name: 'Codebreak Campaign Tracking', provider: 'Codebreak', category: 'analytics',
     purpose: 'Measures how the ad landing pages perform, for our marketing agency’s reporting.' },
 
-  /* Example, ready for launch — uncomment WITH the loading code, never before:
-
+  /* Live from 9 Sep 2026 (Josh). Site-wide analytics, the first tracking on
+     the main site pages rather than only the ad landing pages. Loading code is
+     `loadGa4()` in `src/lib/tracking.ts`, gated on a real `PUBLIC_GA4_ID`
+     (G-2EKSXQHGJL) and, like everything here, fires nothing until Accept/Save
+     with Analytics on. */
   { name: 'Google Analytics 4', provider: 'Google', category: 'analytics',
     purpose: 'Tells us how many people visit and which pages they use, so we can improve the site.' },
-  */
 ];
 
 export const categoryLabels: Record<ConsentCategory, string> = {
