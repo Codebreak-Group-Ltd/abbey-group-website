@@ -143,7 +143,12 @@ const showPlanPrompt = !chromeless && !Astro.url.pathname.startsWith('/homecare-
          before that tag is, not added alongside it under launch pressure. -->
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(...args) { window.dataLayer.push(args); }
+      /* Canonical gtag shim: dataLayer entries MUST be the `arguments` object,
+         not an array — gtag.js reads the queue expecting arguments objects, and
+         an array-form shim stops config/consent commands registering the GA4
+         tag at all (no cookie, no hits). Keep this identical everywhere gtag is
+         (re)defined: `src/lib/tracking.ts` and `CookieConsent.astro`. */
+      function gtag() { window.dataLayer.push(arguments); }
       gtag('consent', 'default', {
         ad_storage: 'denied',
         ad_user_data: 'denied',
