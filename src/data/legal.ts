@@ -24,7 +24,7 @@
    ===================================================================== */
 
 /** Publication date shown on every legal page. Update when the text changes. */
-export const legalUpdated = '30 July 2026';
+export const legalUpdated = '9 September 2026';
 
 /* ---------------------------------------------------------------------
    OUTSTANDING — the only field still missing.
@@ -66,6 +66,11 @@ export const processors: Processor[] = [
     plansOnly: true,
     purpose:
       'Administers the Abbey Home Care Plans on our behalf, as set out in the Plan terms. Only the details needed to run your Plan are shared.',
+  },
+  {
+    name: 'Google',
+    purpose:
+      'Provides Google Analytics, which tells us how many people visit the site and which pages they use, so we can improve it. Set only if you agree to analytics cookies.',
   },
   {
     name: 'Meta',
