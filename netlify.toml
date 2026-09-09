@@ -89,11 +89,17 @@
 # each live site's nav/sitemap on 28 Aug 2026 — see LAUNCH.md for the source
 # crawl. These rules are domain-qualified so they only fire once each domain
 # is added to this Netlify site (Domain management > Domain aliases) and its
-# DNS is pointed here — that DNS access is still outstanding, tracked in
-# `_Specs/01 OUTSTANDING FROM CLIENT.md` §B3. Until DNS is switched, these
-# rules are inert (Netlify never sees traffic for a domain it isn't serving).
-# Once live, each old domain should also go through Google Search Console's
-# Change of Address tool — this only handles the HTTP-level 301s.
+# DNS is pointed here.
+#
+# STATUS (9 Sep 2026): the two apex domains (abbeygas.com, abbeyhomecare.co.uk)
+# went live at launch on 8 Sep — DNS is pointed here, they are on the managed
+# SSL cert, and the 301s below are verified firing to the correct new pages.
+# STILL OUTSTANDING: the www hosts (www.abbeygas.com, www.abbeyhomecare.co.uk)
+# are not yet added as Netlify domain aliases, so they serve the default
+# *.netlify.app cert and the www rules at the foot of this file are inert until
+# those two aliases are added. Change of Address was filed for both apex domains
+# on 8 Sep via Google Search Console — that handles the index move; these rules
+# only handle the HTTP-level 301s.
 
 [[redirects]]
   from = "https://abbeygas.com/about-us/"
@@ -182,5 +188,25 @@
 [[redirects]]
   from = "https://abbeyhomecare.co.uk/*"
   to = "https://abbeygroup.uk/homecare-plans/"
+  status = 301
+  force = true
+
+# --- www variants of the legacy domains -----------------------------------
+# The apex rules above are host-qualified to the bare domain, so a request to
+# www.<legacy> would not match them. Redirect www -> apex preserving the path;
+# the browser then re-requests the apex, where the per-path rules above map it
+# to the correct new page (so www.abbeygas.com/about-us/ still lands on /about/).
+# INERT until each www host is added as a Netlify domain alias (Domain
+# management > Domain aliases) and its SSL cert provisions — until then Netlify
+# serves them the default *.netlify.app cert and never applies these rules.
+[[redirects]]
+  from = "https://www.abbeygas.com/*"
+  to = "https://abbeygas.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.abbeyhomecare.co.uk/*"
+  to = "https://abbeyhomecare.co.uk/:splat"
   status = 301
   force = true
