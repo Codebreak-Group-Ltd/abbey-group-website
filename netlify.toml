@@ -5,6 +5,13 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Serverless functions (GoCardless -> GHL sync, Sept 2026). This is Netlify's
+# default functions location, declared explicitly so the deploy always bundles
+# it rather than relying on autodetection.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 # Security headers (SEO audit, 29 Aug 2026). HSTS already comes from Netlify's
 # own default; everything else was missing entirely.
 #
