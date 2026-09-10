@@ -25,8 +25,9 @@ const title = 'About Abbey Group | Local Tradesmen in Whitby Since 2008';
 const description =
   'Meet the Abbey Group team in Whitby: plumbing, heating, renovations, building and electrical work. Gas Safe registered, serving Whitby since 2008.';
 
-/* Amy, Natasha and James Fawcett's headshots landed 28 Aug 2026. Richard and
-   Mal still carry a monogram rather than a stock face (see image-manifest). */
+/* Amy, Natasha and James Fawcett's headshots landed 28 Aug 2026; Mal's on
+   10 Sep 2026. Richard still carries a monogram rather than a face (see
+   image-manifest). */
 const team = [
   {
     name: 'James Eddon',
@@ -60,6 +61,8 @@ const team = [
     name: 'Mal',
     role: 'Building projects',
     bio: 'Behind the renovations and structural work.',
+    photo: '/images/about-mal.webp',
+    alt: 'Mal, building projects at Abbey Group',
   },
   {
     name: 'James Fawcett',
@@ -177,8 +180,8 @@ const schemas = [
     </div>
 
     <!-- The genuine team photograph carries the section; the cards name people.
-         Only James has a headshot so far, so the rest take a monogram: an honest
-         placeholder beats a stock face on the page whose job is trust. -->
+         Everyone now has a real headshot except Richard, who takes a monogram:
+         an honest placeholder beats a stock face on the page whose job is trust. -->
     <figure class="team__photo reveal">
       <Photo
         src="/images/about-team-group.webp"

@@ -32,10 +32,16 @@ import crypto from 'node:crypto';
 const GC_VERSION = '2015-07-06';
 
 // Amount (in pence) -> plan. Kept here as the single mapping point; if a plan
-// price ever changes it changes in one place.
+// price ever changes it changes in one place. The site sells four homecare
+// tiers; Service Care+ and Ultimate are eligibility-gated (boiler under ten
+// years) so they have no self-serve button and are signed up by the office,
+// but they still reach GoCardless and so must be mapped here. GoCardless
+// template names differ from the site names (kept in the comments).
 const PLANS = {
-  999: { name: 'Service Care', tag: 'plan-service-care' },
-  1399: { name: 'Landlord Care', tag: 'plan-landlord-care' },
+  999: { name: 'Service Care', tag: 'plan-service-care' },          // GC "Boiler Care"
+  1399: { name: 'Landlord Care', tag: 'plan-landlord-care' },       // GC "Landlord Care"
+  1999: { name: 'Service Care+', tag: 'plan-service-care-plus' },   // GC "Boiler Care+"
+  3499: { name: 'Ultimate Home Care', tag: 'plan-ultimate-home-care' },
 };
 
 // Events we forward as a "failed payment" alert to the office.
