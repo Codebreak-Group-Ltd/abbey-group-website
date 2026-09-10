@@ -107,7 +107,15 @@ async function postToGhl(url, payload) {
 
 async function handleSignup(event) {
   const subscription = await gcGet('subscriptions', event.links.subscription);
-  const plan = PLANS[subscription.amount] || { name: 'Homecare (unrecognised amount)', tag: 'plan-unknown' };
+  const plan = PLANS[subscription.amount];
+  if (!plan) {
+    // Amount does not match a known homecare plan, so this subscription is
+    // something else (a non-homecare Direct Debit). Ignore it — only genuine
+    // homecare sign-ups should ever reach the GHL homecare pipeline. If a new
+    // homecare plan is ever added, add its amount to PLANS above.
+    console.log(`gocardless-webhook: ignored subscription ${subscription.id}, amount ${subscription.amount} is not a homecare plan`);
+    return;
+  }
   const person = await customerFromMandate(subscription.links.mandate);
 
   await postToGhl(process.env.GHL_GOCARDLESS_SIGNUP_WEBHOOK, {
