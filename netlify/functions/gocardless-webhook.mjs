@@ -1,20 +1,28 @@
 // GoCardless -> GHL sync (goal 2, Sept 2026).
 //
-// Receives GoCardless webhooks, verifies the signature, and forwards two kinds
-// of event into GoHighLevel via dedicated inbound-webhook workflows:
+// Receives GoCardless webhooks, verifies the signature, and forwards NEW homecare
+// sign-ups into GoHighLevel via a dedicated inbound-webhook workflow:
 //
-//   1. A new homecare sign-up (subscription created on a BRT payment link) ->
-//      GHL creates/updates the contact and drops an opportunity straight into
-//      "Signed up (won)", which fires the existing stage-change automation
-//      (comp-signed, plan tag, the "you're in" email). Same single trigger the
-//      phone-sign-up form uses, so both self-serve and manual paths converge.
-//   2. A failed payment / cancelled mandate -> GHL raises a task on the contact
-//      and emails the office.
+//   A new homecare sign-up (subscription created on a BRT payment link) -> GHL
+//   creates/updates the contact and drops an opportunity straight into
+//   "Signed up (won)", which fires the existing stage-change automation
+//   (comp-signed, plan tag, the "you're in" email). Same single trigger the
+//   phone-sign-up form uses, so both self-serve and manual paths converge.
 //
-// Design note: this posts to its OWN two GHL inbound webhooks (SIGNUP / FAILED),
-// NOT the shared enquiry webhook. The shared one forks on the `competition` tag
-// and would mis-file a sign-up as an enquiry; keeping these separate avoids that
-// and the documented GHL "If/Else can't read a raw webhook payload" limitation.
+// Fires ONLY on `subscription created`, so existing/old clients (whose
+// subscriptions were created in the past) are never touched — this is for NEW
+// sign-ups only (Josh, 10 Sep 2026). Failed-payment alerting was deliberately
+// dropped for the same reason: a failure event can belong to an old client, and
+// old clients must never be added to GHL. GoCardless is Abbey's homecare Direct
+// Debit system only; one-off job payments run through ServiceM8.
+//
+// OPERATIONAL RULE: never bulk-create or re-import subscriptions in GoCardless
+// while this webhook is live — each would fire `subscription created` and mass-add
+// old clients as fake sign-ups. Disable the GoCardless webhook endpoint first.
+//
+// Design note: posts to its OWN GHL inbound webhook (SIGNUP), not the shared
+// enquiry webhook, which forks on the `competition` tag and would mis-file a
+// sign-up as an enquiry.
 //
 // Plan is identified by subscription amount (999 = Service Care, 1399 =
 // Landlord Care), which is more robust than mapping the BRT template id.
@@ -25,7 +33,6 @@
 //   GOCARDLESS_WEBHOOK_SECRET    - the endpoint secret shown when the GoCardless
 //                                  webhook endpoint is created (added after deploy)
 //   GHL_GOCARDLESS_SIGNUP_WEBHOOK - inbound-webhook URL of the sign-up workflow
-//   GHL_GOCARDLESS_FAILED_WEBHOOK - inbound-webhook URL of the failed-payment workflow
 
 import crypto from 'node:crypto';
 
@@ -43,15 +50,6 @@ const PLANS = {
   1999: { name: 'Service Care+', tag: 'plan-service-care-plus' },   // GC "Boiler Care+"
   3499: { name: 'Ultimate Home Care', tag: 'plan-ultimate-home-care' },
 };
-
-// Events we forward as a "failed payment" alert to the office.
-const FAILURE_EVENTS = new Set([
-  'payments:failed',
-  'payments:charged_back',
-  'mandates:cancelled',
-  'mandates:expired',
-  'mandates:failed',
-]);
 
 const gcBase = () =>
   (process.env.GOCARDLESS_ENVIRONMENT || 'live') === 'sandbox'
@@ -107,7 +105,15 @@ async function postToGhl(url, payload) {
 
 async function handleSignup(event) {
   const subscription = await gcGet('subscriptions', event.links.subscription);
-  const plan = PLANS[subscription.amount] || { name: 'Homecare (unrecognised amount)', tag: 'plan-unknown' };
+  const plan = PLANS[subscription.amount];
+  if (!plan) {
+    // Amount does not match a known homecare plan, so this subscription is
+    // something else (a non-homecare Direct Debit). Ignore it — only genuine
+    // homecare sign-ups should ever reach the GHL homecare pipeline. If a new
+    // homecare plan is ever added, add its amount to PLANS above.
+    console.log(`gocardless-webhook: ignored subscription ${subscription.id}, amount ${subscription.amount} is not a homecare plan`);
+    return;
+  }
   const person = await customerFromMandate(subscription.links.mandate);
 
   await postToGhl(process.env.GHL_GOCARDLESS_SIGNUP_WEBHOOK, {
@@ -117,31 +123,6 @@ async function handleSignup(event) {
     plan_interest: plan.name,
     gc_subscription_id: subscription.id,
     gc_amount: (subscription.amount / 100).toFixed(2),
-  });
-}
-
-async function handleFailure(event) {
-  // Failure events carry different link shapes; resolve a mandate id from whatever
-  // the event references, then look up the customer the same way.
-  let mandateId = event.links.mandate;
-  let amount = null;
-  let reason = event.details?.description || event.action;
-
-  if (event.resource_type === 'payments' && event.links.payment) {
-    const payment = await gcGet('payments', event.links.payment);
-    mandateId = mandateId || payment.links.mandate;
-    amount = (payment.amount / 100).toFixed(2);
-  }
-  if (!mandateId) return;
-
-  const person = await customerFromMandate(mandateId);
-  await postToGhl(process.env.GHL_GOCARDLESS_FAILED_WEBHOOK, {
-    ...person,
-    source_page: 'GoCardless Payment Issue',
-    tags: 'homecare,gocardless-payment-issue',
-    gc_event: `${event.resource_type}:${event.action}`,
-    gc_reason: reason,
-    ...(amount ? { gc_amount: amount } : {}),
   });
 }
 
@@ -167,15 +148,11 @@ export default async (req) => {
   // GoCardless will retry the good ones too. Errors are logged for the
   // Netlify function log and swallowed per event.
   for (const event of events) {
-    const key = `${event.resource_type}:${event.action}`;
+    if (event.resource_type !== 'subscriptions' || event.action !== 'created') continue;
     try {
-      if (event.resource_type === 'subscriptions' && event.action === 'created') {
-        await handleSignup(event);
-      } else if (FAILURE_EVENTS.has(key)) {
-        await handleFailure(event);
-      }
+      await handleSignup(event);
     } catch (err) {
-      console.error(`gocardless-webhook: ${key} ${event.id} failed:`, err.message);
+      console.error(`gocardless-webhook: subscription ${event.id} failed:`, err.message);
     }
   }
 
