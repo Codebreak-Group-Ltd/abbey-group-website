@@ -122,5 +122,8 @@ export default async () => {
   });
 };
 
-// Run every 10 minutes (window above is 15 min for safe overlap).
-export const config = { schedule: '*/10 * * * *' };
+// SCHEDULE INTENTIONALLY DISABLED (10 Sep 2026): ships deployed but idle so the
+// ServiceM8 sync can be tested deliberately before it runs live. To activate,
+// restore the line below and redeploy — it then polls every 10 minutes (the
+// 15-min window above gives safe overlap).
+// export const config = { schedule: '*/10 * * * *' };
