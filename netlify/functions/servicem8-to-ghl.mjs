@@ -72,7 +72,24 @@ async function ghlUpsert(body) {
   return res.json();
 }
 
-export default async () => {
+export default async (req) => {
+  // Netlify's scheduler invokes this with a JSON body carrying `next_run`. Any
+  // other (manual) invocation must present ?key=<SERVICEM8_POLL_SECRET>, so the
+  // public function URL cannot be triggered by anyone who stumbles on it.
+  let isScheduled = false;
+  if (req.method === 'POST') {
+    try {
+      const body = await req.clone().json();
+      if (body && body.next_run) isScheduled = true;
+    } catch { /* no JSON body — treat as manual */ }
+  }
+  if (!isScheduled) {
+    const key = new URL(req.url).searchParams.get('key');
+    if (!process.env.SERVICEM8_POLL_SECRET || key !== process.env.SERVICEM8_POLL_SECRET) {
+      return new Response('Forbidden', { status: 403 });
+    }
+  }
+
   const since = new Date(Date.now() - WINDOW_MIN * 60 * 1000);
   let synced = 0, skipped = 0, failed = 0;
 
