@@ -39,14 +39,12 @@ export const nap = {
   email: 'office@abbeygroup.uk',
   // Mon–Fri office hours; phone lines take messages 24/7 (not a callout guarantee).
   hours: 'Monday to Friday, 9am to 4pm',
-  /* Latitude/longitude of the Skinner Street office. LEFT NULL DELIBERATELY:
-     coordinates are the strongest single location signal an AI assistant reads,
-     and a guessed pin would place Abbey on the wrong spot in an answer, which is
-     worse than none. Fill from the Google Business Profile pin (open the GBP,
-     "Edit profile" → the map marker gives the exact lat/lng) and the
-     GeoCoordinates block in schema.ts appears automatically. Outstanding §C.
-     Shape when set: `geo: { lat: 54.4863, lng: -0.6133 }`. */
-  geo: null as { lat: number; lng: number } | null,
+  /* Latitude/longitude of the Skinner Street office. Set 14 Sep 2026 from
+     Google's own embed for "20 Skinner St, Whitby YO21 3AJ" (Josh's Maps
+     share link + embed pb string, which centres on the place marker itself —
+     not a third-party geocode of the address text). The GeoCoordinates block
+     in schema.ts picks this up automatically. */
+  geo: { lat: 54.487412, lng: -0.620185 } as { lat: number; lng: number } | null,
 } as const;
 
 export const ratings = {

@@ -104,8 +104,68 @@ export function loadConsentedTracking(consent: { analytics: boolean; advertising
   if (consent.analytics) {
     loadGa4();
     loadCodebreakPixel();
+    bindPhoneClickTracking();
+    loadWebVitals();
   }
   if (consent.advertising) loadMetaPixel();
+}
+
+let phoneClickBound = false;
+
+/**
+ * Site-wide delegated click listener on `tel:` links, added 14 Sep 2026 —
+ * Enhanced Measurement's "outbound clicks" auto-tracks the ServiceM8 booking
+ * link, but not `tel:`, so a call click was the one real conversion signal
+ * going unmeasured. Binds once; each click fires a GA4 custom event and,
+ * only if Meta is also loaded (advertising consent), a Meta `Contact` event.
+ * Bound from the analytics branch above since GA4 is the primary purpose;
+ * safe to call repeatedly.
+ */
+export function bindPhoneClickTracking(): void {
+  if (phoneClickBound) return;
+  phoneClickBound = true;
+  document.addEventListener('click', (e) => {
+    const link = (e.target as HTMLElement).closest?.('a[href^="tel:"]') as HTMLAnchorElement | null;
+    if (!link) return;
+    if (window.fbq && isRealMetaPixelId(META_PIXEL_ID)) window.fbq('track', 'Contact');
+    if (window.gtag && isRealGa4Id(GA4_ID)) {
+      window.gtag('event', 'phone_click', { link_url: link.href, page_location: window.location.pathname });
+    }
+  });
+}
+
+let webVitalsLoaded = false;
+
+/**
+ * Real-user Core Web Vitals (LCP, INP, CLS), added 14 Sep 2026. GA4 does not
+ * measure these itself, and CrUX (Search Console's field-data report) needs
+ * far more monthly traffic than this site has to ever populate — so this is
+ * the only way to see genuine field performance data rather than a one-off
+ * lab reading. Dynamically imports the `web-vitals` library so non-consented
+ * visitors never download it. Each metric becomes its own GA4 event, named
+ * after the metric (`LCP` / `INP` / `CLS`) so it reads like any other event
+ * in reports rather than needing a dashboard to interpret. `non_interaction`
+ * keeps these out of engagement-rate/bounce calculations. Safe to call
+ * repeatedly; imports and binds only once.
+ */
+export function loadWebVitals(): void {
+  if (webVitalsLoaded || !isRealGa4Id(GA4_ID)) return;
+  webVitalsLoaded = true;
+  import('web-vitals').then(({ onLCP, onINP, onCLS }) => {
+    const send = (metric: { name: string; value: number; id: string; rating: string }) => {
+      if (!(window.gtag && isRealGa4Id(GA4_ID))) return;
+      window.gtag('event', metric.name, {
+        value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
+        metric_id: metric.id,
+        metric_rating: metric.rating,
+        page_location: window.location.pathname,
+        non_interaction: true,
+      });
+    };
+    onLCP(send);
+    onINP(send);
+    onCLS(send);
+  });
 }
 
 /**
