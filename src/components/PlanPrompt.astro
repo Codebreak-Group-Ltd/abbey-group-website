@@ -20,9 +20,11 @@ import { booking, routes } from '../data/site.ts';
    The offer is "limited time" with no end date or countdown, on purpose: Abbey
    will keep it running, and an invented deadline would be a false claim.
 
-   LANDLORD: no discount has been confirmed for the gas safety check, so that
-   offer keeps the plain one-off-vs-plan comparison (£162 alone, or £13.99 a
-   month). Do not copy the 50% claim across until Amy confirms it.
+   LANDLORD: Amy confirmed on 18 Nov 2026 that the same offer applies to the
+   landlord gas safety check (£162 one-off). It is worded as 50% off, then
+   £13.99 a month covering the next certificate a year later, mirroring the
+   service offer. The "then covers the next one" half is inferred from the
+   service mechanic, not separately confirmed.
 
    This is the highest-value conversion mechanic on the site, because it is the
    thing that turns a one-off job into a subscription.
@@ -75,14 +77,14 @@ const offers = [
     key: 'landlord',
     href: booking.landlordGasSafety,
     job: 'gas safety check',
-    heading: 'Already booking the certificate? Turn it into cover for good',
+    heading: 'Already booking the certificate? Get 50% off by joining Landlord Care',
     lead:
-      'The engineer is coming anyway. Start Landlord Care instead of paying for a one-off check, and next year the certificate is booked in for you so it cannot lapse.',
+      'The engineer is coming anyway. Join Landlord Care and your first gas safety check is 50% off, then £13.99 a month covers your next certificate in a year\'s time.',
     wasLabel: 'Gas safety check, one-off',
     was: '£162',
-    nowLabel: 'Landlord Care, from today',
-    now: '£13.99',
-    then: 'a month, the certificate included every year',
+    nowLabel: 'Your first check when you join',
+    now: '50% off',
+    then: 'then £13.99 a month covers your next certificate in a year\'s time',
     stack: [
       'The annual certificate the law requires, booked in every year',
       'The full boiler service included',

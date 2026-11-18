@@ -5,6 +5,20 @@
 
 Living tick-list of what is done and what is still open. Update as items land.
 
+## Offer extended to landlord gas safety certificates (18 November 2026)
+
+Amy (by email, via Josh) reversed her earlier answer: the 50% off DOES apply to
+landlord gas safety certificates. Removed the "does not apply to landlord" small print
+on `/homecare-plans/` and in the FAQ (now "applies on every plan, and to landlord gas
+safety certificates too"); the landlord booking popup and the plan picker's Landlord
+Care result now say 50% off. Still "50% off", no price. The "then £13.99 a month
+covers your next certificate in a year's time" half mirrors the service mechanic and
+was NOT separately confirmed, so ask Amy to eyeball it.
+
+- [ ] `/lp/landlord-care-boiler-draw/` and the other `/lp/` pages still say the
+      service or certificate is "included every year". Unchanged, as before.
+- The 13 Nov "Landlord Care in/out" question below is now answered: in.
+
 ## Limited time offer: first service 50% off (13 November 2026)
 
 Amy and James said on a call that the first boiler service is invoiced at 50% off after
