@@ -5,6 +5,55 @@
 
 Living tick-list of what is done and what is still open. Update as items land.
 
+## Limited time offer: first service 50% off (13 November 2026)
+
+Amy and James said on a call that the first boiler service is invoiced at 50% off after
+the visit, then the £9.99 a month covers next year's service, and that nowhere on the
+site said so (customers were telling them). This reverses the 17 Aug "service
+included, no discount" reading; see the update at the top of `02 PLAN DATA`.
+
+**Done (uncommitted, `npm run verify` clean, zero overflow at 390px):**
+
+- [x] `/homecare-plans/`: new limited-time-offer card (`.lto`) directly under the
+      hero, using Josh's headline; the dark sign-up band and its card rewritten to
+      "50% off, then £9.99 a month covers your next service in a year's time".
+- [x] Same mechanic in `PlanPrompt` (the booking-moment dialog, header comment
+      rewritten so it no longer says "never a discount"), the `/plumbing-heating/`
+      cross-sell band, and the Service Care result in `PlanPicker`.
+- [x] New homecare FAQ "Is there an offer on my first boiler service?" in
+      `faqs.ts`, so the page, its FAQPage JSON-LD and `/llms.txt` all carry it.
+- No end date or countdown anywhere, deliberately (Abbey will keep it running).
+
+**Deliberately NOT changed, still open:**
+
+- Josh's answers from Amy (13 Nov): the offer is on the boiler service of every plan
+  that includes one; NOT on landlord gas safety certificates; copy says "50% off"
+  with no price; no clawback in Amy's understanding. The `.lto` card and FAQ now
+  say "monthly payments, from £9.99" (not "your £9.99") and carry one small-print
+  line excluding landlord certificates.
+- [ ] **Terms contradict Amy on clawback.** `/homecare-plan-terms/` (para 5) says
+      that if you cancel within a 12 month period in which we provided services,
+      "we reserve the right to recover from you any cost of such products and
+      services not covered by your payments". On a 50%-off first service that is a
+      live clawback right. Amy says she would not use it; the T&C still allows it.
+      Needs Amy and the solicitor: either leave it as an unused reserved right, or
+      carve the discounted first service out. The site copy does not promise
+      "no clawback", deliberately. The terms also describe the plan as spreading
+      the cost of the service over 12 months, which does not describe a 50%
+      invoice after the visit; worth rewording in the same pass.
+- [ ] Landlord Care (PlanPrompt landlord offer, PlanPicker landlord result):
+      excluded, per Amy. Open point: Landlord Care also includes a boiler service,
+      so "every plan that includes one" and "not landlord" need one clarifying
+      word from Amy.
+- [ ] The four `/lp/` boiler-draw pages and the Homecare plans "£276 value" stack
+      still treat the service as included in the £9.99. Those are ad/draw pages
+      with their own terms; they need a decision before they are touched.
+- [ ] `/homecare-plan-terms/` does not mention the discounted first service or
+      what happens to it on cancellation. Needs Amy and the solicitor.
+- [ ] Home page homecare band and `/lp/homecare/` (comment still says retired).
+- [ ] Whether 50% applies to every plan or Service Care only, and whether the
+      price is exactly £48. Copy says "50% off" until confirmed.
+
 ## Meta Pixel + Codebreak tracking + AI webhooks live on the two active boiler-draw pages (28 August 2026)
 
 Meta Ads are being built for the boiler-draw campaign, so tracking and lead
