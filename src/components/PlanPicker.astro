@@ -30,9 +30,12 @@ import { nap, routes, gocardless } from '../data/site.ts';
    all `:has()`. Nothing is stored on the device. `@supports` hides the whole
    tool where `:has()` is unavailable, so nobody meets a dead end.
 
-   MONEY LINES (see `_Specs/11 HOMECARE OFFER STRATEGY.md`). Service Care and
-   Landlord Care compare against the real one-off price they replace (£96 or
-   £162), against the honest monthly price. Service Care+ and Ultimate Home
+   MONEY LINES (see `_Specs/11 HOMECARE OFFER STRATEGY.md`). Service Care's
+   line states the limited time offer confirmed 13 Nov 2026: first service 50%
+   off, then £9.99 a month covers the next one (this reverses the 17 Aug
+   "included, no discount" reading). Landlord Care still compares against the
+   real one-off price it replaces (£162), against the honest monthly price; no
+   landlord discount has been confirmed. Service Care+ and Ultimate Home
    Care compare against the cost of a single call-out instead, which is the
    right framing for those two either way. No plan carries a separate joining
    charge. */
@@ -178,9 +181,9 @@ const state = [
         </p>
 
         <p class="pp__rmoney">
-          Your annual service is <strong class="tnum">£96</strong> on its own, and nothing else.
-          Start Service Care instead and it is <strong class="tnum">£9.99</strong> a month, this
-          service included, today and every year after.
+          Your annual service is <strong class="tnum">£96</strong> on its own. Join Service Care
+          and your first service is <strong class="tnum">50% off</strong>, then
+          <strong class="tnum">£9.99</strong> a month covers your next service in a year's time.
         </p>
         {directSignup
           ? <Button href={gocardless.serviceCare} external size="lg">{cta.service}</Button>
